@@ -71,7 +71,7 @@
     <string>清空数据</string>
    </property>
   </widget>
-  <widget class="QPlainTextEdit" name="plainTextEdit">
+  <widget class="QPlainTextEdit" name="sendData">
    <property name="geometry">
     <rect>
      <x>370</x>
@@ -81,7 +81,7 @@
     </rect>
    </property>
   </widget>
-  <widget class="QPlainTextEdit" name="plainTextEdit_2">
+  <widget class="QPlainTextEdit" name="receiveData">
    <property name="geometry">
     <rect>
      <x>370</x>

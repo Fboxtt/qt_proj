@@ -18,6 +18,8 @@ public:
     void Init(Ui::Widget *ui);
     void ClickOpenSerPort(Ui::Widget *ui);
     void RefreshSerial(Ui::Widget *ui);
+    void serial_Read(Ui::Widget *ui);
+    void on_sendBox_clicked(Ui::Widget *ui);
 private:
     QSerialPort SerialPort;
 

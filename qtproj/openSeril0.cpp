@@ -143,3 +143,50 @@ void serial::ClickOpenSerPort(Ui::Widget *ui)
         ui->sendBox->setEnabled(false);
     }
 }
+
+void serial::serial_Read(Ui::Widget *ui)
+{   QString buffer_1;
+    //从缓冲区中读取数据
+    QByteArray buffer = SerialPort.readAll();
+    if(!buffer.isEmpty())//如果非空说明有数据接收
+    {   //转换成16进制大写
+        QString str=buffer.toHex().data();
+        str=str.toUpper();
+        //一个16进制占4位，8位为一字节，所以每两位16进制空一格
+        for(int i=0;i<str.length();i+=2)
+        {
+               QString str_1 = str.mid (i,2);
+               buffer_1 += str_1;
+               buffer_1 += " ";
+        }
+    //读取之前显示数据
+    QString receive = ui->receiveData->toPlainText();
+    //清空显示
+    ui->receiveData->clear();
+    //重新显示
+//    if(a==0){
+            receive += QString(buffer);
+            ui->receiveData->appendPlainText(receive);
+//            }//直接显示
+//    else    {
+//            receive += QString(buffer_1);
+//            ui->receiveData->append(receive);
+//            }//16进制显示
+    }
+    buffer.clear();
+}
+
+void serial::on_sendBox_clicked(Ui::Widget *ui)
+{
+    QByteArray Data_1;
+    //获取输入窗口sendData的数据
+    QString Data = ui->sendData->toPlainText();
+    // if(c)       {Data+='\r';Data+='\n';}//插入换行
+    // if(b==0)    Data_1 = Data.toUtf8();//转换成utf8格式的字节流发送
+    // else        Data_1 = QByteArray::fromHex (Data.toLatin1().data());//按十六进制编码发送
+    // 写入发送缓存区
+    Data_1 = Data.toUtf8();
+    qDebug() << Data_1 << "send data";
+    SerialPort.write(Data_1);
+    qDebug() << Data_1 << "exceed send data func";
+}

@@ -3,12 +3,15 @@
 #include <QDebug>
 #include <QFileDialog>
 #include <serial0.h>
+
+serial se;
+
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
 {
     ui->setupUi(this);
-    serial se;
+    // serial se;
     se.Init(ui);
 }
 
@@ -20,7 +23,7 @@ Widget::~Widget()
 
 void Widget::on_pushButton_2_clicked()
 {
-    QString str = ui->plainTextEdit->toPlainText();
+    QString str = ui->sendData->toPlainText();
 //    QString str = ui->lineEdit->text();
     qDebug() << str;
 }
@@ -51,15 +54,24 @@ void Widget::on_conectSerialButton_clicked()
 
 void Widget::on_searchBtn_clicked()
 {
-    serial se;
+    // serial se;
     se.RefreshSerial(ui);
 }
 
 void Widget::on_openBtn_clicked()
 {
-    serial se;
-    qDebug() << "in open serial";
-//    SelAndOpenSerial(NULL,NULL);
+    // serial se;
+    qDebug() << "open serial btn";
     se.ClickOpenSerPort(ui);
-    qDebug() << "out open serial";
+}
+
+void Widget::on_sendBox_clicked()
+{
+    // serial se;
+    se.on_sendBox_clicked(ui);
+}
+
+void Widget::on_clearReceiveDataButton_clicked()
+{
+    se.serial_Read(ui);
 }
