@@ -49,6 +49,23 @@ void serial::Init(Ui::Widget *ui)
     ui->stopBox->setCurrentIndex(0);
 }
 
+void serial::RefreshSerial(Ui::Widget *ui)
+{
+    ui->portBox->clear();
+    foreach(const QSerialPortInfo &info, QSerialPortInfo::availablePorts()) //访问静态成员函数，返回Qlist
+    {
+        // 自动读取串口号添加到端口portBox中
+        QSerialPort serial;
+        serial.setPort(info);
+        qDebug() << serial.portName() << "serial init debug";
+        if(serial.open(QIODevice::ReadWrite))
+        {
+            ui->portBox->addItem(info.portName());
+            serial.close();
+        }
+    }
+}
+
 void serial::ClickOpenSerPort(Ui::Widget *ui)
 {
     // 打开串口

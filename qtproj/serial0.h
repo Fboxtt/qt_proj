@@ -17,6 +17,7 @@ public:
     serial();
     void Init(Ui::Widget *ui);
     void ClickOpenSerPort(Ui::Widget *ui);
+    void RefreshSerial(Ui::Widget *ui);
 private:
     QSerialPort SerialPort;
 

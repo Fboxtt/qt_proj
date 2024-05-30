@@ -52,5 +52,6 @@ void Widget::on_conectSerialButton_clicked()
 void Widget::on_searchBtn_clicked()
 {
     serial se;
+    se.RefreshSerial(ui);
     se.Init(ui);
 }
