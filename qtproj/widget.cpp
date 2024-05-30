@@ -8,6 +8,8 @@ Widget::Widget(QWidget *parent)
     , ui(new Ui::Widget)
 {
     ui->setupUi(this);
+    serial se;
+    se.Init(ui);
 }
 
 Widget::~Widget()
@@ -44,14 +46,20 @@ void Widget::on_selectFileButton_clicked()
 //extern int SelAndOpenSerial(int argc, char *argv[]);
 void Widget::on_conectSerialButton_clicked()
 {
-    qDebug() << "in open serial";
-//    SelAndOpenSerial(NULL,NULL);
-    qDebug() << "out open serial";
+
 }
 
 void Widget::on_searchBtn_clicked()
 {
     serial se;
     se.RefreshSerial(ui);
-    se.Init(ui);
+}
+
+void Widget::on_openBtn_clicked()
+{
+    serial se;
+    qDebug() << "in open serial";
+//    SelAndOpenSerial(NULL,NULL);
+    se.ClickOpenSerPort(ui);
+    qDebug() << "out open serial";
 }

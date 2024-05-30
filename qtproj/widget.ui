@@ -29,7 +29,7 @@
     </font>
    </property>
    <property name="text">
-    <string>连接串口</string>
+    <string>打开串口</string>
    </property>
   </widget>
   <widget class="QRadioButton" name="radioButton">
@@ -104,7 +104,7 @@
   <widget class="QPushButton" name="sendBox">
    <property name="geometry">
     <rect>
-     <x>610</x>
+     <x>620</x>
      <y>440</y>
      <width>75</width>
      <height>23</height>

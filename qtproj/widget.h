@@ -26,6 +26,8 @@ private slots:
 
     void on_searchBtn_clicked();
 
+    void on_openBtn_clicked();
+
 private:
     Ui::Widget *ui; //似乎是定义了一个类指针
 };
