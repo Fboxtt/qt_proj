@@ -63,6 +63,25 @@ void Widget::on_openBtn_clicked()
     // serial se;
     qDebug() << "open serial btn";
     se.ClickOpenSerPort(ui);
+//    connect()
+//    QObject::connect(se.SerialPort, SIGNAL(QSerialPort::readyRead), this, SIGNAL(Widget::SerialPortReadyRead_slot));
+//    QSerialPort* serial0 = new QSerialPort(this);
+    /* 创建接收数据信号槽 */
+    connect(&se.SerialPort, &QSerialPort::readyRead, this, &Widget::SerialPortReadyRead_slot);
+//    connect(ui->rateBox, QOverload<int>::of(&QComboBox::currentIndexChanged),[=](int index){
+//        if (index == 8) {
+//            ui->rateBox->setEditable(true);
+//            ui->rateBox->setCurrentText(NULL);
+//        } else {
+//            ui->rateBox->setEditable(false);
+//        }
+//    });
+}
+
+void Widget::SerialPortReadyRead_slot()
+{
+    qDebug() << "in ready slot";
+    se.serial_Read(ui);
 }
 
 void Widget::on_sendBox_clicked()

@@ -33,6 +33,8 @@ private slots:
 
     void on_clearReceiveDataButton_clicked();
 
+    void SerialPortReadyRead_slot();
+
 private:
     Ui::Widget *ui; //似乎是定义了一个类指针
 };
