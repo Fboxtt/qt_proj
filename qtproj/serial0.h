@@ -18,10 +18,19 @@ public:
     void Init(Ui::Widget *ui);
     void ClickOpenSerPort(Ui::Widget *ui);
     void RefreshSerial(Ui::Widget *ui);
-    void serial_Read(Ui::Widget *ui);
+    void serial_Read(Ui::Widget *ui, QTimer *tim);
     void on_sendBox_clicked(Ui::Widget *ui);
     QSerialPort SerialPort;
 private:
 
+public:
+    void TimeOut(Ui::Widget *ui, QTimer *tim);
 
+    enum BAT_COMMAND_SEND_STATUS {
+        COMPLETE,
+        INCOMPLETE,
+        FIRST_CONNECT,
+    };
+    
+    BAT_COMMAND_SEND_STATUS batComSendStatus = FIRST_CONNECT;
 };
