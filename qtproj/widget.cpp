@@ -1,10 +1,13 @@
 #include "widget.h"
 #include "ui_widget.h"
+#include "textDecode0.h"
 #include <QDebug>
 #include <QFileDialog>
 #include <serial0.h>
 
+
 serial se;
+textDcode dcode;
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -23,9 +26,7 @@ Widget::~Widget()
 
 void Widget::on_pushButton_2_clicked()
 {
-    QString str = ui->sendData->toPlainText();
-
-    qDebug() << str;
+    dcode.DecodeHexToCommand(ui);
 }
 
 

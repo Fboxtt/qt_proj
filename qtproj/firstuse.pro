@@ -18,10 +18,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     main.cpp \
     openSeril0.cpp \
+    textDecode0.cpp \
     widget.cpp
 
 HEADERS += \
     serial0.h \
+    textDecode0.h \
     widget.h
 
 FORMS += \

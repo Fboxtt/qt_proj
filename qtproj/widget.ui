@@ -330,6 +330,19 @@
     <string>16进制显示</string>
    </property>
   </widget>
+  <widget class="QPushButton" name="pushButton_2">
+   <property name="geometry">
+    <rect>
+     <x>630</x>
+     <y>60</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>解析</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>
