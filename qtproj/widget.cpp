@@ -7,7 +7,7 @@
 
 
 serial se;
-textDcode dcode;
+textDcode dcode0;
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -26,7 +26,9 @@ Widget::~Widget()
 
 void Widget::on_pushButton_2_clicked()
 {
-    dcode.DecodeHexToCommand(ui);
+    QString decodeStr = "未解析";
+    decodeStr = dcode0.DecodeHexToCommand(ui, decodeStr);
+    ui->HexEncodeText->appendPlainText(decodeStr);
 }
 
 
