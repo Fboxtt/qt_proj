@@ -20,7 +20,7 @@ public:
     void ClickOpenSerPort(Ui::Widget *ui);
     void RefreshSerial(Ui::Widget *ui);
     void serial_Read(Ui::Widget *ui, QTimer *tim);
-    void on_sendBox_clicked(Ui::Widget *ui);
+    QString on_sendBox_clicked(Ui::Widget *ui);
     QSerialPort SerialPort;
 private:
 

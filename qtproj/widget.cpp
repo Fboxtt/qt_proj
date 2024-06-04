@@ -16,6 +16,7 @@ Widget::Widget(QWidget *parent)
     ui->setupUi(this);
 
     se.Init(ui);
+    ui->sendBox->setEnabled(false);
 }
 
 Widget::~Widget()
@@ -88,7 +89,15 @@ void Widget::SerialPortReadyRead_slot()
 void Widget::on_sendBox_clicked()
 {
     // serial se;
-    se.on_sendBox_clicked(ui);
+//    se.SerialPort
+    QString sendData = se.on_sendBox_clicked(ui);
+
+    qDebug() << "sendata = " << sendData;
+    se.batComSendStatus = serial::COMPLETE;
+
+    QString dcodeData = dcode0.SendDataDecode(ui, sendData);
+
+    ui->HexEncodeText->appendPlainText(dcodeData);
 }
 
 void Widget::on_clearReceiveDataButton_clicked()

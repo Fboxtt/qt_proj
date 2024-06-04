@@ -10,6 +10,7 @@
 //#include "serial0.h"
 #include <QTextBlock>
 #include <Qmap>
+#include <QTime>
 
 class textDcode
 {
@@ -20,6 +21,8 @@ public:
     QString DecodeHexToCommand(Ui::Widget *ui, QString decodeStr);
     QString SendCmdDocode(QStringList hexList, QString decodeStr);
     QString ByteDecode(QMap<int, QString> mapCode, int keys);
+    QString SendDataDecode(Ui::Widget *ui, QString decodeStr);
+
     QMap<int,QString> typeCode;
     QMap<int,QString> funcCode;
     QMap<int,QString> ackCode;

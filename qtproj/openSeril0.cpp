@@ -26,12 +26,12 @@ void serial::Init(Ui::Widget *ui)
     QStringList dataBitsList;   //数据位
     QStringList stopBitsList;   //停止位
 
-    // 波特率    //波特率默认选择下拉第三项：9600
+    // 波特率    //波特率默认选择下拉第五项：19200
     baudList<<"1200"<<"2400"<<"4800"<<"9600"
            <<"14400"<<"19200"<<"38400"<<"56000"
           <<"57600"<<"115200";
     ui->rateBox->addItems(baudList);
-    ui->rateBox->setCurrentIndex(3);
+    ui->rateBox->setCurrentIndex(5);
 
     // 校验      //校验默认选择无
     parityList<<"无"<<"奇"<<"偶";
@@ -181,7 +181,7 @@ void serial::serial_Read(Ui::Widget *ui, QTimer *tim)
         }
         if (ui->TimeCheckBox->isChecked() && serial::batComSendStatus != serial::INCOMPLETE) // 加时间戳
         {
-            receive += QString("[%1]:RX -> ").arg(QTime::currentTime().toString("HH:mm:ss:zzz"));
+            receive += QString("[%1]:RX ->").arg(QTime::currentTime().toString("HH:mm:ss:zzz"));
         }
         if(ui->hexDisplay->checkState() == Qt::Unchecked){ // 加数据
             receive += QString(buffer);
@@ -197,18 +197,12 @@ void serial::serial_Read(Ui::Widget *ui, QTimer *tim)
     buffer.clear();
 }
 
-void serial::on_sendBox_clicked(Ui::Widget *ui)
+QString serial::on_sendBox_clicked(Ui::Widget *ui)
 {
     QByteArray Data_1;
     //获取输入窗口sendData的数据
     QString Data = ui->sendData->toPlainText();
-    QString outToPlainText;
-//    Data += '\r';//插入换行
-    if (ui->TimeCheckBox->isChecked()) {
-        outToPlainText = QString("[%1]:TX&-> ").arg(QTime::currentTime().toString("HH:mm:ss:zzz")) + Data;
-    }
-    ui->receiveData->appendPlainText(outToPlainText);
-    serial::batComSendStatus = serial::COMPLETE;
+
 
     if(ui->hexSendBox->checkState() == 0) {
         Data_1 = Data.toUtf8();//转换成utf8格式的字节流发送
@@ -218,4 +212,5 @@ void serial::on_sendBox_clicked(Ui::Widget *ui)
     // 写入发送缓存区
     qDebug() << Data_1 << "send data";
     SerialPort.write(Data_1);
+    return Data;
 }

@@ -113,6 +113,15 @@
    <property name="text">
     <string>发送</string>
    </property>
+   <property name="autoDefault">
+    <bool>false</bool>
+   </property>
+   <property name="default">
+    <bool>false</bool>
+   </property>
+   <property name="flat">
+    <bool>false</bool>
+   </property>
   </widget>
   <widget class="QLabel" name="portStatus">
    <property name="geometry">
@@ -297,9 +306,9 @@
   <widget class="QPlainTextEdit" name="HexEncodeText">
    <property name="geometry">
     <rect>
-     <x>770</x>
+     <x>730</x>
      <y>100</y>
-     <width>321</width>
+     <width>351</width>
      <height>211</height>
     </rect>
    </property>
