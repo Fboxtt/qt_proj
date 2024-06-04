@@ -175,16 +175,15 @@ void serial::serial_Read(Ui::Widget *ui, QTimer *tim)
         ui->receiveData->clear();
         //重新显示
 
-        if(serial::batComSendStatus == serial::COMPLETE)
+        if(serial::batComSendStatus == serial::COMPLETE) // 加换行符
         {
             receive += "\r";
         }
-        if (ui->TimeCheckBox->isChecked() && serial::batComSendStatus != serial::INCOMPLETE)
+        if (ui->TimeCheckBox->isChecked() && serial::batComSendStatus != serial::INCOMPLETE) // 加时间戳
         {
-//            framedata = QString("[%1]:RX -> ").arg(QTime::currentTime().toString("HH:mm:ss:zzz"));
             receive += QString("[%1]:RX -> ").arg(QTime::currentTime().toString("HH:mm:ss:zzz"));
         }
-        if(ui->hexDisplay->checkState() == Qt::Unchecked){
+        if(ui->hexDisplay->checkState() == Qt::Unchecked){ // 加数据
             receive += QString(buffer);
         }//直接显示
         else{
@@ -203,11 +202,20 @@ void serial::on_sendBox_clicked(Ui::Widget *ui)
     QByteArray Data_1;
     //获取输入窗口sendData的数据
     QString Data = ui->sendData->toPlainText();
-    // if(c)       {Data+='\r';Data+='\n';}//插入换行
-    // if(b==0)    Data_1 = Data.toUtf8();//转换成utf8格式的字节流发送
-    // else        Data_1 = QByteArray::fromHex (Data.toLatin1().data());//按十六进制编码发送
+    QString outToPlainText;
+//    Data += '\r';//插入换行
+    if (ui->TimeCheckBox->isChecked()) {
+        outToPlainText = QString("[%1]:TX&-> ").arg(QTime::currentTime().toString("HH:mm:ss:zzz")) + Data;
+    }
+    ui->receiveData->appendPlainText(outToPlainText);
+    serial::batComSendStatus = serial::COMPLETE;
+
+    if(ui->hexSendBox->checkState() == 0) {
+        Data_1 = Data.toUtf8();//转换成utf8格式的字节流发送
+    } else {
+        Data_1 = QByteArray::fromHex (Data.toLatin1().data());//按十六进制编码发送
+    }
     // 写入发送缓存区
-    Data_1 = Data.toUtf8();
     qDebug() << Data_1 << "send data";
     SerialPort.write(Data_1);
 }
