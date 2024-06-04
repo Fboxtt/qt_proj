@@ -10,6 +10,7 @@
 #include <QCoreApplication>
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
+#include <QTime>
 class serial
 {
 
@@ -31,6 +32,6 @@ public:
         INCOMPLETE,
         FIRST_CONNECT,
     };
-    
+
     BAT_COMMAND_SEND_STATUS batComSendStatus = FIRST_CONNECT;
 };

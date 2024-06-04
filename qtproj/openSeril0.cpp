@@ -179,7 +179,11 @@ void serial::serial_Read(Ui::Widget *ui, QTimer *tim)
         {
             receive += "\r";
         }
-
+        if (ui->TimeCheckBox->isChecked() && serial::batComSendStatus != serial::INCOMPLETE)
+        {
+//            framedata = QString("[%1]:RX -> ").arg(QTime::currentTime().toString("HH:mm:ss:zzz"));
+            receive += QString("[%1]:RX -> ").arg(QTime::currentTime().toString("HH:mm:ss:zzz"));
+        }
         if(ui->hexDisplay->checkState() == Qt::Unchecked){
             receive += QString(buffer);
         }//直接显示
