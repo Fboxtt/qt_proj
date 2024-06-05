@@ -94,11 +94,11 @@ void Widget::SerialPortReadyRead_slot()
 
 void Widget::on_sendBox_clicked()
 {
-    // serial se;
-//    se.SerialPort
-    QString sendData = se.on_sendBox_clicked(ui);
+    QString sendData = ui->sendData->toPlainText();
+    sendData = se.on_sendBox_clicked(ui, sendData);
 
     qDebug() << "sendata = " << sendData;
+
     se.batComSendStatus = serial::COMPLETE;
 
     QString dcodeData = dcode0.SendDataDecode(ui, sendData);
@@ -109,4 +109,33 @@ void Widget::on_sendBox_clicked()
 void Widget::on_clearReceiveDataButton_clicked()
 {
     ui->receiveData->clear();
+}
+void Widget::SendAndDecode(QString sendData)
+{
+    sendData = se.on_sendBox_clicked(ui, sendData);
+    qDebug() << "sendata = " << sendData;
+    se.batComSendStatus = serial::COMPLETE;
+    QString dcodeData = dcode0.SendDataDecode(ui, sendData);
+    ui->HexEncodeText->appendPlainText(dcodeData);
+}
+void Widget::on_sendTbs_clicked()
+{
+    QString sendData = "00 00 65 01 93 55 AA 00 13 33 00\
+ 00 5F 33 00 00 DA 0C D8 0C D8\
+ 0C D5 0C 00 00 00 00 00 00 00\
+ 00 00 00 00 00 00 00 00 00 00\
+ 00 00 00 00 00 00 00 00 00 00\
+ 00 18 00 18 00 00 00 00 00 00\
+ 00 AE 0F 40 1F 00 00 00 00 00\
+ 00 00 00 00 00 00 00 00 00 00\
+ 00 00 00 00 00 00 00 00 00 32\
+ 00 50 00 00 00 00 00 00 00 00\
+ 00 00 00 2D";
+    this->SendAndDecode(sendData);
+}
+
+void Widget::on_sendRegisterBox_clicked()
+{
+    QString sendData = "00 00 05 01 81 55 AA 06 8C";
+    this->SendAndDecode(sendData);
 }

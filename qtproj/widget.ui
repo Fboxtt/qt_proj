@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1135</width>
-    <height>499</height>
+    <width>1182</width>
+    <height>506</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -308,7 +308,7 @@
     <rect>
      <x>730</x>
      <y>100</y>
-     <width>391</width>
+     <width>441</width>
      <height>211</height>
     </rect>
    </property>
@@ -388,6 +388,45 @@
    </property>
    <property name="checked">
     <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="sendTbs">
+   <property name="geometry">
+    <rect>
+     <x>730</x>
+     <y>10</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>发送tbs命令</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="sendRegisterBox">
+   <property name="geometry">
+    <rect>
+     <x>800</x>
+     <y>10</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>发送注册</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_6">
+   <property name="geometry">
+    <rect>
+     <x>870</x>
+     <y>10</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>PushButton</string>
    </property>
   </widget>
  </widget>

@@ -35,6 +35,13 @@ private slots:
     void on_clearReceiveDataButton_clicked();
 
     void SerialPortReadyRead_slot();
+
+    void on_sendTbs_clicked();
+
+    void SendAndDecode(QString sendData);
+
+    void on_sendRegisterBox_clicked();
+
 private:
     Ui::Widget *ui; //似乎是定义了一个类指针
     QTimer *tim;

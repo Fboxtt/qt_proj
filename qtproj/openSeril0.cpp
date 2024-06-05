@@ -199,12 +199,10 @@ void serial::serial_Read(Ui::Widget *ui, QTimer *tim)
     buffer.clear();
 }
 
-QString serial::on_sendBox_clicked(Ui::Widget *ui)
+QString serial::on_sendBox_clicked(Ui::Widget *ui, QString Data)
 {
     QByteArray Data_1;
     //获取输入窗口sendData的数据
-    QString Data = ui->sendData->toPlainText();
-
 
     if(ui->hexSendBox->checkState() == 0) {
         Data_1 = Data.toUtf8();//转换成utf8格式的字节流发送

@@ -11,6 +11,7 @@
 #include <QTextBlock>
 #include <Qmap>
 #include <QTime>
+#include <QVector>
 
 class textDcode
 {
@@ -20,14 +21,14 @@ public:
 
     QString DecodeHexToCommand(Ui::Widget *ui);
     QString SendCmdDocode(QStringList hexList, QString decodeStr);
-    QString ByteDecode(QMap<int, QString> mapCode, int keys);
+    QString ByteDecode(QMap<uint32_t, QString> mapCode, uint8_t keys);
     QString SendDataDecode(Ui::Widget *ui, QString decodeStr);
-    QString readDataDocode(QStringList hexList, QString decodeStr);
-    QString TbsDecode(QStringList hexList);
+    QString readDataDocode(QStringList hexStrLis, QString decodeStr);
+    uint32_t TbsDecode(QByteArray hexList, uint32_t dataSum);
 
-    QMap<int,QString> typeCode;
-    QMap<int,QString> funcCode;
-    QMap<int,QString> ackCode;
+    QMap<uint32_t, QString> typeCode;
+    QMap<uint32_t, QString> funcCode;
+    QMap<uint32_t, QString> ackCode;
 private:
 
 };
