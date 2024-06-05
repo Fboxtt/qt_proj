@@ -156,7 +156,7 @@ void serial::serial_Read(Ui::Widget *ui, QTimer *tim)
     QByteArray buffer = SerialPort.readAll();
     QByteArray testbu ;
 
-    qDebug() << buffer << "print buffer";
+    qDebug() << buffer << "serial read buffer";
     if(!buffer.isEmpty())//如果非空说明有数据接收
     {   //转换成16进制大写
         QString str=buffer.toHex().data();
@@ -169,6 +169,7 @@ void serial::serial_Read(Ui::Widget *ui, QTimer *tim)
                buffer_1 += str_1;
                buffer_1 += " ";
         }
+        // buffer_1 = buffer_1.simplified();
         //读取之前显示数据
         QString receive = ui->receiveData->toPlainText();
         //清空显示
@@ -177,6 +178,7 @@ void serial::serial_Read(Ui::Widget *ui, QTimer *tim)
 
         if(serial::batComSendStatus == serial::COMPLETE) // 加换行符
         {
+            qDebug() << "complete func in" << "\r";
             receive += "\r";
         }
         if (ui->TimeCheckBox->isChecked() && serial::batComSendStatus != serial::INCOMPLETE) // 加时间戳
@@ -208,6 +210,7 @@ QString serial::on_sendBox_clicked(Ui::Widget *ui)
         Data_1 = Data.toUtf8();//转换成utf8格式的字节流发送
     } else {
         Data_1 = QByteArray::fromHex (Data.toLatin1().data());//按十六进制编码发送
+        Data = Data.remove(QChar('\n'), Qt::CaseInsensitive);
     }
     // 写入发送缓存区
     qDebug() << Data_1 << "send data";

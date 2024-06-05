@@ -18,10 +18,12 @@ class textDcode
 public:
     textDcode();
 
-    QString DecodeHexToCommand(Ui::Widget *ui, QString decodeStr);
+    QString DecodeHexToCommand(Ui::Widget *ui);
     QString SendCmdDocode(QStringList hexList, QString decodeStr);
     QString ByteDecode(QMap<int, QString> mapCode, int keys);
     QString SendDataDecode(Ui::Widget *ui, QString decodeStr);
+    QString readDataDocode(QStringList hexList, QString decodeStr);
+    QString TbsDecode(QStringList hexList);
 
     QMap<int,QString> typeCode;
     QMap<int,QString> funcCode;

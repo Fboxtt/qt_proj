@@ -28,7 +28,7 @@ Widget::~Widget()
 void Widget::on_pushButton_2_clicked()
 {
     QString decodeStr = "未解析";
-    decodeStr = dcode0.DecodeHexToCommand(ui, decodeStr);
+    decodeStr = dcode0.DecodeHexToCommand(ui);
     ui->HexEncodeText->appendPlainText(decodeStr);
 }
 
@@ -62,10 +62,16 @@ void Widget::on_searchBtn_clicked()
     se.RefreshSerial(ui);
 }
 
+void Widget::ReceveHexDecode()
+{
+    QString receiveDecode = dcode0.DecodeHexToCommand(ui);
+    ui->HexEncodeText->appendPlainText(receiveDecode);
+}
 
 void Widget::onTimeOut()
 {
     se.TimeOut(ui,tim);
+    this->ReceveHexDecode();
 }
 
 void Widget::on_openBtn_clicked()
