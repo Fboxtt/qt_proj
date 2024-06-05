@@ -15,7 +15,7 @@ textDcode::textDcode(void)
                 ,{0x60,"关机命令"}\
                 ,{0x64,"休眠命令"}};
 
-    ackCode =   {{0x00,"无异常"}\
+    ackCode =   {{0x00,"ACK无异常"}\
                 ,{0x01,"长度错误"}\
                 ,{0x03,"类型错误"}\
                 ,{0x04,"id错误"}\
@@ -34,12 +34,13 @@ QString textDcode::ByteDecode(QMap<uint32_t, QString> mapCode, uint8_t keys)
     return strCode;
 }
 
-uint32_t textDcode::TbsDecode(QByteArray hexArray, uint32_t dataSum)
+uint32_t textDcode::TbsDecode(QVector<uint8_t> hexVector, uint32_t dataSum)
 {
-    foreach(uint32_t hexNum, hexArray) {
-        dataSum += hexNum;
+    uint32_t checkSum = 0;
+    foreach(uint8_t hexVal, hexVector) {
+        checkSum += hexVal;
     }
-    return dataSum;
+    return checkSum;
 }
 
 QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
@@ -75,7 +76,7 @@ QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
         } else if (Command[i] == "data") {
             if (dataNum == 5) {
             } else if (dataNum > 5) {
-//                dataSum = this->TbsDecode(hexVector.mid(i,dataNum - 5), dataSum);
+                dataSum = this->TbsDecode(hexVector.mid(i,dataNum - 5), dataSum);
                 decodeStr.append(hexStrLis.mid(datId, dataNum - 5).join(" "));
                 datId += dataNum - 5;
             }

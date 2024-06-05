@@ -139,3 +139,9 @@ void Widget::on_sendRegisterBox_clicked()
     QString sendData = "00 00 05 01 81 55 AA 06 8C";
     this->SendAndDecode(sendData);
 }
+
+void Widget::on_pushButton_3_clicked()
+{
+    QString sendData = "00 00 04 01 13 55 AA 17";
+    this->SendAndDecode(sendData);
+}
