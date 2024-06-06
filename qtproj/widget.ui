@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1182</width>
+    <width>1120</width>
     <height>506</height>
    </rect>
   </property>
@@ -16,7 +16,7 @@
   <widget class="QPushButton" name="openBtn">
    <property name="geometry">
     <rect>
-     <x>140</x>
+     <x>100</x>
      <y>440</y>
      <width>75</width>
      <height>23</height>
@@ -35,7 +35,7 @@
   <widget class="QRadioButton" name="radioButton">
    <property name="geometry">
     <rect>
-     <x>470</x>
+     <x>350</x>
      <y>440</y>
      <width>89</width>
      <height>16</height>
@@ -48,7 +48,7 @@
   <widget class="QRadioButton" name="radioButton_2">
    <property name="geometry">
     <rect>
-     <x>530</x>
+     <x>410</x>
      <y>440</y>
      <width>89</width>
      <height>16</height>
@@ -61,7 +61,7 @@
   <widget class="QPushButton" name="clearReceiveDataButton">
    <property name="geometry">
     <rect>
-     <x>624</x>
+     <x>504</x>
      <y>310</y>
      <width>81</width>
      <height>23</height>
@@ -74,7 +74,7 @@
   <widget class="QPlainTextEdit" name="sendData">
    <property name="geometry">
     <rect>
-     <x>370</x>
+     <x>250</x>
      <y>360</y>
      <width>331</width>
      <height>71</height>
@@ -84,7 +84,7 @@
   <widget class="QPlainTextEdit" name="receiveData">
    <property name="geometry">
     <rect>
-     <x>370</x>
+     <x>250</x>
      <y>100</y>
      <width>331</width>
      <height>211</height>
@@ -94,8 +94,8 @@
   <widget class="QComboBox" name="portBox">
    <property name="geometry">
     <rect>
-     <x>140</x>
-     <y>410</y>
+     <x>20</x>
+     <y>440</y>
      <width>69</width>
      <height>22</height>
     </rect>
@@ -104,7 +104,7 @@
   <widget class="QPushButton" name="sendBox">
    <property name="geometry">
     <rect>
-     <x>620</x>
+     <x>500</x>
      <y>460</y>
      <width>75</width>
      <height>23</height>
@@ -126,9 +126,9 @@
   <widget class="QLabel" name="portStatus">
    <property name="geometry">
     <rect>
-     <x>230</x>
+     <x>190</x>
      <y>440</y>
-     <width>131</width>
+     <width>61</width>
      <height>16</height>
     </rect>
    </property>
@@ -165,8 +165,8 @@
   <widget class="QPushButton" name="selectFileButton">
    <property name="geometry">
     <rect>
-     <x>280</x>
-     <y>60</y>
+     <x>10</x>
+     <y>70</y>
      <width>75</width>
      <height>23</height>
     </rect>
@@ -178,8 +178,8 @@
   <widget class="QLineEdit" name="lineEdit">
    <property name="geometry">
     <rect>
-     <x>50</x>
-     <y>60</y>
+     <x>10</x>
+     <y>40</y>
      <width>221</width>
      <height>20</height>
     </rect>
@@ -188,8 +188,8 @@
   <widget class="QPushButton" name="pushButton_5">
    <property name="geometry">
     <rect>
-     <x>280</x>
-     <y>90</y>
+     <x>90</x>
+     <y>70</y>
      <width>75</width>
      <height>23</height>
     </rect>
@@ -201,7 +201,7 @@
   <widget class="QPushButton" name="searchBtn">
    <property name="geometry">
     <rect>
-     <x>230</x>
+     <x>100</x>
      <y>410</y>
      <width>75</width>
      <height>23</height>
@@ -303,20 +303,10 @@
     <string>停止位</string>
    </property>
   </widget>
-  <widget class="QPlainTextEdit" name="HexEncodeText">
-   <property name="geometry">
-    <rect>
-     <x>730</x>
-     <y>100</y>
-     <width>441</width>
-     <height>211</height>
-    </rect>
-   </property>
-  </widget>
   <widget class="QPushButton" name="pushButton">
    <property name="geometry">
     <rect>
-     <x>624</x>
+     <x>504</x>
      <y>330</y>
      <width>81</width>
      <height>23</height>
@@ -329,7 +319,7 @@
   <widget class="QCheckBox" name="hexDisplay">
    <property name="geometry">
     <rect>
-     <x>370</x>
+     <x>250</x>
      <y>330</y>
      <width>81</width>
      <height>16</height>
@@ -345,7 +335,7 @@
   <widget class="QPushButton" name="pushButton_2">
    <property name="geometry">
     <rect>
-     <x>630</x>
+     <x>510</x>
      <y>60</y>
      <width>75</width>
      <height>23</height>
@@ -358,7 +348,7 @@
   <widget class="QCheckBox" name="TimeCheckBox">
    <property name="geometry">
     <rect>
-     <x>470</x>
+     <x>350</x>
      <y>330</y>
      <width>101</width>
      <height>16</height>
@@ -377,7 +367,7 @@
   <widget class="QCheckBox" name="hexSendBox">
    <property name="geometry">
     <rect>
-     <x>370</x>
+     <x>250</x>
      <y>440</y>
      <width>91</width>
      <height>16</height>
@@ -393,7 +383,7 @@
   <widget class="QPushButton" name="sendTbs">
    <property name="geometry">
     <rect>
-     <x>730</x>
+     <x>610</x>
      <y>10</y>
      <width>75</width>
      <height>23</height>
@@ -406,7 +396,7 @@
   <widget class="QPushButton" name="sendRegisterBox">
    <property name="geometry">
     <rect>
-     <x>800</x>
+     <x>680</x>
      <y>10</y>
      <width>75</width>
      <height>23</height>
@@ -419,7 +409,7 @@
   <widget class="QPushButton" name="pushButton_6">
    <property name="geometry">
     <rect>
-     <x>870</x>
+     <x>750</x>
      <y>10</y>
      <width>75</width>
      <height>23</height>
@@ -432,8 +422,8 @@
   <widget class="QPushButton" name="pushButton_3">
    <property name="geometry">
     <rect>
-     <x>730</x>
-     <y>60</y>
+     <x>610</x>
+     <y>40</y>
      <width>61</width>
      <height>16</height>
     </rect>
@@ -442,27 +432,27 @@
     <string>tbs命令发送</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_4">
-   <property name="geometry">
-    <rect>
-     <x>1080</x>
-     <y>380</y>
-     <width>80</width>
-     <height>14</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>PushButton</string>
-   </property>
-  </widget>
   <widget class="QListWidget" name="listWidget">
    <property name="geometry">
     <rect>
-     <x>730</x>
-     <y>320</y>
-     <width>256</width>
-     <height>131</height>
+     <x>610</x>
+     <y>100</y>
+     <width>501</width>
+     <height>211</height>
     </rect>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="clearReceiveDataButton_2">
+   <property name="geometry">
+    <rect>
+     <x>1030</x>
+     <y>310</y>
+     <width>81</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>清空</string>
    </property>
   </widget>
  </widget>

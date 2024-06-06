@@ -34,7 +34,7 @@ QString textDcode::ByteDecode(QMap<uint32_t, QString> mapCode, uint8_t keys)
     return strCode;
 }
 
-uint32_t textDcode::TbsDecode(QVector<uint8_t> hexVector, uint32_t dataSum)
+uint32_t textDcode::TbsDecode(QVector<uint8_t> hexVector)
 {
     uint32_t checkSum = 0;
     foreach(uint8_t hexVal, hexVector) {
@@ -59,9 +59,6 @@ QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
         qDebug() << i <<"decodeStr = " << hexStrLis[datId] << decodeStr;
         if (Command[i] == "地址") {
             decodeStr.append(hexStrLis[datId] + " ");
-        } else if (Command[i] == "功能码") {
-            decodeStr.append(this->ByteDecode(this->funcCode, (hexVector[datId]) - 0x80) + " ");
-            dataSum += hexVector[datId];
         } else if (Command[i] == "高字节") {
             decodeStr.append(hexStrLis[datId] + " ");
             dataNum += hexVector[datId] * 256;
@@ -70,13 +67,16 @@ QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
             decodeStr.append(hexStrLis[datId] + " ");
             dataNum += hexVector[datId];
             dataSum += hexVector[datId];
+        } else if (Command[i] == "功能码") {
+            decodeStr.append(this->ByteDecode(this->funcCode, (hexVector[datId]) - 0x80) + " ");
+            dataSum += hexVector[datId];
         } else if (Command[i] == "ack") {
             decodeStr.append(this->ByteDecode(this->ackCode, hexVector[datId]) + " ");
             dataSum += hexVector[datId];
         } else if (Command[i] == "data") {
             if (dataNum == 5) {
             } else if (dataNum > 5) {
-                dataSum = this->TbsDecode(hexVector.mid(i,dataNum - 5), dataSum);
+                dataSum += this->TbsDecode(hexVector.mid(i,dataNum - 5));
                 decodeStr.append(hexStrLis.mid(datId, dataNum - 5).join(" "));
                 datId += dataNum - 5;
             }

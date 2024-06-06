@@ -32,6 +32,8 @@ Widget::Widget(QWidget *parent)
     ui->listWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->listWidget,&QListWidget::customContextMenuRequested,this,&Widget::on_PopupRightMenu);
 
+    ui->listWidget->setWordWrap(true); // 设置可以换行
+    ui->listWidget->setStyleSheet("QListWidget{font-size:10px;}"); // 设置字体大小
 }
 
 Widget::~Widget()
@@ -44,7 +46,7 @@ void Widget::on_pushButton_2_clicked()
 {
     QString decodeStr = "未解析";
     decodeStr = dcode0.DecodeHexToCommand(ui);
-    ui->HexEncodeText->appendPlainText(decodeStr);
+    ui->listWidget->addItem(decodeStr);
 }
 
 
@@ -80,7 +82,7 @@ void Widget::on_searchBtn_clicked()
 void Widget::ReceveHexDecode()
 {
     QString receiveDecode = dcode0.DecodeHexToCommand(ui);
-    ui->HexEncodeText->appendPlainText(receiveDecode);
+    ui->listWidget->addItem(receiveDecode);
 }
 
 void Widget::onTimeOut()
@@ -118,7 +120,7 @@ void Widget::on_sendBox_clicked()
 
     QString dcodeData = dcode0.SendDataDecode(ui, sendData);
 
-    ui->HexEncodeText->appendPlainText(dcodeData);
+    ui->listWidget->addItem(dcodeData);
 }
 
 void Widget::on_clearReceiveDataButton_clicked()
@@ -131,7 +133,7 @@ void Widget::SendAndDecode(QString sendData)
     qDebug() << "sendata = " << sendData;
     se.batComSendStatus = serial::COMPLETE;
     QString dcodeData = dcode0.SendDataDecode(ui, sendData);
-    ui->HexEncodeText->appendPlainText(dcodeData);
+    ui->listWidget->addItem(dcodeData);
 }
 void Widget::on_sendTbs_clicked()
 {
@@ -182,12 +184,7 @@ void Widget::on_PopupRightMenu(const QPoint& pos)
     pMeue->exec(QCursor::pos());
 }
 
-void Widget::on_pushButton_4_clicked()
+void Widget::on_clearReceiveDataButton_2_clicked()
 {
-    QStringList list;                                //创建数据显示列表
-    static QString str;
-    str += str + "苹果1";
-    ui->listWidget->addItem(str);
-    ui->listWidget->setWordWrap(true);
-    ui->listWidget->setStyleSheet("QListWidget{font-size:16px;}"); // 设置字体大小
+    ui->listWidget->clear();
 }
