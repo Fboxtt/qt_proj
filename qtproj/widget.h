@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include <QTimer>
-
+#include <QPoint>
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
 QT_END_NAMESPACE
@@ -44,6 +44,9 @@ private slots:
 
     void on_pushButton_3_clicked();
 
+    void on_pushButton_4_clicked();
+
+    void on_PopupRightMenu(const QPoint& pos);
 private:
     Ui::Widget *ui; //似乎是定义了一个类指针
     QTimer *tim;

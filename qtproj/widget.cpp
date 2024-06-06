@@ -1,13 +1,23 @@
 #include "widget.h"
 #include "ui_widget.h"
 #include "textDecode0.h"
+
 #include <QDebug>
 #include <QFileDialog>
-#include <serial0.h>
-#include <xlsx.h>
+#include <QStringListModel>
+#include <QMenu>
+#include <QClipboard>
+
+#include "serial0.h"
+#include "xlsx.h"
+
+
+
+
 
 serial se;
 textDcode dcode0;
+
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -17,6 +27,11 @@ Widget::Widget(QWidget *parent)
 
     se.Init(ui);
     ui->sendBox->setEnabled(false);
+
+
+    ui->listWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->listWidget,&QListWidget::customContextMenuRequested,this,&Widget::on_PopupRightMenu);
+
 }
 
 Widget::~Widget()
@@ -144,4 +159,35 @@ void Widget::on_pushButton_3_clicked()
 {
     QString sendData = "00 00 04 01 13 55 AA 17";
     this->SendAndDecode(sendData);
+}
+
+void Widget::on_PopupRightMenu(const QPoint& pos)
+{
+    QMenu* pMeue = new QMenu(this);
+
+    QAction* pA1 = new QAction("复制",this);
+    pMeue->addAction(pA1);
+
+//    connect(pA1,&QAction::triggered,[=]{
+//            qDebug()<<"1";
+//        });
+    QObject::connect(pA1, &QAction::triggered, [&]() {
+            QClipboard *clipboard = QApplication::clipboard();
+            clipboard->setText(ui->listWidget->currentItem()->text());
+        });
+
+    QListWidgetItem* pItem = ui->listWidget->itemAt(pos);
+    if(!pItem)
+        return;
+    pMeue->exec(QCursor::pos());
+}
+
+void Widget::on_pushButton_4_clicked()
+{
+    QStringList list;                                //创建数据显示列表
+    static QString str;
+    str += str + "苹果1";
+    ui->listWidget->addItem(str);
+    ui->listWidget->setWordWrap(true);
+    ui->listWidget->setStyleSheet("QListWidget{font-size:16px;}"); // 设置字体大小
 }
