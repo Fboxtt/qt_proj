@@ -4,7 +4,7 @@
 #include <QDebug>
 #include <QFileDialog>
 #include <serial0.h>
-
+#include <xlsx.h>
 
 serial se;
 textDcode dcode0;

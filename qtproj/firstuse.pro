@@ -19,12 +19,14 @@ SOURCES += \
     main.cpp \
     openSeril0.cpp \
     textDecode0.cpp \
-    widget.cpp
+    widget.cpp \
+    xlsx.cpp
 
 HEADERS += \
     serial0.h \
     textDecode0.h \
-    widget.h
+    widget.h \
+    xlsx.h
 
 FORMS += \
     widget.ui
