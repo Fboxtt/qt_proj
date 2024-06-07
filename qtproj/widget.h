@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QTimer>
 #include <QPoint>
+#include <QListWidgetItem>
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
 QT_END_NAMESPACE
@@ -18,8 +19,6 @@ public:
 
 private slots:
     void on_pushButton_2_clicked();
-
-    void on_pushButton_clicked();
 
     void on_selectFileButton_clicked();
 
@@ -46,6 +45,8 @@ private slots:
 
     void on_PopupRightMenu(const QPoint& pos);
     void on_clearReceiveDataButton_2_clicked();
+
+    void on_listWidget_itemClicked(QListWidgetItem *item);
 
 private:
     Ui::Widget *ui; //似乎是定义了一个类指针

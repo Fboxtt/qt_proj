@@ -29,11 +29,11 @@ Widget::Widget(QWidget *parent)
     ui->sendBox->setEnabled(false);
 
 
-    ui->listWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(ui->listWidget,&QListWidget::customContextMenuRequested,this,&Widget::on_PopupRightMenu);
+    ui->listWidget->setContextMenuPolicy(Qt::CustomContextMenu); // 设置右键菜单
+    connect(ui->listWidget,&QListWidget::customContextMenuRequested,this,&Widget::on_PopupRightMenu); // 链接右击和on_PopupRightMenu槽函数，
 
-    ui->listWidget->setWordWrap(true); // 设置可以换行
-    ui->listWidget->setStyleSheet("QListWidget{font-size:10px;}"); // 设置字体大小
+    ui->listWidget->setWordWrap(true); // 设置可以换行 listwidget格式设置
+    ui->listWidget->setStyleSheet("QListWidget{font-size:10px;}"); // 设置字体大小 listwidget格式设置
 }
 
 Widget::~Widget()
@@ -47,12 +47,6 @@ void Widget::on_pushButton_2_clicked()
     QString decodeStr = "未解析";
     decodeStr = dcode0.DecodeHexToCommand(ui);
     ui->listWidget->addItem(decodeStr);
-}
-
-
-void Widget::on_pushButton_clicked()
-{
-
 }
 
 void Widget::on_selectFileButton_clicked()
@@ -187,4 +181,9 @@ void Widget::on_PopupRightMenu(const QPoint& pos)
 void Widget::on_clearReceiveDataButton_2_clicked()
 {
     ui->listWidget->clear();
+}
+
+void Widget::on_listWidget_itemClicked(QListWidgetItem *item)
+{
+
 }
