@@ -13,11 +13,9 @@
 
 
 
-
-
 serial se;
 textDcode dcode0;
-
+QVector<QTableWidgetItem> itemTableList(50);
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -34,6 +32,11 @@ Widget::Widget(QWidget *parent)
 
     ui->listWidget->setWordWrap(true); // 设置可以换行 listwidget格式设置
     ui->listWidget->setStyleSheet("QListWidget{font-size:10px;}"); // 设置字体大小 listwidget格式设置
+
+    for(int idx = 0, limit = itemTableList.size(); idx < limit; idx++) {
+        itemTableList[idx].setText(QString("%1").arg(idx,0,10));
+        ui->tableWidget->setItem(idx / 3, idx % 3, &itemTableList[idx]);
+    }
 }
 
 Widget::~Widget()
@@ -77,6 +80,8 @@ void Widget::ReceveHexDecode()
 {
     QString receiveDecode = dcode0.DecodeHexToCommand(ui);
     ui->listWidget->addItem(receiveDecode);
+    int row = ui->listWidget->count();
+    this->on_listWidget_itemClicked(ui->listWidget->item(row - 1));
 }
 
 void Widget::onTimeOut()
@@ -196,7 +201,7 @@ void Widget::on_listWidget_itemClicked(QListWidgetItem *item)
     dataList = timeAndDataList[1].split(" "); // 需要改，防止溢出
     qDebug() << "begin hextostr" << dataList;
     QVector<tbs> decodeList = dcode0.HexToStr(ui, dataList.mid(8, -1)); // 需要改成自适应
-    dcode0.itemToTable(ui, decodeList);
+    dcode0.itemToTable(ui, decodeList, &itemTableList);
 }
 
 void Widget::on_pushButton_4_clicked()

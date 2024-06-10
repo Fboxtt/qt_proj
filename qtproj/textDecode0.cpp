@@ -290,12 +290,19 @@ QString textDcode::DecodeHexToCommand(Ui::Widget *ui)
 
 }
 
-QVector<QTableWidgetItem> itemTableList(30);
 
-void textDcode::itemToTable(Ui::Widget *ui, QVector<tbs> dataList)
+
+void textDcode::itemToTable(Ui::Widget *ui, QVector<tbs> dataList, QVector<QTableWidgetItem>* itemTableList)
 {
+    for(int idx = 0, limit = itemTableList->size(); idx < limit; idx++) {
+        (*itemTableList)[idx].setText("");
+    }
+    uint32_t idx = 0;
     foreach(tbs unit, dataList) {
-
+        (*itemTableList)[idx].setText(unit.valName + " = " + QString("%1").arg(unit.uintVal,0,10));
+        qDebug() << "idx / 3 = " << idx / 4 << "% 3 = " << idx % 4;
+//        ui->tableWidget->setItem(idx / 3, idx % 3, &itemTableList[idx]);
+        idx++;
     }
 }
 
