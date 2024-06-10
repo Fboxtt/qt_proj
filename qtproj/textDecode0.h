@@ -1,8 +1,6 @@
 #ifndef TEXTDECODE_H
 #define TEXTDECODE_H
 
-#endif // TEXTDECODE_H
-
 #include "widget.h"
 #include "ui_widget.h"
 #include <QDebug>
@@ -12,6 +10,54 @@
 #include <Qmap>
 #include <QTime>
 #include <QVector>
+#include <QList>
+class datTypDic
+{
+public:
+    enum DATA_TYPE {
+        ULONG,
+        LONG,
+        USHORT,
+        SHORT,
+        CHAR,
+    };
+    enum ENDIAN_TYPE {
+        LITTLE,
+        BIG,
+    };
+    enum SIGNED_TYPE {
+        SIGNED,
+        UNSIGNED,
+    };
+
+    datTypDic(DATA_TYPE type, QString typeName, uint32_t typeLenth, ENDIAN_TYPE endianType, SIGNED_TYPE signedType);
+    DATA_TYPE type;
+    QString typeName;
+    uint32_t typeLenth;
+    ENDIAN_TYPE endianType;
+    SIGNED_TYPE signedType;
+};
+
+class tbs
+{
+    static uint32_t datInCmdAddr;
+    static uint32_t datLenth;
+
+public:
+    tbs(QString valName, datTypDic::DATA_TYPE dataType);
+    tbs(){};
+//    datTypDic getType(void);
+    QString valName;
+    uint32_t unitInCmdAddr;
+    uint32_t unitInDatAddr;
+    datTypDic::DATA_TYPE dataType;
+    datTypDic::ENDIAN_TYPE endianType;
+    datTypDic::SIGNED_TYPE signedType;
+
+    uint32_t typeLenth;
+    uint32_t uintVal;
+//    void Init(QString* valName, uint32_t address, uint32_t cmdAddress);
+};
 
 class textDcode
 {
@@ -25,10 +71,18 @@ public:
     QString SendDataDecode(Ui::Widget *ui, QString decodeStr);
     QString readDataDocode(QStringList hexStrLis, QString decodeStr);
     uint32_t TbsDecode(QVector<uint8_t> hexVector);
-
+    void itemToTable(Ui::Widget *ui, QVector<tbs> dataList);
+    QVector<tbs> HexToStr(Ui::Widget *ui, QStringList dataList);
+    void unsignedToSigned(uint32_t val, datTypDic typedic);
     QMap<uint32_t, QString> typeCode;
     QMap<uint32_t, QString> funcCode;
     QMap<uint32_t, QString> ackCode;
 private:
 
 };
+
+
+
+#endif // TEXTDECODE_H
+
+

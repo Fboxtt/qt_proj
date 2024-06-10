@@ -1,6 +1,97 @@
 #include <textDecode0.h>
 
 
+
+datTypDic::datTypDic(DATA_TYPE type, QString typeName, uint32_t typeLenth, ENDIAN_TYPE endianType, SIGNED_TYPE signedType)
+{
+    this->type = type;
+    this->typeName = typeName;
+    this->typeLenth = typeLenth;
+    this->endianType = endianType;
+    this->signedType = signedType;
+}
+
+QList<datTypDic> TypUnion = {
+    {datTypDic::ULONG,   "ULONG", 4, datTypDic::LITTLE, datTypDic::UNSIGNED},
+    {datTypDic::LONG,     "LONG", 4, datTypDic::LITTLE, datTypDic::SIGNED},
+    {datTypDic::USHORT, "USHORT", 2, datTypDic::LITTLE, datTypDic::UNSIGNED},
+    {datTypDic::SHORT,   "SHORT", 2, datTypDic::LITTLE, datTypDic::SIGNED},
+    {datTypDic::CHAR,     "CHAR", 1, datTypDic::LITTLE, datTypDic::SIGNED},
+};
+uint32_t tbs::datInCmdAddr = 8;
+uint32_t tbs::datLenth = 0;
+tbs::tbs(QString valName,datTypDic::DATA_TYPE dataType)
+{
+    this->valName = valName;
+    this->unitInCmdAddr = tbs::datInCmdAddr + tbs::datLenth;
+    this->unitInDatAddr = tbs::datLenth;
+    this->dataType = dataType;
+
+    foreach(datTypDic unit, TypUnion) {
+        if(unit.type == this->dataType) {
+            this->typeLenth = unit.typeLenth;
+            this->datLenth += unit.typeLenth;
+            this->endianType = unit.endianType;
+            this->signedType = unit.signedType;
+        }
+    }
+}
+
+//datTypDic tbs::getType(void)
+//{
+//    foreach(datTypDic unit, TypUnion) {
+//        if(unit.type == this->dataType) {
+//            return unit;
+//        }
+//    }
+//    qDebug() << "warning :no this dataType";
+//    return TypUnion[0];
+//}
+
+QVector<tbs> tbsUnit = {
+    {"端口电压mV", datTypDic::ULONG}, \
+    {"电池电压mV", datTypDic::ULONG}, \
+    {"0电芯电压mV", datTypDic::USHORT}, \
+    {"1电芯电压mV", datTypDic::USHORT}, \
+    {"2电芯电压mV", datTypDic::USHORT}, \
+    {"3电芯电压mV", datTypDic::USHORT}, \
+    {"4电芯电压mV", datTypDic::USHORT}, \
+    {"5电芯电压mV", datTypDic::USHORT}, \
+    {"6电芯电压mV", datTypDic::USHORT}, \
+    {"7电芯电压mV", datTypDic::USHORT}, \
+    {"8电芯电压mV", datTypDic::USHORT}, \
+    {"9电芯电压mV", datTypDic::USHORT}, \
+    {"10电芯电压mV", datTypDic::USHORT}, \
+    {"11电芯电压mV", datTypDic::USHORT}, \
+    {"12电芯电压mV", datTypDic::USHORT}, \
+    {"13电芯电压mV", datTypDic::USHORT}, \
+    {"14电芯电压mV", datTypDic::USHORT}, \
+    {"15电芯电压mV", datTypDic::USHORT}, \
+    {"电流值mA", datTypDic::LONG}, \
+    {"0温度值℃", datTypDic::SHORT}, \
+    {"1温度值℃", datTypDic::SHORT}, \
+    {"2温度值℃", datTypDic::SHORT}, \
+    {"3温度值℃", datTypDic::SHORT}, \
+    {"4温度值℃", datTypDic::SHORT}, \
+    {"usRmAH", datTypDic::USHORT}, \
+    {"usFccAH", datTypDic::USHORT}, \
+    {"usBiaAH", datTypDic::USHORT}, \
+    {"otherInfo", datTypDic::ULONG}, \
+    {"alarmStatus", datTypDic::ULONG}, \
+    {"protectStatus", datTypDic::ULONG}, \
+    {"faultStatus", datTypDic::ULONG}, \
+    {"balanceStatus", datTypDic::ULONG}, \
+
+    {"BattStatus", datTypDic::USHORT}, \
+
+    {"SOCPct%", datTypDic::USHORT}, \
+
+    {"SOHPct%", datTypDic::ULONG}, \
+    {"DisTimes次", datTypDic::ULONG}, \
+    {"TotalDisAH", datTypDic::ULONG}, \
+};
+//tbs tbsUnit(nullptr,0,0+4);
+
 textDcode::textDcode(void)
 {
     funcCode =  {{0x01,"产品注册"} \
@@ -20,7 +111,10 @@ textDcode::textDcode(void)
                 ,{0x03,"类型错误"}\
                 ,{0x04,"id错误"}\
                 ,{0x05,"握手错误"}\
-                ,{0x06,"校验错误"}};;
+                ,{0x06,"校验错误"}};
+
+
+
 }
 
 QString textDcode::ByteDecode(QMap<uint32_t, QString> mapCode, uint8_t keys)
@@ -33,6 +127,8 @@ QString textDcode::ByteDecode(QMap<uint32_t, QString> mapCode, uint8_t keys)
     strCode = mapCode.value(keys);
     return strCode;
 }
+
+
 
 uint32_t textDcode::TbsDecode(QVector<uint8_t> hexVector)
 {
@@ -77,7 +173,7 @@ QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
             if (dataNum == 5) {
             } else if (dataNum > 5) {
                 dataSum += this->TbsDecode(hexVector.mid(i,dataNum - 5));
-                decodeStr.append(hexStrLis.mid(datId, dataNum - 5).join(" "));
+                decodeStr.append(hexStrLis.mid(datId, dataNum - 5).join(" ") + " ");
                 datId += dataNum - 5;
             }
             continue;
@@ -194,3 +290,48 @@ QString textDcode::DecodeHexToCommand(Ui::Widget *ui)
 
 }
 
+QVector<QTableWidgetItem> itemTableList(30);
+
+void textDcode::itemToTable(Ui::Widget *ui, QVector<tbs> dataList)
+{
+    foreach(tbs unit, dataList) {
+
+    }
+}
+
+void textDcode::unsignedToSigned(uint32_t val, datTypDic typedic)
+{
+
+}
+QVector<tbs> textDcode::HexToStr(Ui::Widget *ui, QStringList dataList)
+{
+
+    bool ok;
+    QVector<uint8_t> hexVector;
+    uint8_t byteInData = 0;
+    uint32_t tbsUnitIdx = 0, uintVal = 0;
+
+    foreach(QString hexStr, dataList) {
+        hexStr.toInt(&ok, 16);
+        if (ok == true) {
+            hexVector.append((uint8_t)hexStr.toInt(&ok, 16));
+        }
+    }
+    qDebug() << "hexvector = " << hexVector << "size = " << hexVector.size();
+    foreach(uint8_t hex, hexVector) {
+        if (byteInData == tbsUnit[tbsUnitIdx].typeLenth) {
+//            this->unsignedToSigned(uintVal, TypUnion[tbsUnit[tbsUnitIdx]]);
+            tbsUnit[tbsUnitIdx].uintVal = uintVal;
+            qDebug() << tbsUnit[tbsUnitIdx].valName <<"uintval%d = " << uintVal;
+
+            tbsUnitIdx++;
+            uintVal = 0;
+            byteInData = 0;
+        }
+//        qDebug() << "hex = " << hex;
+        uintVal += (((uint32_t)hex) <<  byteInData * 8);
+        byteInData++;
+    }
+    return tbsUnit;
+
+}

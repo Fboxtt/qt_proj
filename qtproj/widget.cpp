@@ -185,5 +185,21 @@ void Widget::on_clearReceiveDataButton_2_clicked()
 
 void Widget::on_listWidget_itemClicked(QListWidgetItem *item)
 {
+    qDebug() << item->text();
+    ui->tableWidget->setFont(QFont("黑体", 5));
+//    ui->tableWidget->setHorizontalHeaderLabels(QStringList() << "教程" << "网址" << "状态"); // 设置表头
 
+//    ui->tableWidget->setItem(1,1,new QTableWidgetItem("C语言"));
+
+    QStringList timeAndDataList, dataList;
+    timeAndDataList = item->text().split("->");
+    dataList = timeAndDataList[1].split(" "); // 需要改，防止溢出
+    qDebug() << "begin hextostr" << dataList;
+    QVector<tbs> decodeList = dcode0.HexToStr(ui, dataList.mid(8, -1)); // 需要改成自适应
+    dcode0.itemToTable(ui, decodeList);
+}
+
+void Widget::on_pushButton_4_clicked()
+{
+//    delete(tableItem);
 }
