@@ -16,17 +16,17 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    csv.cpp \
     main.cpp \
     openSeril0.cpp \
     textDecode0.cpp \
-    xlsx.cpp \
     widget.cpp
 
 
 HEADERS += \
+    csv.h \
     serial0.h \
     textDecode0.h \
-    xlsx.h \
     widget.h
 
 FORMS += \

@@ -10,10 +10,10 @@
 #include <QTime>
 #include <QVector>
 
-class xlsxSet
+class csv
 {
 public:
-    xlsxSet();
+    csv();
 private:
     Ui::Widget *ui; //似乎是定义了一个类指针
 //    QTimer *tim;
