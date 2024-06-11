@@ -143,7 +143,7 @@ void serial::ClickOpenSerPort(Ui::Widget *ui)
         ui->sendBox->setEnabled(false);
     }
 }
-void serial::TimeOut(Ui::Widget *ui, QTimer *tim)
+void serial::TimeOut(QTimer *tim)
 {
     serial::batComSendStatus = serial::COMPLETE;
     tim->stop();

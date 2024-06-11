@@ -71,8 +71,8 @@ public:
     QString SendDataDecode(Ui::Widget *ui, QString decodeStr);
     QString readDataDocode(QStringList hexStrLis, QString decodeStr);
     uint32_t TbsDecode(QVector<uint8_t> hexVector);
-    void itemToTable(Ui::Widget *ui, QVector<tbs> dataList, QVector<QTableWidgetItem>* itemTableList);
-    QVector<tbs> HexToStr(Ui::Widget *ui, QStringList dataList);
+    void itemToTable(QVector<tbs> dataList, QVector<QTableWidgetItem>* itemTableList);
+    QVector<tbs> HexToStr(QStringList dataList);
     void unsignedToSigned(uint32_t val, datTypDic typedic);
     QMap<uint32_t, QString> typeCode;
     QMap<uint32_t, QString> funcCode;

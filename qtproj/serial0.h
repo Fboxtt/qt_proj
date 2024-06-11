@@ -25,7 +25,7 @@ public:
 private:
 
 public:
-    void TimeOut(Ui::Widget *ui, QTimer *tim);
+    void TimeOut(QTimer *tim);
 
     enum BAT_COMMAND_SEND_STATUS {
         COMPLETE,

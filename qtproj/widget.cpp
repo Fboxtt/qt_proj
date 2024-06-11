@@ -47,12 +47,12 @@ Widget::~Widget()
 }
 
 
-void Widget::on_pushButton_2_clicked()
-{
-    QString decodeStr = "未解析";
-    decodeStr = dcode0.DecodeHexToCommand(ui);
-    ui->listWidget->addItem(decodeStr);
-}
+//void Widget::on_pushButton_2_clicked()
+//{
+//    QString decodeStr = "未解析";
+//    decodeStr = dcode0.DecodeHexToCommand(ui);
+//    ui->listWidget->addItem(decodeStr);
+//}
 
 void Widget::on_selectFileButton_clicked()
 {
@@ -88,7 +88,7 @@ void Widget::ReceveHexDecode()
 
 void Widget::onTimeOut()
 {
-    se.TimeOut(ui,tim);
+    se.TimeOut(tim);
     this->ReceveHexDecode();
 }
 
@@ -197,8 +197,8 @@ void Widget::on_listWidget_itemClicked(QListWidgetItem *item)
     timeAndDataList = item->text().split("->");
     dataList = timeAndDataList[1].split(" "); // 需要改，防止溢出
     qDebug() << "begin hextostr" << dataList;
-    QVector<tbs> decodeList = dcode0.HexToStr(ui, dataList.mid(8, -1)); // 需要改成自适应
-    dcode0.itemToTable(ui, decodeList, &itemTableList);
+    QVector<tbs> decodeList = dcode0.HexToStr(dataList.mid(8, -1)); // 需要改成自适应
+    dcode0.itemToTable(decodeList, &itemTableList);
 }
 
 void Widget::on_pushButton_4_clicked()

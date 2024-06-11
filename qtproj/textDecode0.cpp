@@ -292,7 +292,7 @@ QString textDcode::DecodeHexToCommand(Ui::Widget *ui)
 
 
 
-void textDcode::itemToTable(Ui::Widget *ui, QVector<tbs> dataList, QVector<QTableWidgetItem>* itemTableList)
+void textDcode::itemToTable(QVector<tbs> dataList, QVector<QTableWidgetItem>* itemTableList)
 {
     for(int idx = 0, limit = itemTableList->size(); idx < limit; idx++) {
         (*itemTableList)[idx].setText("");
@@ -300,16 +300,15 @@ void textDcode::itemToTable(Ui::Widget *ui, QVector<tbs> dataList, QVector<QTabl
     uint32_t idx = 0;
     foreach(tbs unit, dataList) {
         (*itemTableList)[idx].setText(unit.valName + " = " + QString("%1").arg(unit.uintVal,0,10));
-//        ui->tableWidget->setItem(idx / 3, idx % 3, &itemTableList[idx]);
         idx++;
     }
 }
 
-void textDcode::unsignedToSigned(uint32_t val, datTypDic typedic)
-{
+//void textDcode::unsignedToSigned(uint32_t val, datTypDic typedic)
+//{
 
-}
-QVector<tbs> textDcode::HexToStr(Ui::Widget *ui, QStringList dataList)
+//}
+QVector<tbs> textDcode::HexToStr(QStringList dataList)
 {
 
     bool ok;

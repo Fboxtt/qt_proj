@@ -18,8 +18,6 @@ public:
     ~Widget();
 
 private slots:
-    void on_pushButton_2_clicked();
-
     void on_selectFileButton_clicked();
 
     void on_conectSerialButton_clicked();

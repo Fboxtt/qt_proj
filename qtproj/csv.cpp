@@ -37,7 +37,7 @@ void csv::tbsToCsv(Ui::Widget *ui, QString fileName, textDcode* dcode0)
         if(dataList.size() <= 8) {
             continue;
         }
-        QVector<tbs> decodeList = dcode0->HexToStr(ui, dataList.mid(8, -1)); // 需要改成自适应
+        QVector<tbs> decodeList = dcode0->HexToStr(dataList.mid(8, -1)); // 需要改成自适应
 //        csv::saveCsv(ui->lineEdit_2->text(), decodeList);
 
         if(idx == 0) { // 写入标题
