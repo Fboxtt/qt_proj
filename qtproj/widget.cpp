@@ -7,6 +7,7 @@
 #include <QStringListModel>
 #include <QMenu>
 #include <QClipboard>
+#include <QDateTime>
 
 #include "serial0.h"
 #include "csv.h"
@@ -33,6 +34,7 @@ Widget::Widget(QWidget *parent)
     ui->listWidget->setWordWrap(true); // 设置可以换行 listwidget格式设置
     ui->listWidget->setStyleSheet("QListWidget{font-size:10px;}"); // 设置字体大小 listwidget格式设置
 
+    ui->tableWidget->setFont(QFont("黑体", 5)); // table字体设置
     for(int idx = 0, limit = itemTableList.size(); idx < limit; idx++) {
         itemTableList[idx].setText(QString("%1").arg(idx,0,10));
         ui->tableWidget->setItem(idx / 3, idx % 3, &itemTableList[idx]);
@@ -191,11 +193,6 @@ void Widget::on_clearReceiveDataButton_2_clicked()
 void Widget::on_listWidget_itemClicked(QListWidgetItem *item)
 {
     qDebug() << item->text();
-    ui->tableWidget->setFont(QFont("黑体", 5));
-//    ui->tableWidget->setHorizontalHeaderLabels(QStringList() << "教程" << "网址" << "状态"); // 设置表头
-
-//    ui->tableWidget->setItem(1,1,new QTableWidgetItem("C语言"));
-
     QStringList timeAndDataList, dataList;
     timeAndDataList = item->text().split("->");
     dataList = timeAndDataList[1].split(" "); // 需要改，防止溢出
@@ -207,4 +204,24 @@ void Widget::on_listWidget_itemClicked(QListWidgetItem *item)
 void Widget::on_pushButton_4_clicked()
 {
 //    delete(tableItem);
+}
+
+void Widget::on_pushButton_8_clicked()
+{
+    QString fileName = QString("%1").arg(QDateTime::currentDateTime().toString("yyyyMMdd_HH_mm_ss"));
+    QString saveFileUrl = QFileDialog::getSaveFileName(this,tr("Open hex"), "/home/" + fileName, tr("(*.csv)"));
+//    QString fileName = QFileDialog::getOpenFileName(this, tr("Open hex"), "/home/jana", tr("(*.hex)"));
+    if (saveFileUrl.isEmpty()) {
+//        QMessageBox::warning(this, "Warning!", "Failed to open the file!");
+        ui->lineEdit_2->setText("未选择文件");
+    }
+    else {
+        ui->lineEdit_2->setText(saveFileUrl);
+    }
+}
+
+void Widget::on_pushButton_7_clicked()
+{
+    QString fileName = ui->lineEdit_2->text();
+    csv::tbsToCsv(ui, fileName, &dcode0);
 }

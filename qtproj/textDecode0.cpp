@@ -300,7 +300,6 @@ void textDcode::itemToTable(Ui::Widget *ui, QVector<tbs> dataList, QVector<QTabl
     uint32_t idx = 0;
     foreach(tbs unit, dataList) {
         (*itemTableList)[idx].setText(unit.valName + " = " + QString("%1").arg(unit.uintVal,0,10));
-        qDebug() << "idx / 3 = " << idx / 4 << "% 3 = " << idx % 4;
 //        ui->tableWidget->setItem(idx / 3, idx % 3, &itemTableList[idx]);
         idx++;
     }
@@ -324,10 +323,8 @@ QVector<tbs> textDcode::HexToStr(Ui::Widget *ui, QStringList dataList)
             hexVector.append((uint8_t)hexStr.toInt(&ok, 16));
         }
     }
-    qDebug() << "hexvector = " << hexVector << "size = " << hexVector.size();
     foreach(uint8_t hex, hexVector) {
         if (byteInData == tbsUnit[tbsUnitIdx].typeLenth) {
-//            this->unsignedToSigned(uintVal, TypUnion[tbsUnit[tbsUnitIdx]]);
             tbsUnit[tbsUnitIdx].uintVal = uintVal;
             qDebug() << tbsUnit[tbsUnitIdx].valName <<"uintval%d = " << uintVal;
 
@@ -335,7 +332,6 @@ QVector<tbs> textDcode::HexToStr(Ui::Widget *ui, QStringList dataList)
             uintVal = 0;
             byteInData = 0;
         }
-//        qDebug() << "hex = " << hex;
         uintVal += (((uint32_t)hex) <<  byteInData * 8);
         byteInData++;
     }

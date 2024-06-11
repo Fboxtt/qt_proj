@@ -14,31 +14,33 @@
    <string>Widget</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0" colspan="2">
-    <widget class="QLabel" name="label_2">
+   <item row="4" column="10">
+    <widget class="QPushButton" name="clearReceiveDataButton_2">
      <property name="text">
-      <string>版本号</string>
+      <string>清空</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="2">
-    <widget class="QLabel" name="label_3">
+   <item row="8" column="4">
+    <widget class="QRadioButton" name="radioButton">
      <property name="text">
-      <string>0.0.1</string>
+      <string>LRLF</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="7">
-    <widget class="QPushButton" name="sendTbs">
+   <item row="9" column="6">
+    <widget class="QPushButton" name="sendBox">
      <property name="text">
-      <string>tbs测试</string>
+      <string>发送</string>
      </property>
-    </widget>
-   </item>
-   <item row="0" column="8">
-    <widget class="QPushButton" name="sendRegisterBox">
-     <property name="text">
-      <string>发送注册</string>
+     <property name="autoDefault">
+      <bool>false</bool>
+     </property>
+     <property name="default">
+      <bool>false</bool>
+     </property>
+     <property name="flat">
+      <bool>false</bool>
      </property>
     </widget>
    </item>
@@ -49,23 +51,6 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0" colspan="3">
-    <widget class="QLineEdit" name="lineEdit"/>
-   </item>
-   <item row="1" column="7">
-    <widget class="QPushButton" name="pushButton_3">
-     <property name="text">
-      <string>tbs命令发送</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QPushButton" name="selectFileButton">
-     <property name="text">
-      <string>查找文件</string>
-     </property>
-    </widget>
-   </item>
    <item row="2" column="1" colspan="2">
     <widget class="QPushButton" name="pushButton_5">
      <property name="text">
@@ -73,14 +58,17 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="6">
-    <widget class="QPushButton" name="pushButton_2">
+   <item row="8" column="3">
+    <widget class="QCheckBox" name="hexSendBox">
      <property name="text">
-      <string>解析</string>
+      <string>16进制发送</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
-   <item row="3" column="0" rowspan="4" colspan="3">
+   <item row="3" column="0" rowspan="6" colspan="3">
     <layout class="QFormLayout" name="formLayout">
      <item row="0" column="0">
       <widget class="QComboBox" name="rateBox"/>
@@ -154,6 +142,40 @@
      </item>
     </layout>
    </item>
+   <item row="7" column="3" colspan="4">
+    <widget class="QPlainTextEdit" name="sendData"/>
+   </item>
+   <item row="8" column="5">
+    <widget class="QRadioButton" name="radioButton_2">
+     <property name="text">
+      <string>LR</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>0.0.1</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="7">
+    <widget class="QPushButton" name="sendTbs">
+     <property name="text">
+      <string>tbs测试</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="9">
+    <widget class="QPushButton" name="pushButton_4">
+     <property name="text">
+      <string>deleteTableItem</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="3">
+    <widget class="QLineEdit" name="lineEdit"/>
+   </item>
    <item row="3" column="3" rowspan="2" colspan="4">
     <layout class="QGridLayout" name="gridLayout_2">
      <item row="3" column="2">
@@ -201,17 +223,42 @@
    <item row="3" column="7" colspan="4">
     <widget class="QListWidget" name="listWidget"/>
    </item>
-   <item row="4" column="10">
-    <widget class="QPushButton" name="clearReceiveDataButton_2">
+   <item row="2" column="0">
+    <widget class="QPushButton" name="selectFileButton">
      <property name="text">
-      <string>清空</string>
+      <string>查找文件</string>
      </property>
     </widget>
    </item>
-   <item row="5" column="3" colspan="4">
-    <widget class="QPlainTextEdit" name="sendData"/>
+   <item row="0" column="8">
+    <widget class="QPushButton" name="sendRegisterBox">
+     <property name="text">
+      <string>发送注册</string>
+     </property>
+    </widget>
    </item>
-   <item row="5" column="7" rowspan="3" colspan="4">
+   <item row="1" column="7">
+    <widget class="QPushButton" name="pushButton_3">
+     <property name="text">
+      <string>tbs命令发送</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="2">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>版本号</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="6">
+    <widget class="QPushButton" name="pushButton_2">
+     <property name="text">
+      <string>解析</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="7" rowspan="3" colspan="4">
     <widget class="QTableWidget" name="tableWidget">
      <row>
       <property name="text">
@@ -310,52 +357,22 @@
      </item>
     </widget>
    </item>
-   <item row="6" column="3">
-    <widget class="QCheckBox" name="hexSendBox">
+   <item row="5" column="7">
+    <widget class="QPushButton" name="pushButton_8">
      <property name="text">
-      <string>16进制发送</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
+      <string>保存地址</string>
      </property>
     </widget>
    </item>
-   <item row="6" column="4">
-    <widget class="QRadioButton" name="radioButton">
+   <item row="5" column="8">
+    <widget class="QPushButton" name="pushButton_7">
      <property name="text">
-      <string>LRLF</string>
+      <string>保存数据</string>
      </property>
     </widget>
    </item>
-   <item row="6" column="5">
-    <widget class="QRadioButton" name="radioButton_2">
-     <property name="text">
-      <string>LR</string>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="6">
-    <widget class="QPushButton" name="sendBox">
-     <property name="text">
-      <string>发送</string>
-     </property>
-     <property name="autoDefault">
-      <bool>false</bool>
-     </property>
-     <property name="default">
-      <bool>false</bool>
-     </property>
-     <property name="flat">
-      <bool>false</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="9">
-    <widget class="QPushButton" name="pushButton_4">
-     <property name="text">
-      <string>deleteTableItem</string>
-     </property>
-    </widget>
+   <item row="4" column="7" colspan="2">
+    <widget class="QLineEdit" name="lineEdit_2"/>
    </item>
   </layout>
  </widget>
