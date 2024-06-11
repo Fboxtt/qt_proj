@@ -1,5 +1,6 @@
 QT       += core gui
 QT       += serialport
+QT       += charts
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
@@ -20,6 +21,7 @@ SOURCES += \
     openSeril0.cpp \
     textDecode0.cpp \
     csv.cpp \
+    chart.cpp \
     widget.cpp
 
 
@@ -27,6 +29,7 @@ HEADERS += \
     serial0.h \
     textDecode0.h \
     csv.h \
+    chart.h \
     widget.h
 
 FORMS += \

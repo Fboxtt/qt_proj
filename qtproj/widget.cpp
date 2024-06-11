@@ -9,6 +9,12 @@
 #include <QClipboard>
 #include <QDateTime>
 
+//QT_CHARTS_USE_NAMESPACE
+//using namespace QTCharts;
+#include <QChartView>
+#include <Qtcharts>
+#include <QLineSeries>
+
 #include "serial0.h"
 #include "csv.h"
 
@@ -17,6 +23,8 @@
 serial se;
 textDcode dcode0;
 QVector<QTableWidgetItem> itemTableList(50);
+
+//QWidget w2; // 作为tab的parent
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -31,14 +39,33 @@ Widget::Widget(QWidget *parent)
     ui->listWidget->setContextMenuPolicy(Qt::CustomContextMenu); // 设置右键菜单
     connect(ui->listWidget,&QListWidget::customContextMenuRequested,this,&Widget::on_PopupRightMenu); // 链接右击和on_PopupRightMenu槽函数，
 
+    // listWidget设置
     ui->listWidget->setWordWrap(true); // 设置可以换行 listwidget格式设置
     ui->listWidget->setStyleSheet("QListWidget{font-size:10px;}"); // 设置字体大小 listwidget格式设置
 
+    // tableWidget设置
     ui->tableWidget->setFont(QFont("黑体", 5)); // table字体设置
     for(int idx = 0, limit = itemTableList.size(); idx < limit; idx++) {
         itemTableList[idx].setText(QString("%1").arg(idx,0,10));
         ui->tableWidget->setItem(idx / 3, idx % 3, &itemTableList[idx]);
     }
+
+    // tapwidget设置
+//    ui->tabWidget->removeTab(1);
+
+
+//    QLabel* labelTest = new QLabel("test lable");
+//    ui->tabWidget->addTab(labelTest,"波形图");
+//    labelTest->resize(100,50);
+
+    QChartView *chartview = new QChartView(ui->tab_2);
+    QChart *chart=new QChart();
+    chartview->setChart(chart);
+    chartview->resize(400,300);
+    QLineSeries *series0 = new QLineSeries();
+    *series0 << QPointF(1,5) << QPointF(2,1) << QPointF(3, 5) << QPointF(3, 7) << QPointF(7, 6) << QPointF(9, 7);
+    chart->addSeries(series0);
+//    setCentralWidget(chartview);
 }
 
 Widget::~Widget()
