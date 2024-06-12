@@ -11,20 +11,17 @@
 
 //QT_CHARTS_USE_NAMESPACE
 //using namespace QTCharts;
-#include <QChartView>
-#include <Qtcharts>
-#include <QLineSeries>
 
 #include "serial0.h"
 #include "csv.h"
-
+#include "chart.h"
 
 
 serial se;
 textDcode dcode0;
 QVector<QTableWidgetItem> itemTableList(50);
 
-//QWidget w2; // 作为tab的parent
+chart* chart0;
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -50,6 +47,8 @@ Widget::Widget(QWidget *parent)
         ui->tableWidget->setItem(idx / 3, idx % 3, &itemTableList[idx]);
     }
 
+    chart0 = new chart(ui->tab_2);
+
     // tapwidget设置
 //    ui->tabWidget->removeTab(1);
 
@@ -58,13 +57,7 @@ Widget::Widget(QWidget *parent)
 //    ui->tabWidget->addTab(labelTest,"波形图");
 //    labelTest->resize(100,50);
 
-    QChartView *chartview = new QChartView(ui->tab_2);
-    QChart *chart=new QChart();
-    chartview->setChart(chart);
-    chartview->resize(400,300);
-    QLineSeries *series0 = new QLineSeries();
-    *series0 << QPointF(1,5) << QPointF(2,1) << QPointF(3, 5) << QPointF(3, 7) << QPointF(7, 6) << QPointF(9, 7);
-    chart->addSeries(series0);
+
 //    setCentralWidget(chartview);
 }
 
@@ -251,4 +244,20 @@ void Widget::on_pushButton_7_clicked()
 {
     QString fileName = ui->lineEdit_2->text();
     csv::tbsToCsv(ui, fileName, &dcode0);
+}
+
+void Widget::on_pushButton_clicked()
+{
+    static int y = 4;
+    chart0->addNewLine("电压曲线", "伏特V");
+
+    chart0->addNewPoint("电压曲线",y++);
+
+}
+
+void Widget::on_pushButton_2_clicked()
+{
+//    static int param = 0;
+//    param++;
+//    chart0->setAxis(-5 - param, 5 + param, -5 - param, 5 + param);
 }
