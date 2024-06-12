@@ -54,6 +54,7 @@ void chart::addNewPoint(QString lineName, int newY)
         qDebug() << "没有目标曲线无法添加";
         return;
     }
+
     // 在map中使用名字键找到对象
     line *line1 = lineMap.value(lineName);
 
