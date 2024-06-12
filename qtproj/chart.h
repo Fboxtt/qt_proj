@@ -23,14 +23,7 @@ public:
     chart(QWidget *parent = nullptr);
     QChartView *chartview;
     QChart *qchart;
-
-    QLineSeries *series0;
-    void addPoint(int x, int y);
-
     QValueAxis *axisX;
-    QValueAxis *axisY;
-    QValueAxis *axisY2;
-    void setAxis(int minX, int maxX, int minY, int maxY);
 
 
     QMap<QString, line*> lineMap;
