@@ -70,3 +70,5 @@ void chart::addNewPoint(QString lineName, int newY)
     this->axisX->setRange(0, x);
     x++;
 }
+
+

@@ -117,6 +117,7 @@ textDcode::textDcode(void)
 
 }
 
+// 输入值，输出对应字符串
 QString textDcode::ByteDecode(QMap<uint32_t, QString> mapCode, uint8_t keys)
 {
     QString strCode;
@@ -139,6 +140,7 @@ uint32_t textDcode::TbsDecode(QVector<uint8_t> hexVector)
     return checkSum;
 }
 
+// 把收到的所有数据，替换成type，ack和data.
 QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
 {
     QStringList Command = {"地址","高字节","低字节","单板类型","功能码","握手1","握手2","ack","data","check"};
@@ -193,6 +195,8 @@ QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
     qDebug() << "endstr:" << decodeStr;
     return decodeStr;
 }
+
+// 将除了data的所有hex字节数据用 字符 替换。
 QString textDcode::SendCmdDocode(QStringList hexStrLis, QString decodeStr)
 {
     QString Command[8] = {"地址","低字节","高字节","单板类型","功能码","握手1","握手2","check"};
@@ -214,6 +218,7 @@ QString textDcode::SendCmdDocode(QStringList hexStrLis, QString decodeStr)
     return decodeStr;
 }
 
+// 给输入str，加上时间戳
 QString textDcode::SendDataDecode(Ui::Widget *ui, QString decodeStr)
 {
     QString outToPlainText;
@@ -227,6 +232,7 @@ QString textDcode::SendDataDecode(Ui::Widget *ui, QString decodeStr)
     return this->DecodeHexToCommand(ui);
 }
 
+// 将plaintext 最后一个block内的可解析数据替换
 QString textDcode::DecodeHexToCommand(Ui::Widget *ui)
 {
     QString Command[10] = {"地址","低字节","高字节","单板类型","功能码","握手1","握手2","ack","data","check"};
@@ -290,13 +296,16 @@ QString textDcode::DecodeHexToCommand(Ui::Widget *ui)
 
 }
 
-
-
-void textDcode::itemToTable(QVector<tbs> dataList, QVector<QTableWidgetItem>* itemTableList)
+void textDcode::clearTableItem(QVector<QTableWidgetItem>* itemTableList)
 {
     for(int idx = 0, limit = itemTableList->size(); idx < limit; idx++) {
         (*itemTableList)[idx].setText("");
     }
+}
+
+// 把输入的itemlist内的值修改成空“”，并写入新的值
+void textDcode::itemToTable(QVector<tbs> dataList, QVector<QTableWidgetItem>* itemTableList)
+{
     uint32_t idx = 0;
     foreach(tbs unit, dataList) {
         (*itemTableList)[idx].setText(unit.valName + " = " + QString("%1").arg(unit.uintVal,0,10));
@@ -304,10 +313,7 @@ void textDcode::itemToTable(QVector<tbs> dataList, QVector<QTableWidgetItem>* it
     }
 }
 
-//void textDcode::unsignedToSigned(uint32_t val, datTypDic typedic)
-//{
-
-//}
+// 将字符串str转换成真实的int值，再转换成str写入table
 QVector<tbs> textDcode::HexToStr(QStringList dataList)
 {
 

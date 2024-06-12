@@ -49,16 +49,6 @@ Widget::Widget(QWidget *parent)
 
     chart0 = new chart(ui->tab_2);
 
-    // tapwidget设置
-//    ui->tabWidget->removeTab(1);
-
-
-//    QLabel* labelTest = new QLabel("test lable");
-//    ui->tabWidget->addTab(labelTest,"波形图");
-//    labelTest->resize(100,50);
-
-
-//    setCentralWidget(chartview);
 }
 
 Widget::~Widget()
@@ -66,13 +56,6 @@ Widget::~Widget()
     delete ui;
 }
 
-
-//void Widget::on_pushButton_2_clicked()
-//{
-//    QString decodeStr = "未解析";
-//    decodeStr = dcode0.DecodeHexToCommand(ui);
-//    ui->listWidget->addItem(decodeStr);
-//}
 
 void Widget::on_selectFileButton_clicked()
 {
@@ -178,11 +161,32 @@ void Widget::on_sendRegisterBox_clicked()
     this->SendAndDecode(sendData);
 }
 
-void Widget::on_pushButton_3_clicked()
+void Widget::sendCmdRecieveWave()
 {
     QString sendData = "00 00 04 01 13 55 AA 17";
     this->SendAndDecode(sendData);
 }
+
+void Widget::on_pushButton_3_clicked()
+{
+    if(ui->pushButton_3->text() == "开始读取tbs") {
+        tbsTim = new QTimer();
+        tbsTim->setInterval(1000);
+        connect(tbsTim, SIGNAL(timeout()), this, SLOT(sendCmdRecieveWave()));
+        tbsTim->start();
+        ui->pushButton_3->setText("停止读取tbs");
+
+    } else if (ui->pushButton_3->text() == "停止读取tbs") {
+        tbsTim->stop();
+        ui->pushButton_3->setText("继续读取tbs");
+
+    } else if (ui->pushButton_3->text() == "继续读取tbs") {
+        tbsTim->start();
+        ui->pushButton_3->setText("停止读取tbs");
+    }
+
+}
+
 
 void Widget::on_PopupRightMenu(const QPoint& pos)
 {
@@ -212,11 +216,21 @@ void Widget::on_clearReceiveDataButton_2_clicked()
 
 void Widget::on_listWidget_itemClicked(QListWidgetItem *item)
 {
-    qDebug() << item->text();
     QStringList timeAndDataList, dataList;
+
+    dcode0.clearTableItem(&itemTableList);
+
     timeAndDataList = item->text().split("->");
+    if(timeAndDataList.begin()->contains("TX") || timeAndDataList.size() < 2) {
+        return;
+    }
+
     dataList = timeAndDataList[1].split(" "); // 需要改，防止溢出
-    qDebug() << "begin hextostr" << dataList;
+    if(dataList.size() <= 8 || (dataList[4] != "93" && dataList[4] != "bat状态")) {
+        qDebug() << "dataList <= 8 or datalist[4] != 93";
+        return;
+    }
+
     QVector<tbs> decodeList = dcode0.HexToStr(dataList.mid(8, -1)); // 需要改成自适应
     dcode0.itemToTable(decodeList, &itemTableList);
 }
