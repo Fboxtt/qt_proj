@@ -12,6 +12,9 @@ chart::chart(QWidget *parent)
     chartview->setChart(qchart);
     chartview->resize(1000,1000);
 
+    // chart改名
+    qchart->setTitle("电池状态折线表");
+
     // 初始化X轴
     this->axisX = new QValueAxis;
     axisX->setRange(0,5);
@@ -30,8 +33,10 @@ void chart::addNewLine(QString lineName, QString axisYName)
     line *line1 = new line();
     lineMap.insert(lineName, line1);
 
+
     //  新series添加到chart
     line1->series = new QLineSeries();
+    line1->series->setName(lineName);
     qchart->addSeries(line1->series);
 
     // 定义新Y轴

@@ -85,8 +85,19 @@ void Widget::ReceveHexDecode()
 {
     QString receiveDecode = dcode0.DecodeHexToCommand(ui);
     ui->listWidget->addItem(receiveDecode);
-    int row = ui->listWidget->count();
-    this->on_listWidget_itemClicked(ui->listWidget->item(row - 1));
+
+    int row = ui->listWidget->count();  
+    dcode0.clearTableItem(&itemTableList);
+    bool stat = this->on_listWidget_itemClicked(ui->listWidget->item(row - 1));
+    if(stat == true) {
+        dcode0.itemToTable(&itemTableList);
+        chart0->addNewLine("pack", "毫伏mV");
+        chart0->addNewPoint("pack", (*dcode0.tbsUnion)[0].uintVal);
+
+        chart0->addNewLine("电芯", "1毫伏mV");
+        chart0->addNewPoint("电芯", (*dcode0.tbsUnion)[2].uintVal);
+
+    }
 }
 
 void Widget::onTimeOut()
@@ -214,26 +225,10 @@ void Widget::on_clearReceiveDataButton_2_clicked()
     ui->listWidget->clear();
 }
 
-void Widget::on_listWidget_itemClicked(QListWidgetItem *item)
+bool Widget::on_listWidget_itemClicked(QListWidgetItem *item)
 {
-    QStringList timeAndDataList, dataList;
-
-    dcode0.clearTableItem(&itemTableList);
-
-    timeAndDataList = item->text().split("->");
-    if(timeAndDataList.begin()->contains("TX") || timeAndDataList.size() < 2) {
-        return;
-    }
-
-    dataList = timeAndDataList[1].split(" "); // 需要改，防止溢出
-    if(dataList.size() <= 8 || (dataList[4] != "93" && dataList[4] != "bat状态")) {
-        qDebug() << "dataList <= 8 or datalist[4] != 93";
-        return;
-    }
-
-    QVector<tbs> decodeList = dcode0.HexToStr(dataList.mid(8, -1)); // 需要改成自适应
-    dcode0.itemToTable(decodeList, &itemTableList);
-}
+    return dcode0.ItemToTbs(item);
+} 
 
 void Widget::on_pushButton_4_clicked()
 {

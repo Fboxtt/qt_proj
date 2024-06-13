@@ -44,7 +44,7 @@ private slots:
     void on_PopupRightMenu(const QPoint& pos);
     void on_clearReceiveDataButton_2_clicked();
 
-    void on_listWidget_itemClicked(QListWidgetItem *item);
+    bool on_listWidget_itemClicked(QListWidgetItem *item);
 
     void on_pushButton_4_clicked();
 

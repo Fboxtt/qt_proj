@@ -37,17 +37,6 @@ tbs::tbs(QString valName,datTypDic::DATA_TYPE dataType)
     }
 }
 
-//datTypDic tbs::getType(void)
-//{
-//    foreach(datTypDic unit, TypUnion) {
-//        if(unit.type == this->dataType) {
-//            return unit;
-//        }
-//    }
-//    qDebug() << "warning :no this dataType";
-//    return TypUnion[0];
-//}
-
 QVector<tbs> tbsUnit = {
     {"端口电压mV", datTypDic::ULONG}, \
     {"电池电压mV", datTypDic::ULONG}, \
@@ -90,7 +79,6 @@ QVector<tbs> tbsUnit = {
     {"DisTimes次", datTypDic::ULONG}, \
     {"TotalDisAH", datTypDic::ULONG}, \
 };
-//tbs tbsUnit(nullptr,0,0+4);
 
 textDcode::textDcode(void)
 {
@@ -113,6 +101,7 @@ textDcode::textDcode(void)
                 ,{0x05,"握手错误"}\
                 ,{0x06,"校验错误"}};
 
+    this->tbsUnion = &tbsUnit;
 
 
 }
@@ -304,10 +293,10 @@ void textDcode::clearTableItem(QVector<QTableWidgetItem>* itemTableList)
 }
 
 // 把输入的itemlist内的值修改成空“”，并写入新的值
-void textDcode::itemToTable(QVector<tbs> dataList, QVector<QTableWidgetItem>* itemTableList)
+void textDcode::itemToTable(QVector<QTableWidgetItem>* itemTableList)
 {
     uint32_t idx = 0;
-    foreach(tbs unit, dataList) {
+    foreach(tbs unit, tbsUnit) {
         (*itemTableList)[idx].setText(unit.valName + " = " + QString("%1").arg(unit.uintVal,0,10));
         idx++;
     }
@@ -341,5 +330,23 @@ QVector<tbs> textDcode::HexToStr(QStringList dataList)
         byteInData++;
     }
     return tbsUnit;
+}
 
+bool textDcode::ItemToTbs(QListWidgetItem *item)
+{
+    QStringList timeAndDataList, dataList;
+
+    timeAndDataList = item->text().split("->");
+    if(timeAndDataList.begin()->contains("TX") || timeAndDataList.size() < 2) {
+        return false;
+    }
+
+    dataList = timeAndDataList[1].split(" "); // 需要改，防止溢出
+    if(dataList.size() <= 8 || (dataList[4] != "93" && dataList[4] != "bat状态")) {
+        qDebug() << "dataList <= 8 or datalist[4] != 93";
+        return false;
+    }
+
+    QVector<tbs> decodeList = this->HexToStr(dataList.mid(8, -1)); // 需要改成自适应
+    return true;
 }
