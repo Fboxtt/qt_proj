@@ -7,17 +7,17 @@ line::line(){
 chart::chart(QWidget *parent)
 {
     // 初始化chart窗口
-    chartview = new QChartView(parent);
-    qchart = new QChart();
-    chartview->setChart(qchart);
-    chartview->resize(1000,1000);
+    this->chartview = new QChartView(parent);
+    this->qchart = new QChart();
+    this->chartview->setChart(this->qchart);
+    this->chartview->resize(1000, 1000);
 
     // chart改名
-    qchart->setTitle("电池状态折线表");
+    this->qchart->setTitle("电池状态折线表");
 
     // 初始化X轴
     this->axisX = new QValueAxis;
-    axisX->setRange(0,5);
+    axisX->setRange(0, 5);
     axisX->setTitleText("time(secs)");
 }
 
@@ -37,7 +37,7 @@ void chart::addNewLine(QString lineName, QString axisYName)
     //  新series添加到chart
     line1->series = new QLineSeries();
     line1->series->setName(lineName);
-    qchart->addSeries(line1->series);
+    this->qchart->addSeries(line1->series);
 
     // 定义新Y轴
     line1->axisY = new QValueAxis;
@@ -45,8 +45,8 @@ void chart::addNewLine(QString lineName, QString axisYName)
     line1->axisY->setTitleText(axisYName);
 
     // 新Y轴和series和chart联系起来
-    qchart->addAxis ( this->axisX, Qt::AlignBottom );
-    qchart->addAxis ( line1->axisY, Qt::AlignLeft );
+    this->qchart->addAxis ( this->axisX, Qt::AlignBottom );
+    this->qchart->addAxis ( line1->axisY, Qt::AlignLeft );
     line1->series->attachAxis ( this->axisX );
     line1->series->attachAxis ( line1->axisY );
 }
