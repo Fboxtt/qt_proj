@@ -181,7 +181,7 @@ QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
         }
         datId++;
     }
-    qDebug() << "endstr:" << decodeStr;
+    // qDebug() << "endstr:" << decodeStr;
     return decodeStr;
 }
 
@@ -203,7 +203,7 @@ QString textDcode::SendCmdDocode(QStringList hexStrLis, QString decodeStr)
             decodeStr.append(hexStrLis[i] + " ");
         }
     }
-    qDebug() << "endstr:" << decodeStr;
+    // qDebug() << "endstr:" << decodeStr;
     return decodeStr;
 }
 
@@ -266,11 +266,11 @@ QString textDcode::DecodeHexToCommand(Ui::Widget *ui)
 
     if (dataList.size() == 8) {
         dataText = SendCmdDocode(dataList, dataText);
-        qDebug() << "Decode=8 endstr" << dataText;
+        // qDebug() << "Decode=8 endstr" << dataText;
         // send data
     } else if (dataList.size() > 8 && dataList.size() < 200) {
         dataText = readDataDocode(dataList, dataText);
-        qDebug() << "Decode>8 endstr" << dataText;
+        // qDebug() << "Decode>8 endstr" << dataText;
         // receive data
     } else {
         qDebug() << "无法解析";
@@ -320,7 +320,7 @@ QVector<tbs> textDcode::HexToStr(QStringList dataList)
     foreach(uint8_t hex, hexVector) {
         if (byteInData == tbsUnit[tbsUnitIdx].typeLenth) {
             tbsUnit[tbsUnitIdx].uintVal = uintVal;
-            qDebug() << tbsUnit[tbsUnitIdx].valName <<"uintval%d = " << uintVal;
+            // qDebug() << tbsUnit[tbsUnitIdx].valName <<"uintval%d = " << uintVal;
 
             tbsUnitIdx++;
             uintVal = 0;

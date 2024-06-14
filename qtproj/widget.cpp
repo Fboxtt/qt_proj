@@ -21,7 +21,7 @@ serial se;
 textDcode dcode0;
 QVector<QTableWidgetItem> itemTableList(50);
 
-chart* chart0;
+chartV* chartV0;
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -47,8 +47,15 @@ Widget::Widget(QWidget *parent)
         ui->tableWidget->setItem(idx / 3, idx % 3, &itemTableList[idx]);
     }
 
-    chart0 = new chart(ui->tab_2);
+    chartV0 = new chartV();
+    chartV0->addNewChart(ui->tab_2,"总电压", "pack电压", "mV");
+    chartV0->addNewChart(ui->tab_2,"电芯电压", "电芯电压", "mV");
+    chartV0->addNewChart(ui->tab_2,"温度", "ntc1", "C");
 
+    ui->gridLayout_5->addWidget(chartV0->chartMap.value("总电压")->chartview, 0, 0);
+    ui->gridLayout_5->addWidget(chartV0->chartMap.value("电芯电压")->chartview, 0, 1);
+    ui->gridLayout_5->addWidget(chartV0->chartMap.value("温度")->chartview, 1, 0);
+//    chartV0->addNewChart(ui->tab_2, "", "", "");
 }
 
 Widget::~Widget()
@@ -91,11 +98,13 @@ void Widget::ReceveHexDecode()
     bool stat = this->on_listWidget_itemClicked(ui->listWidget->item(row - 1));
     if(stat == true) {
         dcode0.itemToTable(&itemTableList);
-        chart0->addNewLine("pack", "毫伏mV");
-        chart0->addNewPoint("pack", (*dcode0.tbsUnion)[0].uintVal);
 
-        chart0->addNewLine("电芯", "1毫伏mV");
-        chart0->addNewPoint("电芯", (*dcode0.tbsUnion)[2].uintVal);
+        chartV0->lineAddPoint("pack电压", (*dcode0.tbsUnion)[0].uintVal);
+
+//        chartV0->addNewChart(ui->tab_2,"总电压", "电芯", "mV");
+        chartV0->lineAddPoint("电芯电压", (*dcode0.tbsUnion)[2].uintVal);
+        chartV0->lineAddPoint("ntc1", (*dcode0.tbsUnion)[19].uintVal);
+
 
     }
 }
@@ -257,10 +266,10 @@ void Widget::on_pushButton_7_clicked()
 
 void Widget::on_pushButton_clicked()
 {
-    static int y = 4;
-    chart0->addNewLine("电压曲线", "伏特V");
+//    static int y = 4;
+//    chartV0->addNewLine("电压曲线", "伏特V");
 
-    chart0->addNewPoint("电压曲线",y++);
+//    chartV0->addNewPoint("电压曲线",y++);
 
 }
 
@@ -268,5 +277,5 @@ void Widget::on_pushButton_2_clicked()
 {
 //    static int param = 0;
 //    param++;
-//    chart0->setAxis(-5 - param, 5 + param, -5 - param, 5 + param);
+//    chartV0->setAxis(-5 - param, 5 + param, -5 - param, 5 + param);
 }
