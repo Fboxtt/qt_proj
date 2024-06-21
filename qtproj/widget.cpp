@@ -13,7 +13,7 @@
 //using namespace QTCharts;
 
 #include "serial0.h"
-#include "csv.h"
+#include "csv1.h"
 #include "chart.h"
 
 
@@ -262,20 +262,4 @@ void Widget::on_pushButton_7_clicked()
 {
     QString fileName = ui->lineEdit_2->text();
     csv::tbsToCsv(ui, fileName, &dcode0);
-}
-
-void Widget::on_pushButton_clicked()
-{
-//    static int y = 4;
-//    chartV0->addNewLine("电压曲线", "伏特V");
-
-//    chartV0->addNewPoint("电压曲线",y++);
-
-}
-
-void Widget::on_pushButton_2_clicked()
-{
-//    static int param = 0;
-//    param++;
-//    chartV0->setAxis(-5 - param, 5 + param, -5 - param, 5 + param);
 }
