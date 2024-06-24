@@ -81,7 +81,9 @@ public:
 
     QVector<tbs>* tbsUnion;
     bool ItemToTbs(QListWidgetItem *item);
+    void SetStatusToBox(Ui::Widget *ui);
     void SetStatusToGBox(QGridLayout *gridLayout);
+    void SetStatusToLBox(QGridLayout *gridLayout, QList<QString> strL, QList<QLabel*> labelL, uint32_t val);
 private:
 
 };

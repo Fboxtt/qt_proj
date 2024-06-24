@@ -61,7 +61,7 @@ Widget::Widget(QWidget *parent)
     ui->gridLayout_5->addWidget(chartV0->chartMap.value("温度")->chartview, 1, 0);
 //    chartV0->addNewChart(ui->tab_2, "", "", "");
 
-
+    ui->alarmGroupBox->setMinimumWidth(150);
 }
 
 Widget::~Widget()
@@ -271,30 +271,30 @@ void Widget::on_pushButton_7_clicked()
     csv::tbsToCsv(ui, fileName, &dcode0);
 }
 
-void Widget::on_pushButton_clicked()
-{
-//    QPixmap greenPic = QPixmap("://images/greenpot.png");
-//    greenPic = greenPic.scaled(510,40, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-//    QPixmap redPic = QPixmap("://images/greenpot.png");
-    int width = 200;
-    ui->batGroupBox->setMinimumSize(width, 1000);
-    ui->batGroupBox->setMaximumWidth(width);
+//void Widget::on_pushButton_clicked()
+//{
+////    QPixmap greenPic = QPixmap("://images/greenpot.png");
+////    greenPic = greenPic.scaled(510,40, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+////    QPixmap redPic = QPixmap("://images/greenpot.png");
+//    int width = 200;
+//    ui->batGroupBox->setMinimumSize(width, 1000);
+//    ui->batGroupBox->setMaximumWidth(width);
 
-    QPixmap pixmap = QPixmap(width,30);
-    pixmap.fill(Qt::transparent);
+//    QPixmap pixmap = QPixmap(width,30);
+//    pixmap.fill(Qt::transparent);
 
-    QPainter painter(&pixmap);
+//    QPainter painter(&pixmap);
 
-    painter.setBrush(Qt::green);
-    painter.drawEllipse(width - 45 - 2*30, 0, 30, 30);
-    painter.setBrush(Qt::red);
-    painter.drawEllipse(width - 35 - 30,   0, 30, 30);
-    painter.drawText(0,0, 150, 30, Qt::AlignLeft | Qt::AlignVCenter,"电芯过压");
-    ui->label->setPixmap(pixmap);
-//    ui->label->setText("test");
-}
+//    painter.setBrush(Qt::green);
+//    painter.drawEllipse(width - 45 - 2*30, 0, 30, 30);
+//    painter.setBrush(Qt::red);
+//    painter.drawEllipse(width - 35 - 30,   0, 30, 30);
+//    painter.drawText(0,0, 150, 30, Qt::AlignLeft | Qt::AlignVCenter,"电芯过压");
+//    ui->label->setPixmap(pixmap);
+////    ui->label->setText("test");
+//}
 
 void Widget::on_pushButton_2_clicked()
 {
-    dcode0.SetStatusToGBox(ui->gridLayout_7);
+    dcode0.SetStatusToBox(ui);
 }

@@ -105,10 +105,9 @@ textDcode::textDcode(void)
 }
 
 QList<QLabel*> alarmLabel;
-//QLabel (*alarmLabel)[96] = {nullptr};
-QLabel* loseLabel[32];
-QLabel* otherLabel[32];
-QLabel* batlabel[32];
+QList<QLabel*> loseLabel;
+QList<QLabel*> otherLabel;
+QList<QLabel*> batlabel;
 
 QList<QString> alarmStat = {
     "Pack过压",
@@ -403,14 +402,23 @@ bool textDcode::ItemToTbs(QListWidgetItem *item)
     return true;
 }
 
+void textDcode::SetStatusToBox(Ui::Widget *ui)
+{
+    this->SetStatusToGBox(ui->gridLayout_7);
+    this->SetStatusToLBox(ui->loseGridLayout,  loseStat,  loseLabel,  tbsUnit[31].uintVal);
+    this->SetStatusToLBox(ui->otherGridLayout, otherStat, otherLabel, tbsUnit[32].uintVal);
+    this->SetStatusToLBox(ui->batGridLayout,   batStat,   batlabel,    tbsUnit[33].uintVal);
+}
+
 void textDcode::SetStatusToGBox(QGridLayout *gridLayout)
 {
     int i = 0;
     qDebug() << " protect status" << tbsUnit[29].uintVal;
-    if(alarmLabel.size() == 0) {
-        foreach(QString statName, alarmStat)
-        {
-            int iX3 = i * 3;
+
+    foreach(QString statName, alarmStat)
+    {
+        int iX3 = i * 3;
+        if(alarmLabel.value(iX3) == 0) {
             alarmLabel.append(new QLabel());
             alarmLabel.append(new QLabel());
             alarmLabel.append(new QLabel());
@@ -418,23 +426,48 @@ void textDcode::SetStatusToGBox(QGridLayout *gridLayout)
             gridLayout->addWidget(alarmLabel[iX3],   i, 0);
             gridLayout->addWidget(alarmLabel[iX3+1], i, 1);
             gridLayout->addWidget(alarmLabel[iX3+2], i, 2);
-            i++;
         }
-    }
-    i = 0;
-    foreach(QString statName, alarmStat)
-    {
-        alarmLabel[i * 3]->setText(statName);
+
+        alarmLabel[iX3]->setText(statName);
         if((tbsUnit[28].uintVal & 0x1 << i) != 0) {
-            alarmLabel[i * 3 + 1]->setStyleSheet("QLabel { background-color: red}");
+            alarmLabel[iX3 + 1]->setStyleSheet("QLabel { background-color: red}");
         } else {
-            alarmLabel[i * 3 + 1]->setStyleSheet("QLabel { background-color: green}");
+            alarmLabel[iX3 + 1]->setStyleSheet("QLabel { background-color: green}");
         }
         if((tbsUnit[29].uintVal & 0x1 << i) != 0) {
-            alarmLabel[i * 3 + 2]->setStyleSheet("QLabel { background-color: red}");
+            alarmLabel[iX3 + 2]->setStyleSheet("QLabel { background-color: red}");
         } else {
-            alarmLabel[i * 3 + 2]->setStyleSheet("QLabel { background-color: green}");
+            alarmLabel[iX3 + 2]->setStyleSheet("QLabel { background-color: green}");
         }
         i++;
     }
 }
+
+void textDcode::SetStatusToLBox(QGridLayout *gridLayout, QList<QString> strL, QList<QLabel*> labelL, uint32_t val)
+{
+    int i = 0;
+    qDebug() << "status val" << val;
+
+    foreach(QString statName, strL)
+    {
+        int iX3 = i * 2;
+        if(labelL.value(iX3) == 0) {
+            labelL.append(new QLabel());
+            labelL.append(new QLabel());
+
+            gridLayout->addWidget(labelL[iX3],     i, 0);
+            gridLayout->addWidget(labelL[iX3 + 1], i, 1);
+        }
+
+        labelL[iX3]->setText(statName);
+
+        if((val & 0x1 << i) != 0) {
+            labelL[iX3 + 1]->setStyleSheet("QLabel { background-color: red}");
+        } else {
+            labelL[iX3 + 1]->setStyleSheet("QLabel { background-color: green}");
+        }
+        qDebug() << i << iX3;
+        i++;
+    }
+}
+
