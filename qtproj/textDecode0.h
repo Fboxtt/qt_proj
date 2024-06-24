@@ -81,6 +81,7 @@ public:
 
     QVector<tbs>* tbsUnion;
     bool ItemToTbs(QListWidgetItem *item);
+    void SetStatusToGBox(QGridLayout *gridLayout);
 private:
 
 };

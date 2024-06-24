@@ -5,6 +5,7 @@
 #include <QTimer>
 #include <QPoint>
 #include <QListWidgetItem>
+#include <QLabel>
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
 QT_END_NAMESPACE
@@ -53,10 +54,15 @@ private slots:
     void on_pushButton_7_clicked();
 
 
+    void on_pushButton_clicked();
+
+    void on_pushButton_2_clicked();
+
 private:
     Ui::Widget *ui; //似乎是定义了一个类指针
     QTimer *tim;
     QTimer *tbsTim;
+
 public slots:
     void onTimeOut();
     void ReceveHexDecode();

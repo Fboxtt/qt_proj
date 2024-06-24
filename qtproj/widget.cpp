@@ -9,6 +9,8 @@
 #include <QClipboard>
 #include <QDateTime>
 
+#include <QPainter>
+#include <QPixmap>
 //QT_CHARTS_USE_NAMESPACE
 //using namespace QTCharts;
 
@@ -22,6 +24,7 @@ textDcode dcode0;
 QVector<QTableWidgetItem> itemTableList(50);
 
 chartV* chartV0;
+
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -47,6 +50,7 @@ Widget::Widget(QWidget *parent)
         ui->tableWidget->setItem(idx / 3, idx % 3, &itemTableList[idx]);
     }
 
+    // 波形chart配置
     chartV0 = new chartV();
     chartV0->addNewChart(ui->tab_2,"总电压", "pack电压", "mV");
     chartV0->addNewChart(ui->tab_2,"电芯电压", "电芯电压", "mV");
@@ -56,6 +60,8 @@ Widget::Widget(QWidget *parent)
     ui->gridLayout_5->addWidget(chartV0->chartMap.value("电芯电压")->chartview, 0, 1);
     ui->gridLayout_5->addWidget(chartV0->chartMap.value("温度")->chartview, 1, 0);
 //    chartV0->addNewChart(ui->tab_2, "", "", "");
+
+
 }
 
 Widget::~Widget()
@@ -94,14 +100,15 @@ void Widget::ReceveHexDecode()
     ui->listWidget->addItem(receiveDecode);
 
     int row = ui->listWidget->count();  
+    // 清除itemTable内的数据
     dcode0.clearTableItem(&itemTableList);
-    bool stat = this->on_listWidget_itemClicked(ui->listWidget->item(row - 1));
+    // 判断listwidget最后一个item是否是tbs数据，是则写入到tbsUnit中
+//    bool stat = this->on_listWidget_itemClicked(ui->listWidget->item(row - 1));
+    bool stat = dcode0.ItemToTbs(ui->listWidget->item(row - 1));
     if(stat == true) {
         dcode0.itemToTable(&itemTableList);
 
         chartV0->lineAddPoint("pack电压", (*dcode0.tbsUnion)[0].uintVal);
-
-//        chartV0->addNewChart(ui->tab_2,"总电压", "电芯", "mV");
         chartV0->lineAddPoint("电芯电压", (*dcode0.tbsUnion)[2].uintVal);
         chartV0->lineAddPoint("ntc1", (*dcode0.tbsUnion)[19].uintVal);
 
@@ -262,4 +269,32 @@ void Widget::on_pushButton_7_clicked()
 {
     QString fileName = ui->lineEdit_2->text();
     csv::tbsToCsv(ui, fileName, &dcode0);
+}
+
+void Widget::on_pushButton_clicked()
+{
+//    QPixmap greenPic = QPixmap("://images/greenpot.png");
+//    greenPic = greenPic.scaled(510,40, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+//    QPixmap redPic = QPixmap("://images/greenpot.png");
+    int width = 200;
+    ui->batGroupBox->setMinimumSize(width, 1000);
+    ui->batGroupBox->setMaximumWidth(width);
+
+    QPixmap pixmap = QPixmap(width,30);
+    pixmap.fill(Qt::transparent);
+
+    QPainter painter(&pixmap);
+
+    painter.setBrush(Qt::green);
+    painter.drawEllipse(width - 45 - 2*30, 0, 30, 30);
+    painter.setBrush(Qt::red);
+    painter.drawEllipse(width - 35 - 30,   0, 30, 30);
+    painter.drawText(0,0, 150, 30, Qt::AlignLeft | Qt::AlignVCenter,"电芯过压");
+    ui->label->setPixmap(pixmap);
+//    ui->label->setText("test");
+}
+
+void Widget::on_pushButton_2_clicked()
+{
+    dcode0.SetStatusToGBox(ui->gridLayout_7);
 }

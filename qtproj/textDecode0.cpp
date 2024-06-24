@@ -102,10 +102,59 @@ textDcode::textDcode(void)
                 ,{0x06,"校验错误"}};
 
     this->tbsUnion = &tbsUnit;
-
-
 }
 
+QList<QLabel*> alarmLabel;
+//QLabel (*alarmLabel)[96] = {nullptr};
+QLabel* loseLabel[32];
+QLabel* otherLabel[32];
+QLabel* batlabel[32];
+
+QList<QString> alarmStat = {
+    "Pack过压",
+    "电池组过压",
+    "单体电芯过压",
+    "电池组欠压",
+    "单体电芯欠压",
+    "充电过流",
+    "放电过流",
+    "充电高温",
+    "放电高温",
+    "充电低温",
+    "放电低温",
+    "容量低",
+    "放电短路",
+    "反接",
+    "低温充电过流",
+    "低温充电过流",
+    "低温充电过压",
+    "充电短路",
+};
+QList<QString> loseStat = {
+    "电压传感器失效",
+    "温度传感器失效",
+    "充电管失效",
+    "放电管失效",
+    "电芯损坏",
+    "加热器失效",
+    "面板开关关闭",
+    "限流充电回路失效",
+    "保险丝熔断失效",
+};
+QList<QString> otherStat = {
+    "加热器",
+    "满充计时",
+    "电压校准",
+    "电流校准",
+    "充电限流",
+
+};
+QList<QString> batStat = {
+    "充电",
+    "放电",
+    "满电",
+    "空闲",
+};
 // 输入值，输出对应字符串
 QString textDcode::ByteDecode(QMap<uint32_t, QString> mapCode, uint8_t keys)
 {
@@ -302,7 +351,7 @@ void textDcode::itemToTable(QVector<QTableWidgetItem>* itemTableList)
     }
 }
 
-// 将字符串str转换成真实的int值，再转换成str写入table
+// 将字符串str转换成真实的int值，再转换成str写入tbsUnit
 QVector<tbs> textDcode::HexToStr(QStringList dataList)
 {
 
@@ -332,6 +381,8 @@ QVector<tbs> textDcode::HexToStr(QStringList dataList)
     return tbsUnit;
 }
 
+
+// 从输入的item判断数据是否是tbs数据，如果是则解析再写入到tbsUnit
 bool textDcode::ItemToTbs(QListWidgetItem *item)
 {
     QStringList timeAndDataList, dataList;
@@ -347,6 +398,43 @@ bool textDcode::ItemToTbs(QListWidgetItem *item)
         return false;
     }
 
+    // 把数据写入tbsUnit
     QVector<tbs> decodeList = this->HexToStr(dataList.mid(8, -1)); // 需要改成自适应
     return true;
+}
+
+void textDcode::SetStatusToGBox(QGridLayout *gridLayout)
+{
+    int i = 0;
+    qDebug() << " protect status" << tbsUnit[29].uintVal;
+    if(alarmLabel.size() == 0) {
+        foreach(QString statName, alarmStat)
+        {
+            int iX3 = i * 3;
+            alarmLabel.append(new QLabel());
+            alarmLabel.append(new QLabel());
+            alarmLabel.append(new QLabel());
+
+            gridLayout->addWidget(alarmLabel[iX3],   i, 0);
+            gridLayout->addWidget(alarmLabel[iX3+1], i, 1);
+            gridLayout->addWidget(alarmLabel[iX3+2], i, 2);
+            i++;
+        }
+    }
+    i = 0;
+    foreach(QString statName, alarmStat)
+    {
+        alarmLabel[i * 3]->setText(statName);
+        if((tbsUnit[28].uintVal & 0x1 << i) != 0) {
+            alarmLabel[i * 3 + 1]->setStyleSheet("QLabel { background-color: red}");
+        } else {
+            alarmLabel[i * 3 + 1]->setStyleSheet("QLabel { background-color: green}");
+        }
+        if((tbsUnit[29].uintVal & 0x1 << i) != 0) {
+            alarmLabel[i * 3 + 2]->setStyleSheet("QLabel { background-color: red}");
+        } else {
+            alarmLabel[i * 3 + 2]->setStyleSheet("QLabel { background-color: green}");
+        }
+        i++;
+    }
 }
