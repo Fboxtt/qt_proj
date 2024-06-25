@@ -43,9 +43,10 @@ private slots:
     void on_pushButton_3_clicked();
 
     void on_PopupRightMenu(const QPoint& pos);
+
     void on_clearReceiveDataButton_2_clicked();
 
-    bool on_listWidget_itemClicked(QListWidgetItem *item);
+    void on_listWidget_itemClicked(QListWidgetItem *item);
 
     void on_pushButton_4_clicked();
 
@@ -61,8 +62,8 @@ private:
     QTimer *tbsTim;
 
 public slots:
-    void onTimeOut();
-    void ReceveHexDecode();
+    void ReadSerialTimeOut();
+    void SetTbsToTableWidget(QListWidgetItem *item, int flag);
     void sendCmdRecieveWave();
 };
 #endif // WIDGET_H

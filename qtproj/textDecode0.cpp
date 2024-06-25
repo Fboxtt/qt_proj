@@ -333,6 +333,7 @@ QString textDcode::DecodeHexToCommand(Ui::Widget *ui)
 
 }
 
+// 把输入的itemlist内的值修改成空“”
 void textDcode::clearTableItem(QVector<QTableWidgetItem>* itemTableList)
 {
     for(int idx = 0, limit = itemTableList->size(); idx < limit; idx++) {
@@ -340,7 +341,7 @@ void textDcode::clearTableItem(QVector<QTableWidgetItem>* itemTableList)
     }
 }
 
-// 把输入的itemlist内的值修改成空“”，并写入新的值
+// 把输入的itemlist内写入新的值
 void textDcode::itemToTable(QVector<QTableWidgetItem>* itemTableList)
 {
     uint32_t idx = 0;
@@ -402,6 +403,7 @@ bool textDcode::ItemToTbs(QListWidgetItem *item)
     return true;
 }
 
+// 把告警状态，保护状态，电池状态，失效状态，其他状态写入到groupBox中
 void textDcode::SetStatusToBox(Ui::Widget *ui)
 {
     this->SetStatusToGBox(ui->gridLayout_7);
@@ -410,6 +412,7 @@ void textDcode::SetStatusToBox(Ui::Widget *ui)
     this->SetStatusToLBox(ui->batGridLayout,   batStat,   batlabel,    tbsUnit[33].uintVal);
 }
 
+// 把告警状态和保护状态写入到groupBox中
 void textDcode::SetStatusToGBox(QGridLayout *gridLayout)
 {
     int i = 0;
@@ -443,6 +446,7 @@ void textDcode::SetStatusToGBox(QGridLayout *gridLayout)
     }
 }
 
+// 把电池状态，失效状态，其他状态写入到groupBox中
 void textDcode::SetStatusToLBox(QGridLayout *gridLayout, QList<QString> strL, QList<QLabel*> labelL, uint32_t val)
 {
     int i = 0;
