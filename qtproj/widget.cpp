@@ -21,7 +21,7 @@
 
 serial se;
 textDcode dcode0;
-QVector<QTableWidgetItem> itemTableList(50);
+QVector<QTableWidgetItem> itemTableList(80);
 
 chartV* chartV0;
 
@@ -40,17 +40,22 @@ Widget::Widget(QWidget *parent)
     // 链接右击和on_PopupRightMenu槽函数
     connect(ui->listWidget,&QListWidget::customContextMenuRequested,this,&Widget::on_PopupRightMenu); 
     
-    // connect(ui->listWidget,&QListWidget::itemClicked,this,&Widget::on_listWidget_itemClicked);
+//    ui->gridLayout_14->set
 
     // listWidget设置
     ui->listWidget->setWordWrap(true); // 设置可以换行 listwidget格式设置
     ui->listWidget->setStyleSheet("QListWidget{font-size:10px;}"); // 设置字体大小 listwidget格式设置
 
     // tableWidget设置
-    ui->tableWidget->setFont(QFont("黑体", 5)); // table字体设置
+    ui->tableWidget->setFont(QFont("黑体", 7)); // table字体设置
+    ui->tableWidget->setFixedSize(600,800);
+    ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->tableWidget->setVerticalHeaderLabels({"1","2","3","4","5","6","7","8","9","10", \
+                                             "11","12","13","14","15","16","17","18","19","20"});
     for(int idx = 0, limit = itemTableList.size(); idx < limit; idx++) {
         itemTableList[idx].setText(QString("%1").arg(idx,0,10));
-        ui->tableWidget->setItem(idx / 3, idx % 3, &itemTableList[idx]);
+        ui->tableWidget->setItem(idx / 4, idx % 4, &itemTableList[idx]);
     }
 
     // 波形chart配置
@@ -113,8 +118,8 @@ void Widget::ReadSerialTimeOut()
 
     QString receiveDecode = dcode0.DecodeHexToCommand(ui);
     ui->listWidget->addItem(receiveDecode);
-
     int row = ui->listWidget->count();
+    ui->listWidget->setCurrentRow(row - 1);
     this->SetTbsToTableWidget(ui->listWidget->item(row - 1), 1);
 
     dcode0.SetStatusToBox(ui);

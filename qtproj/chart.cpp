@@ -64,7 +64,8 @@ void chartV::lineAddPoint(QString lineName, int newY)
     if(newY != chDest->maxY) {
         chDest->maxY = chDest->maxY > newY ? chDest->maxY : newY;
         chDest->minY = chDest->minY < newY ? chDest->minY : newY;
-        chDest->axisY->setRange(chDest->minY, chDest->maxY);
+        // *1.33是为了让波形图居中偏上
+        chDest->axisY->setRange(chDest->minY, chDest->maxY * 1.33);
     }
 
     chDest->axisX->setRange(0, x);
@@ -102,29 +103,5 @@ void chart::addNewLine(QString lineName, QString axisYName)
     series->attachAxis ( this->axisX );
 }
 
-void chart::addNewPoint(QString lineName, int newY)
-{
-    static int x = 0, minY = -5, maxY = 5;
-    if(!seriesMap.contains(lineName))
-    {
-        qDebug() << "没有目标曲线无法添加";
-        return;
-    }
-
-    // 在map中使用名字键找到对象
-    QLineSeries *series = seriesMap.value(lineName);
-
-    *(series) << QPointF(x,newY);
-
-    // 求出曲线极值，让Y轴随着Y极值变化，形成活动窗口
-    if(newY != maxY) {
-        maxY = maxY > newY ? maxY : newY;
-        minY = minY < newY ? minY : newY;
-        this->axisY->setRange(minY, maxY);
-    }
-
-    this->axisX->setRange(0, x);
-    x++;
-}
 
 

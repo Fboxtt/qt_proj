@@ -149,10 +149,11 @@ QList<QString> otherStat = {
 
 };
 QList<QString> batStat = {
+    "空闲",
     "充电",
     "放电",
     "满电",
-    "空闲",
+
 };
 // 输入值，输出对应字符串
 QString textDcode::ByteDecode(QMap<uint32_t, QString> mapCode, uint8_t keys)
@@ -191,7 +192,7 @@ QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
     }
 
     for (uint32_t i = 0, limit = Command.size(); i < limit; i++) {
-        qDebug() << i <<"decodeStr = " << hexStrLis[datId] << decodeStr;
+        qDebug() << i << "datid=" << datId << "decodeStr = " << hexStrLis[datId] << decodeStr;
         if (Command[i] == "地址") {
             decodeStr.append(hexStrLis[datId] + " ");
         } else if (Command[i] == "高字节") {
@@ -202,6 +203,9 @@ QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
             decodeStr.append(hexStrLis[datId] + " ");
             dataNum += hexVector[datId];
             dataSum += hexVector[datId];
+            if (dataNum != (uint32_t)hexStrLis.size() - 4) {
+                break;
+            }
         } else if (Command[i] == "功能码") {
             decodeStr.append(this->ByteDecode(this->funcCode, (hexVector[datId]) - 0x80) + " ");
             dataSum += hexVector[datId];
@@ -209,6 +213,7 @@ QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
             decodeStr.append(this->ByteDecode(this->ackCode, hexVector[datId]) + " ");
             dataSum += hexVector[datId];
         } else if (Command[i] == "data") {
+            qDebug() << "datId" << datId << "dataNum" << dataNum << "hexstrlis size = " << hexStrLis.size();
             if (dataNum == 5) {
             } else if (dataNum > 5) {
                 dataSum += this->TbsDecode(hexVector.mid(i,dataNum - 5));
@@ -336,8 +341,10 @@ QString textDcode::DecodeHexToCommand(Ui::Widget *ui)
 // 把输入的itemlist内的值修改成空“”
 void textDcode::clearTableItem(QVector<QTableWidgetItem>* itemTableList)
 {
-    for(int idx = 0, limit = itemTableList->size(); idx < limit; idx++) {
-        (*itemTableList)[idx].setText("");
+    uint32_t idx = 0;
+    foreach(tbs unit, tbsUnit) {
+        (*itemTableList)[idx * 2 + 1].setText("");
+        idx++;
     }
 }
 
@@ -346,7 +353,8 @@ void textDcode::itemToTable(QVector<QTableWidgetItem>* itemTableList)
 {
     uint32_t idx = 0;
     foreach(tbs unit, tbsUnit) {
-        (*itemTableList)[idx].setText(unit.valName + " = " + QString("%1").arg(unit.uintVal,0,10));
+        (*itemTableList)[idx * 2].setText(unit.valName);
+        (*itemTableList)[idx * 2 + 1].setText(QString("%1").arg(unit.uintVal,0,10));
         idx++;
     }
 }
