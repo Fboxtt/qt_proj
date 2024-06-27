@@ -39,8 +39,11 @@ Widget::Widget(QWidget *parent)
     ui->listWidget->setContextMenuPolicy(Qt::CustomContextMenu); 
     // 链接右击和on_PopupRightMenu槽函数
     connect(ui->listWidget,&QListWidget::customContextMenuRequested,this,&Widget::on_PopupRightMenu); 
-    
-//    ui->gridLayout_14->set
+
+    // 设置listwidget最大宽度
+    ui->listWidget->setMaximumWidth(300);
+
+
 
     // listWidget设置
     ui->listWidget->setWordWrap(true); // 设置可以换行 listwidget格式设置
