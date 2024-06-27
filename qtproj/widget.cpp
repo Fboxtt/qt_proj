@@ -110,7 +110,7 @@ void Widget::on_listWidget_itemClicked(QListWidgetItem *item)
     static int count = 0;
     qDebug() << "listWidget item click" << count;
     count++;
-    this->SetTbsToTableWidget(item, 0);
+    this->SetTbsToTableAndChart(item, 0);
     dcode0.SetStatusToBox(ui);
 }
 
@@ -123,13 +123,13 @@ void Widget::ReadSerialTimeOut()
     ui->listWidget->addItem(receiveDecode);
     int row = ui->listWidget->count();
     ui->listWidget->setCurrentRow(row - 1);
-    this->SetTbsToTableWidget(ui->listWidget->item(row - 1), 1);
+    this->SetTbsToTableAndChart(ui->listWidget->item(row - 1), 1);
 
     dcode0.SetStatusToBox(ui);
 }
 
 // 解析listWidget内的数据，并写入到tableWidget中
-void Widget::SetTbsToTableWidget(QListWidgetItem *item, int flag)
+void Widget::SetTbsToTableAndChart(QListWidgetItem *item, int flag)
 {
 
     // 清除itemTable内的数据，并写入
@@ -283,8 +283,7 @@ void Widget::on_pushButton_8_clicked()
     if (saveFileUrl.isEmpty()) {
 //        QMessageBox::warning(this, "Warning!", "Failed to open the file!");
         ui->lineEdit_2->setText("未选择文件");
-    }
-    else {
+    } else {
         ui->lineEdit_2->setText(saveFileUrl);
     }
 }
@@ -298,4 +297,40 @@ void Widget::on_pushButton_7_clicked()
 void Widget::on_pushButton_2_clicked()
 {
     dcode0.SetStatusToBox(ui);
+}
+
+void Widget::on_pushButton_clicked()
+{
+    QString saveFileUrl = QFileDialog::getOpenFileName(this, tr("Open csv"), "/home/", tr("(*.csv)"));
+    QFile csvFile;
+    if (saveFileUrl.isEmpty()) {
+        ui->lineEdit_3->setText("未选择文件");
+    } else {
+        ui->lineEdit_3->setText(saveFileUrl);
+
+        csv::ReadCsv(&csvFile, saveFileUrl);
+        while(1) {
+            QByteArray lineData = csvFile.readLine();
+            if(lineData == nullptr) {
+                break;
+            }
+            qDebug() << lineData << "||";
+            ui->listWidget->addItem(lineData);
+            if(dcode0.CsvToTbs(lineData) == false) {
+                continue;
+            }
+
+            int row = ui->listWidget->count();
+            ui->listWidget->setCurrentRow(row - 1);
+
+            chartV0->lineAddPoint("pack电压", (*dcode0.tbsUnion)[0].uintVal);
+            chartV0->lineAddPoint("电芯电压", (*dcode0.tbsUnion)[2].uintVal);
+            chartV0->lineAddPoint("ntc1", (*dcode0.tbsUnion)[19].uintVal);
+
+            dcode0.clearTableItem(&itemTableList);
+            dcode0.itemToTable(&itemTableList);
+            dcode0.SetStatusToBox(ui);
+        }
+
+    }
 }

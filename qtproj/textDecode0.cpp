@@ -483,3 +483,33 @@ void textDcode::SetStatusToLBox(QGridLayout *gridLayout, QList<QString> strL, QL
     }
 }
 
+// 把从csv中读取到的行数据写入tbs中
+bool textDcode::CsvToTbs(QByteArray csvData)
+{
+    QString tbsStr = QString::fromLocal8Bit(csvData);
+    tbsStr.remove(QChar::LineFeed);
+    tbsStr.remove(QChar::CarriageReturn);
+    QStringList strList = tbsStr.split(",");
+    if(strList.value(-1) == "")
+    {
+        strList.removeLast();
+    }
+    if(tbsStr.contains(QRegExp("[\\x4e00-\\x9fa5]+"))) {
+        return false;
+    }
+    if(strList.size() != tbsUnit.size())
+    {
+        qDebug() << "csvstring size error" << strList.size() << tbsUnit.size() << strList;
+
+        return false;
+    }
+    int i = 0;
+    bool ok = false;
+    foreach(QString str, strList){
+        tbsUnit[i].uintVal = str.toInt(&ok, 10);
+        qDebug() << tbsUnit[i].uintVal;
+        i++;
+    }
+
+    return true;
+}

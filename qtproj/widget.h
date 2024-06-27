@@ -56,6 +56,8 @@ private slots:
 
     void on_pushButton_2_clicked();
 
+    void on_pushButton_clicked();
+
 private:
     Ui::Widget *ui; //似乎是定义了一个类指针
     QTimer *tim;
@@ -63,7 +65,7 @@ private:
 
 public slots:
     void ReadSerialTimeOut();
-    void SetTbsToTableWidget(QListWidgetItem *item, int flag);
+    void SetTbsToTableAndChart(QListWidgetItem *item, int flag);
     void sendCmdRecieveWave();
 };
 #endif // WIDGET_H

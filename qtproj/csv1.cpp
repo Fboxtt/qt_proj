@@ -70,7 +70,6 @@ void csv::saveCsv(QString fileName, QStringList strListToCsv)
         return;
     }
 
-
     QFile file;
     file.setFileName(fileName);
     if(!file.open(QIODevice::Append))
@@ -89,4 +88,18 @@ void csv::saveCsv(QString fileName, QStringList strListToCsv)
     }
     file.close();
     return;
+}
+
+bool csv::ReadCsv(QFile *file, QString fileName)
+{
+
+    file->setFileName(fileName);
+    if(!file->open(QIODevice::ReadOnly))
+    {
+        qDebug()<<"文件打开失败";
+        file->close();
+        return false;
+    }
+//    QTextCodec* codec = QTextCodec::codecForName("UTF-8");
+    return true;
 }

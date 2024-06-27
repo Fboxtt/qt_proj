@@ -92,7 +92,7 @@
         <item row="1" column="0">
          <widget class="QPushButton" name="pushButton">
           <property name="text">
-           <string>PushButton</string>
+           <string>打开文件</string>
           </property>
          </widget>
         </item>
