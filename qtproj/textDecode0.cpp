@@ -169,7 +169,7 @@ QString textDcode::ByteDecode(QMap<uint32_t, QString> mapCode, uint8_t keys)
 
 
 
-uint32_t textDcode::TbsDecode(QVector<uint8_t> hexVector)
+uint32_t textDcode::CalCheckSum(QVector<uint8_t> hexVector)
 {
     uint32_t checkSum = 0;
     foreach(uint8_t hexVal, hexVector) {
@@ -184,6 +184,7 @@ QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
     QStringList Command = {"地址","高字节","低字节","单板类型","功能码","握手1","握手2","ack","data","check"};
     QVector<uint8_t> hexVector;
     uint32_t dataNum = 0, dataSum = 0, datId = 0;
+    QStringList codeList;
     decodeStr = "";
     bool ok;
 
@@ -192,50 +193,49 @@ QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
     }
 
     for (uint32_t i = 0, limit = Command.size(); i < limit; i++) {
-        qDebug() << i << "datid=" << datId << "decodeStr = " << hexStrLis[datId] << decodeStr;
+        qDebug() << i << "datid=" << datId << "codeList = " << hexStrLis[datId] << codeList;
         if (Command[i] == "地址") {
-            decodeStr.append(hexStrLis[datId] + " ");
+            // codeList.append(hexStrLis[datId]);
         } else if (Command[i] == "高字节") {
-            decodeStr.append(hexStrLis[datId] + " ");
+            // codeList.append(hexStrLis[datId]);
             dataNum += hexVector[datId] * 256;
             dataSum += hexVector[datId];
         } else if (Command[i] == "低字节") {
-            decodeStr.append(hexStrLis[datId] + " ");
+            // codeList.append(hexStrLis[datId]);
             dataNum += hexVector[datId];
             dataSum += hexVector[datId];
             if (dataNum != (uint32_t)hexStrLis.size() - 4) {
                 break;
             }
         } else if (Command[i] == "功能码") {
-            decodeStr.append(this->ByteDecode(this->funcCode, (hexVector[datId]) - 0x80) + " ");
+            codeList.append(this->ByteDecode(this->funcCode, (hexVector[datId]) - 0x80));
             dataSum += hexVector[datId];
         } else if (Command[i] == "ack") {
-            decodeStr.append(this->ByteDecode(this->ackCode, hexVector[datId]) + " ");
+            codeList.append(this->ByteDecode(this->ackCode, hexVector[datId]));
             dataSum += hexVector[datId];
         } else if (Command[i] == "data") {
             qDebug() << "datId" << datId << "dataNum" << dataNum << "hexstrlis size = " << hexStrLis.size();
             if (dataNum == 5) {
             } else if (dataNum > 5) {
-                dataSum += this->TbsDecode(hexVector.mid(i,dataNum - 5));
-                decodeStr.append(hexStrLis.mid(datId, dataNum - 5).join(" ") + " ");
+                dataSum += this->CalCheckSum(hexVector.mid(i,dataNum - 5));
                 datId += dataNum - 5;
             }
             continue;
         } else if (Command[i] == "check") {
             qDebug() << "dataSum = " << dataSum << "& 0xff = " << (dataSum & 0xff);
             if ((dataSum & 0xff) == hexVector[datId]) {
-                decodeStr.append("校验正确");
+                codeList.append("校验正确");
             } else {
-                decodeStr.append("校验错误");
+                codeList.append("校验错误");
             }
         } else {
-            decodeStr.append(hexStrLis[datId] + " ");
+            // codeList.append(hexStrLis[datId]);
             dataSum += hexVector[datId];
         }
         datId++;
     }
-    // qDebug() << "endstr:" << decodeStr;
-    return decodeStr;
+    qDebug() << "codelist.join = " << codeList.join(",");
+    return codeList.join(",");
 }
 
 // 将除了data的所有hex字节数据用 字符 替换。
@@ -243,25 +243,22 @@ QString textDcode::SendCmdDocode(QStringList hexStrLis, QString decodeStr)
 {
     QString Command[8] = {"地址","低字节","高字节","单板类型","功能码","握手1","握手2","check"};
     QString strm;
-    decodeStr = "";
+    QStringList outStrL;
+
     bool ok;
     for (uint32_t i = 0, limit = hexStrLis.size(); i < limit; i++) {
         qDebug() << hexStrLis[i].toInt(&ok, 16) << decodeStr;
-
         if (Command[i] == "功能码") {
-            decodeStr.append(this->ByteDecode(this->funcCode, hexStrLis[i].toInt(&ok, 16)) + " ");
+            outStrL.append(this->ByteDecode(this->funcCode, hexStrLis[i].toInt(&ok, 16)));
         } else if (Command[i] == "ack") {
-            decodeStr.append(this->ByteDecode(this->ackCode, hexStrLis[i].toInt(&ok, 16)) + " ");
-        } else {
-            decodeStr.append(hexStrLis[i] + " ");
+            outStrL.append(this->ByteDecode(this->ackCode, hexStrLis[i].toInt(&ok, 16)));
         }
     }
-    // qDebug() << "endstr:" << decodeStr;
-    return decodeStr;
+    return outStrL.join(",");
 }
 
 // 给输入str，加上时间戳
-QString textDcode::SendDataDecode(Ui::Widget *ui, QString decodeStr)
+QString textDcode::AddTimeStamp(Ui::Widget *ui, QString decodeStr)
 {
     QString outToPlainText;
 //    Data += '\r';//插入换行
@@ -271,11 +268,11 @@ QString textDcode::SendDataDecode(Ui::Widget *ui, QString decodeStr)
     }
     ui->receiveData->appendPlainText(outToPlainText);
 
-    return this->DecodeHexToCommand(ui);
+    return outToPlainText;
 }
 
 // 将plaintext 最后一个block内的可解析数据替换
-QString textDcode::DecodeHexToCommand(Ui::Widget *ui)
+QString textDcode::TextDecode(Ui::Widget *ui)
 {
     QString Command[10] = {"地址","低字节","高字节","单板类型","功能码","握手1","握手2","ack","data","check"};
     QString timeText, dataText;
@@ -307,8 +304,7 @@ QString textDcode::DecodeHexToCommand(Ui::Widget *ui)
     }
 
     if (dataText.contains(QRegExp("^[0-9a-fA-F]{1,}$")) == true) {
-        dataText = "数据非法";
-        return dataText;
+        return QString("数据非法") +"," + timeAndDataList[0] + "->" + timeAndDataList[1];
     }
     qDebug() << textBlock.text() << "text block";
 
@@ -318,23 +314,22 @@ QString textDcode::DecodeHexToCommand(Ui::Widget *ui)
     // 通过长度判断是send还是receive
 
     if (dataList.size() == 8) {
-        dataText = SendCmdDocode(dataList, dataText);
-        // qDebug() << "Decode=8 endstr" << dataText;
-        // send data
+        dataText = SendCmdDocode(dataList, dataText)  + "," + timeAndDataList[0] + "->";
+
     } else if (dataList.size() > 8 && dataList.size() < 200) {
-        dataText = readDataDocode(dataList, dataText);
-        // qDebug() << "Decode>8 endstr" << dataText;
-        // receive data
+        dataText = readDataDocode(dataList, dataText) + "," + timeAndDataList[0] + "->";
+
     } else {
         qDebug() << "无法解析";
-        dataText = "无法解析";
+        dataText = QString("无法解析") + "->" ;
         // error
     }
-
+    qDebug() << "split = " << timeText << dataText;
     //单独解码
 
     //返回并显示
-    return timeText + "->" + dataText;
+    ui->listWidget->addItem(dataText);
+    return "";
 
 }
 

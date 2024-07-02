@@ -40,11 +40,10 @@ Widget::Widget(QWidget *parent)
     // 链接右击和on_PopupRightMenu槽函数
     connect(ui->listWidget,&QListWidget::customContextMenuRequested,this,&Widget::on_PopupRightMenu); 
 
+
+
     // 设置listwidget最大宽度
-    ui->listWidget->setMaximumWidth(300);
-
-
-
+    ui->listWidget->setMaximumWidth(400);
     // listWidget设置
     ui->listWidget->setWordWrap(true); // 设置可以换行 listwidget格式设置
     ui->listWidget->setStyleSheet("QListWidget{font-size:10px;}"); // 设置字体大小 listwidget格式设置
@@ -119,7 +118,7 @@ void Widget::ReadSerialTimeOut()
 {
     se.TimeOut(tim);
 
-    QString receiveDecode = dcode0.DecodeHexToCommand(ui);
+    QString receiveDecode = dcode0.TextDecode(ui);
     ui->listWidget->addItem(receiveDecode);
     int row = ui->listWidget->count();
     ui->listWidget->setCurrentRow(row - 1);
@@ -170,13 +169,13 @@ void Widget::SerialPortReadyRead_slot()
 void Widget::on_sendBox_clicked()
 {
     QString sendData = ui->sendData->toPlainText();
-    sendData = se.on_sendBox_clicked(ui, sendData);
+    sendData = se.SerialSend(ui, sendData);
 
     qDebug() << "sendata = " << sendData;
 
     se.batComSendStatus = serial::COMPLETE;
 
-    QString dcodeData = dcode0.SendDataDecode(ui, sendData);
+    QString dcodeData = dcode0.AddTimeStamp(ui, sendData);
 
     ui->listWidget->addItem(dcodeData);
 }
@@ -187,11 +186,11 @@ void Widget::on_clearReceiveDataButton_clicked()
 }
 void Widget::SendAndDecode(QString sendData)
 {
-    sendData = se.on_sendBox_clicked(ui, sendData);
+    sendData = se.SerialSend(ui, sendData);
     qDebug() << "sendata = " << sendData;
     se.batComSendStatus = serial::COMPLETE;
-    QString dcodeData = dcode0.SendDataDecode(ui, sendData);
-    ui->listWidget->addItem(dcodeData);
+    QString dcodeData = dcode0.AddTimeStamp(ui, sendData);
+    dcode0.TextDecode(ui);;
 }
 void Widget::on_sendTbs_clicked()
 {

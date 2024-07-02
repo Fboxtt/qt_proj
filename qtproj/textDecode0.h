@@ -65,12 +65,12 @@ class textDcode
 public:
     textDcode();
 
-    QString DecodeHexToCommand(Ui::Widget *ui);
+    QString TextDecode(Ui::Widget *ui);
     QString SendCmdDocode(QStringList hexList, QString decodeStr);
     QString ByteDecode(QMap<uint32_t, QString> mapCode, uint8_t keys);
-    QString SendDataDecode(Ui::Widget *ui, QString decodeStr);
+    QString AddTimeStamp(Ui::Widget *ui, QString decodeStr);
     QString readDataDocode(QStringList hexStrLis, QString decodeStr);
-    uint32_t TbsDecode(QVector<uint8_t> hexVector);
+    uint32_t CalCheckSum(QVector<uint8_t> hexVector);
     void itemToTable(QVector<QTableWidgetItem>* itemTableList);
     void clearTableItem(QVector<QTableWidgetItem>* itemTableList);
     QVector<tbs> HexToStr(QStringList dataList);

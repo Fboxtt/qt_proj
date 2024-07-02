@@ -199,7 +199,7 @@ void serial::serial_Read(Ui::Widget *ui, QTimer *tim)
     buffer.clear();
 }
 
-QString serial::on_sendBox_clicked(Ui::Widget *ui, QString Data)
+QString serial::SerialSend(Ui::Widget *ui, QString Data)
 {
     QByteArray Data_1;
     //获取输入窗口sendData的数据
