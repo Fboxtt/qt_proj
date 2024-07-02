@@ -73,7 +73,8 @@ public:
     uint32_t CalCheckSum(QVector<uint8_t> hexVector);
     void itemToTable(QVector<QTableWidgetItem>* itemTableList);
     void clearTableItem(QVector<QTableWidgetItem>* itemTableList);
-    QVector<tbs> HexToStr(QStringList dataList);
+    QVector<tbs> HexWriteTbs(QStringList dataList);
+    QVector<tbs> IntWriteTbs(QStringList dataList);
     void unsignedToSigned(uint32_t val, datTypDic typedic);
     QMap<uint32_t, QString> typeCode;
     QMap<uint32_t, QString> funcCode;

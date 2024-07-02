@@ -234,6 +234,15 @@ QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
         }
         datId++;
     }
+
+    // dataList = timeAndDataList[1].split(" "); // 需要改，防止溢出
+    if(hexStrLis.size() <= 8 || (hexStrLis[3] != "93" && codeList[0] != "bat状态")) {
+        qDebug() << "dataList <= 8 or datalist[4] != 93";
+    } else {
+        // 把数据写入tbsUnit
+        QVector<tbs> decodeList = this->HexWriteTbs(hexStrLis.mid(8, -1)); // 需要改成自适应
+    }
+
     qDebug() << "codelist.join = " << codeList.join(",");
     return codeList.join(",");
 }
@@ -318,17 +327,19 @@ QString textDcode::TextDecode(Ui::Widget *ui)
 
     } else if (dataList.size() > 8 && dataList.size() < 200) {
         dataText = readDataDocode(dataList, dataText) + "," + timeAndDataList[0] + "->";
-
+        foreach(tbs tbsU, tbsUnit) {
+            QString tbsStr;
+            dataText += tbsStr.setNum(tbsU.uintVal, 10) + ",";
+        }
+        ui->listWidget->addItem(dataText);
     } else {
         qDebug() << "无法解析";
         dataText = QString("无法解析") + "->" ;
-        // error
     }
     qDebug() << "split = " << timeText << dataText;
-    //单独解码
 
-    //返回并显示
-    ui->listWidget->addItem(dataText);
+    //单独解码
+    // Widget.SetTbsToTableAndChart(dataText, 1);
     return "";
 
 }
@@ -355,7 +366,7 @@ void textDcode::itemToTable(QVector<QTableWidgetItem>* itemTableList)
 }
 
 // 将字符串str转换成真实的int值，再转换成str写入tbsUnit
-QVector<tbs> textDcode::HexToStr(QStringList dataList)
+QVector<tbs> textDcode::HexWriteTbs(QStringList dataList)
 {
 
     bool ok;
@@ -383,6 +394,25 @@ QVector<tbs> textDcode::HexToStr(QStringList dataList)
     }
     return tbsUnit;
 }
+QVector<tbs> textDcode::IntWriteTbs(QStringList dataList)
+{
+
+    bool ok;
+    QVector<uint8_t> hexVector;
+    uint32_t tbsUnitIdx = 0, uintVal = 0;
+
+    foreach(QString hexStr, dataList) {
+        uintVal = hexStr.toInt(&ok, 10);
+        tbsUnit[tbsUnitIdx].uintVal = uintVal;
+        tbsUnitIdx++;
+        if(tbsUnitIdx >= (uint32_t)tbsUnit.size()) {
+            
+            qDebug() << "tbsUnit.size()" << tbsUnit.size();
+            break;
+        }
+    }
+    return tbsUnit;
+}
 
 
 // 从输入的item判断数据是否是tbs数据，如果是则解析再写入到tbsUnit
@@ -395,14 +425,17 @@ bool textDcode::ItemToTbs(QListWidgetItem *item)
         return false;
     }
 
-    dataList = timeAndDataList[1].split(" "); // 需要改，防止溢出
-    if(dataList.size() <= 8 || (dataList[4] != "93" && dataList[4] != "bat状态")) {
-        qDebug() << "dataList <= 8 or datalist[4] != 93";
-        return false;
+    dataList = timeAndDataList[1].split(","); // 需要改，防止溢出
+    qDebug() << "datalist = " << dataList;
+    // if(dataList.size() <= 8 || (dataList[4] != "93" && dataList[4] != "bat状态")) {
+    //     qDebug() << "dataList <= 8 or datalist[4] != 93";
+    //     return false;
+    // }
+    if(dataList.size() != 37) {
+        qDebug() << dataList.size();
     }
-
     // 把数据写入tbsUnit
-    QVector<tbs> decodeList = this->HexToStr(dataList.mid(8, -1)); // 需要改成自适应
+    QVector<tbs> decodeList = this->IntWriteTbs(dataList); // 需要改成自适应
     return true;
 }
 

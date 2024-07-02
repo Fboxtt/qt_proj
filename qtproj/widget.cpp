@@ -43,7 +43,7 @@ Widget::Widget(QWidget *parent)
 
 
     // 设置listwidget最大宽度
-    ui->listWidget->setMaximumWidth(400);
+    ui->listWidget->setMaximumWidth(300);
     // listWidget设置
     ui->listWidget->setWordWrap(true); // 设置可以换行 listwidget格式设置
     ui->listWidget->setStyleSheet("QListWidget{font-size:10px;}"); // 设置字体大小 listwidget格式设置
@@ -110,7 +110,6 @@ void Widget::on_listWidget_itemClicked(QListWidgetItem *item)
     qDebug() << "listWidget item click" << count;
     count++;
     this->SetTbsToTableAndChart(item, 0);
-    dcode0.SetStatusToBox(ui);
 }
 
 // 串口读取函数的定时器链接的函数，保证接收数据的完整
@@ -119,12 +118,12 @@ void Widget::ReadSerialTimeOut()
     se.TimeOut(tim);
 
     QString receiveDecode = dcode0.TextDecode(ui);
-    ui->listWidget->addItem(receiveDecode);
+
     int row = ui->listWidget->count();
     ui->listWidget->setCurrentRow(row - 1);
     this->SetTbsToTableAndChart(ui->listWidget->item(row - 1), 1);
 
-    dcode0.SetStatusToBox(ui);
+    
 }
 
 // 解析listWidget内的数据，并写入到tableWidget中
@@ -143,6 +142,8 @@ void Widget::SetTbsToTableAndChart(QListWidgetItem *item, int flag)
             chartV0->lineAddPoint("ntc1", (*dcode0.tbsUnion)[19].uintVal);
         }
         dcode0.itemToTable(&itemTableList);
+
+        dcode0.SetStatusToBox(ui);
     }
 
 }
@@ -190,27 +191,28 @@ void Widget::SendAndDecode(QString sendData)
     qDebug() << "sendata = " << sendData;
     se.batComSendStatus = serial::COMPLETE;
     QString dcodeData = dcode0.AddTimeStamp(ui, sendData);
-    dcode0.TextDecode(ui);;
+    dcode0.TextDecode(ui);
 }
 void Widget::on_sendTbs_clicked()
 {
-    QString sendData = "00 00 65 01 93 55 AA 00 13 33 00\
- 00 5F 33 00 00 DA 0C D8 0C D8\
- 0C D5 0C 00 00 00 00 00 00 00\
- 00 00 00 00 00 00 00 00 00 00\
- 00 00 00 00 00 00 00 00 00 00\
- 00 18 00 18 00 00 00 00 00 00\
- 00 AE 0F 40 1F 00 00 00 00 00\
- 00 00 00 00 00 00 00 00 00 00\
- 00 00 00 00 00 00 00 00 00 32\
- 00 50 00 00 00 00 00 00 00 00\
- 00 00 00 2D";
+//     QString sendData = "00 00 65 01 93 55 AA 00 13 33 00\
+//  00 5F 33 00 00 DA 0C D8 0C D8\
+//  0C D5 0C 00 00 00 00 00 00 00\
+//  00 00 00 00 00 00 00 00 00 00\
+//  00 00 00 00 00 00 00 00 00 00\
+//  00 18 00 18 00 00 00 00 00 00\
+//  00 AE 0F 40 1F 00 00 00 00 00\
+//  00 00 00 00 00 00 00 00 00 00\
+//  00 00 00 00 00 00 00 00 00 32\
+//  00 50 00 00 00 00 00 00 00 00\
+//  00 00 00 2D";
+    QString sendData = "00 00 04 01 13 55 AA 17";
     this->SendAndDecode(sendData);
 }
 
 void Widget::on_sendRegisterBox_clicked()
 {
-    QString sendData = "00 00 05 01 81 55 AA 06 8C";
+    QString sendData = "00 00 04 01 01 55 AA 06";
     this->SendAndDecode(sendData);
 }
 

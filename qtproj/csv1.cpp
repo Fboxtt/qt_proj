@@ -34,12 +34,10 @@ void csv::tbsToCsv(Ui::Widget *ui, QString fileName, textDcode* dcode0)
         item = ui->listWidget->item(idx);
         timeAndDataList = item->text().split("->");
         dataList = timeAndDataList[1].split(" "); // 需要改，设置成固定函数
-        if(dataList.size() <= 8) {
-            continue;
-        }
-        QVector<tbs> decodeList = dcode0->HexToStr(dataList.mid(8, -1)); // 需要改成自适应
-//        csv::saveCsv(ui->lineEdit_2->text(), decodeList);
 
+        QVector<tbs> decodeList = dcode0->IntWriteTbs(dataList); // 需要改成自适应
+//        csv::saveCsv(ui->lineEdit_2->text(), decodeList);
+        // qDebug() << "strListToCsv" << strListToCsv;
         if(idx == 0) { // 写入标题
             foreach(tbs tbsUnit, decodeList) {
                 strToCsv += tbsUnit.valName + ",";
@@ -56,7 +54,7 @@ void csv::tbsToCsv(Ui::Widget *ui, QString fileName, textDcode* dcode0)
         strToCsv += "\n";
         strListToCsv.append(strToCsv);
     }
-
+    qDebug() << "strListToCsv" << strListToCsv;
     csv::saveCsv(fileName, strListToCsv);
 }
 
