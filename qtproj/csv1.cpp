@@ -30,29 +30,32 @@ void csv::tbsToCsv(Ui::Widget *ui, QString fileName, textDcode* dcode0)
     QStringList strListToCsv;
     QString strToCsv;
     QListWidgetItem *item;
+    qDebug() << "listwidgetcount" << ui->listWidget->count();
     for(int idx = 0, limit = ui->listWidget->count(); idx < limit; idx++) {
-        item = ui->listWidget->item(idx);
-        timeAndDataList = item->text().split("->");
-        dataList = timeAndDataList[1].split(" "); // 需要改，设置成固定函数
 
-        QVector<tbs> decodeList = dcode0->IntWriteTbs(dataList); // 需要改成自适应
-//        csv::saveCsv(ui->lineEdit_2->text(), decodeList);
-        // qDebug() << "strListToCsv" << strListToCsv;
         if(idx == 0) { // 写入标题
-            foreach(tbs tbsUnit, decodeList) {
+            strToCsv = "前缀,";
+            foreach(tbs tbsUnit, *dcode0->tbsUnion) {
                 strToCsv += tbsUnit.valName + ",";
-
             }
             strToCsv += "\n";
+            strListToCsv.append(strToCsv);
+            continue;
         }
-        strListToCsv.append(strToCsv);
+        // qDebug() << "idx" << idx;
+        item = ui->listWidget->item(idx);
+        // timeAndDataList = item->text().split("->");
+        // dataList = timeAndDataList[1].split(","); // 需要改，设置成固定函数
 
-        strToCsv = "";
-        foreach(tbs tbsUnit, decodeList) {
-            strToCsv += QString("%1").arg(tbsUnit.uintVal,0,10) + ",";
-        }
-        strToCsv += "\n";
-        strListToCsv.append(strToCsv);
+        // QVector<tbs> decodeList = dcode0->IntWriteTbs(dataList); // 需要改成自适应
+
+        // strToCsv = "";
+
+        // foreach(tbs tbsUnit, decodeList) {
+        //     strToCsv += QString("%1").arg(tbsUnit.uintVal,0,10) + ",";
+        // }
+
+         strListToCsv.append(item->text() + "\n");
     }
     qDebug() << "strListToCsv" << strListToCsv;
     csv::saveCsv(fileName, strListToCsv);

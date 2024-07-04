@@ -25,7 +25,9 @@ QVector<QTableWidgetItem> itemTableList(80);
 
 chartV* chartV0;
 
-
+#define BAT_SEP (",")
+#define COMUT_SEP (";")
+#define COMUT_SET ("->,")
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
@@ -117,7 +119,7 @@ void Widget::ReadSerialTimeOut()
 {
     se.TimeOut(tim);
 
-    QString receiveDecode = dcode0.TextDecode(ui);
+    QString receiveDecode = dcode0.PlainTextDecode(ui);
 
     int row = ui->listWidget->count();
     ui->listWidget->setCurrentRow(row - 1);
@@ -191,7 +193,7 @@ void Widget::SendAndDecode(QString sendData)
     qDebug() << "sendata = " << sendData;
     se.batComSendStatus = serial::COMPLETE;
     QString dcodeData = dcode0.AddTimeStamp(ui, sendData);
-    dcode0.TextDecode(ui);
+    dcode0.PlainTextDecode(ui);
 }
 void Widget::on_sendTbs_clicked()
 {
@@ -299,7 +301,7 @@ void Widget::on_pushButton_2_clicked()
 {
     dcode0.SetStatusToBox(ui);
 }
-
+// 读取csv的数据，并解析
 void Widget::on_pushButton_clicked()
 {
     QString saveFileUrl = QFileDialog::getOpenFileName(this, tr("Open csv"), "/home/", tr("(*.csv)"));
@@ -310,14 +312,15 @@ void Widget::on_pushButton_clicked()
         ui->lineEdit_3->setText(saveFileUrl);
 
         csv::ReadCsv(&csvFile, saveFileUrl);
-        while(1) {
+        while(true) {
             QByteArray lineData = csvFile.readLine();
             if(lineData == nullptr) {
                 break;
             }
             qDebug() << lineData << "||";
             ui->listWidget->addItem(lineData);
-            if(dcode0.CsvToTbs(lineData) == false) {
+            QListWidgetItem* item = ui->listWidget->item(ui->listWidget->count() - 1);
+            if(dcode0.ItemToTbs(item) == false) {
                 continue;
             }
 

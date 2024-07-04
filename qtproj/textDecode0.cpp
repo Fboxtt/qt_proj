@@ -273,7 +273,7 @@ QString textDcode::AddTimeStamp(Ui::Widget *ui, QString decodeStr)
 //    Data += '\r';//插入换行
     qDebug() << ui->TimeCheckBox->isChecked() << "time checkbox";
     if (ui->TimeCheckBox->isChecked()) {
-        outToPlainText = QString("[%1]:TX&->").arg(QTime::currentTime().toString("HH:mm:ss:zzz")) + decodeStr;
+        outToPlainText = QString("[%1]:TX&->;").arg(QTime::currentTime().toString("HH:mm:ss:zzz")) + decodeStr;
     }
     ui->receiveData->appendPlainText(outToPlainText);
 
@@ -281,7 +281,7 @@ QString textDcode::AddTimeStamp(Ui::Widget *ui, QString decodeStr)
 }
 
 // 将plaintext 最后一个block内的可解析数据替换
-QString textDcode::TextDecode(Ui::Widget *ui)
+QString textDcode::PlainTextDecode(Ui::Widget *ui)
 {
     QString Command[10] = {"地址","低字节","高字节","单板类型","功能码","握手1","握手2","ack","data","check"};
     QString timeText, dataText;
@@ -302,20 +302,24 @@ QString textDcode::TextDecode(Ui::Widget *ui)
     blockCount = ui->receiveData->blockCount();
 
     textBlock = doc->findBlockByNumber(blockCount - 1); // 获得末尾的text
-
+    qDebug() << "doc" << doc;
     dataText = textBlock.text();
     timeText = "";
-
+    qDebug() << "dataText" << dataText;
+    if (!dataText.contains(";", Qt::CaseSensitive)) {
+        timeAndDataList = dataText.split(";"); // 和时间戳分开
+        return QString("数据非法") + dataText;
+    }
     if (dataText.contains("->", Qt::CaseSensitive)) {
-        timeAndDataList = dataText.split("->"); // 和时间戳分开
+        timeAndDataList = dataText.split(";"); // 和时间戳分开
         timeText = timeAndDataList[0];
         dataText = timeAndDataList[1];
     }
 
     if (dataText.contains(QRegExp("^[0-9a-fA-F]{1,}$")) == true) {
-        return QString("数据非法") +"," + timeAndDataList[0] + "->" + timeAndDataList[1];
+        return QString("数据非法") +"," + timeAndDataList[0] + ";" + timeAndDataList[1];
     }
-    qDebug() << textBlock.text() << "text block";
+    qDebug()  << "text block" << textBlock.text();
 
     dataList = dataText.simplified().split(' ');
 
@@ -323,10 +327,10 @@ QString textDcode::TextDecode(Ui::Widget *ui)
     // 通过长度判断是send还是receive
 
     if (dataList.size() == 8) {
-        dataText = SendCmdDocode(dataList, dataText)  + "," + timeAndDataList[0] + "->";
+        dataText = SendCmdDocode(dataList, dataText)  + "," + timeAndDataList[0] + ";";
 
     } else if (dataList.size() > 8 && dataList.size() < 200) {
-        dataText = readDataDocode(dataList, dataText) + "," + timeAndDataList[0] + "->";
+        dataText = readDataDocode(dataList, dataText) + "," + timeAndDataList[0] + ";";
         foreach(tbs tbsU, tbsUnit) {
             QString tbsStr;
             dataText += tbsStr.setNum(tbsU.uintVal, 10) + ",";
@@ -334,7 +338,7 @@ QString textDcode::TextDecode(Ui::Widget *ui)
         ui->listWidget->addItem(dataText);
     } else {
         qDebug() << "无法解析";
-        dataText = QString("无法解析") + "->" ;
+        dataText = QString("无法解析") + ";" ;
     }
     qDebug() << "split = " << timeText << dataText;
 
@@ -406,7 +410,7 @@ QVector<tbs> textDcode::IntWriteTbs(QStringList dataList)
         tbsUnit[tbsUnitIdx].uintVal = uintVal;
         tbsUnitIdx++;
         if(tbsUnitIdx >= (uint32_t)tbsUnit.size()) {
-            
+
             qDebug() << "tbsUnit.size()" << tbsUnit.size();
             break;
         }
@@ -420,7 +424,7 @@ bool textDcode::ItemToTbs(QListWidgetItem *item)
 {
     QStringList timeAndDataList, dataList;
 
-    timeAndDataList = item->text().split("->");
+    timeAndDataList = item->text().split(";");
     if(timeAndDataList.begin()->contains("TX") || timeAndDataList.size() < 2) {
         return false;
     }
@@ -522,9 +526,9 @@ bool textDcode::CsvToTbs(QByteArray csvData)
     {
         strList.removeLast();
     }
-    if(tbsStr.contains(QRegExp("[\\x4e00-\\x9fa5]+"))) {
-        return false;
-    }
+//    if(tbsStr.contains(QRegExp("[\\x4e00-\\x9fa5]+"))) {
+//        return false;
+//    }
     if(strList.size() != tbsUnit.size())
     {
         qDebug() << "csvstring size error" << strList.size() << tbsUnit.size() << strList;

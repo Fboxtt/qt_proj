@@ -65,7 +65,7 @@ class textDcode
 public:
     textDcode();
 
-    QString TextDecode(Ui::Widget *ui);
+    QString PlainTextDecode(Ui::Widget *ui);
     QString SendCmdDocode(QStringList hexList, QString decodeStr);
     QString ByteDecode(QMap<uint32_t, QString> mapCode, uint8_t keys);
     QString AddTimeStamp(Ui::Widget *ui, QString decodeStr);

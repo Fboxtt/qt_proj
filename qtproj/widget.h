@@ -68,4 +68,9 @@ public slots:
     void SetTbsToTableAndChart(QListWidgetItem *item, int flag);
     void sendCmdRecieveWave();
 };
+
+#define BAT_SEP (",")
+#define COMUT_SEP (";")
+#define COMUT_BAT_SEP ("->,")
+
 #endif // WIDGET_H
