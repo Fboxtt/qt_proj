@@ -71,6 +71,6 @@ public slots:
 
 #define BAT_SEP (",")
 #define COMUT_SEP (";")
-#define COMUT_BAT_SEP ("->,")
+#define COMUT_BAT_SEP (";,")
 
 #endif // WIDGET_H

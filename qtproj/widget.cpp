@@ -25,9 +25,7 @@ QVector<QTableWidgetItem> itemTableList(80);
 
 chartV* chartV0;
 
-#define BAT_SEP (",")
-#define COMUT_SEP (";")
-#define COMUT_SET ("->,")
+
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)

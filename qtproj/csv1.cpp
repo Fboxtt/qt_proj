@@ -34,9 +34,9 @@ void csv::tbsToCsv(Ui::Widget *ui, QString fileName, textDcode* dcode0)
     for(int idx = 0, limit = ui->listWidget->count(); idx < limit; idx++) {
 
         if(idx == 0) { // 写入标题
-            strToCsv = "前缀,";
+            strToCsv += "前缀,";
             foreach(tbs tbsUnit, *dcode0->tbsUnion) {
-                strToCsv += tbsUnit.valName + ",";
+                strToCsv += tbsUnit.valName + BAT_SEP;
             }
             strToCsv += "\n";
             strListToCsv.append(strToCsv);

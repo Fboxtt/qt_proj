@@ -183,10 +183,10 @@ void serial::serial_Read(Ui::Widget *ui, QTimer *tim)
         }
         if (ui->TimeCheckBox->isChecked() && serial::batComSendStatus != serial::INCOMPLETE) // 加时间戳
         {
-            receive += QString("[%1]:RX ->;").arg(QTime::currentTime().toString("HH:mm:ss:zzz"));
+            receive += QString("[%1]:RX ->").arg(QTime::currentTime().toString("HH:mm:ss:zzz")) + COMUT_BAT_SEP;
         }
         if(ui->hexDisplay->checkState() == Qt::Unchecked){ // 加数据
-            receive += QString(buffer);
+            receive += QString(buffer); 
         }//直接显示
         else{
             receive += QString(buffer_1);
