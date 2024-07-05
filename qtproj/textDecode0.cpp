@@ -459,7 +459,7 @@ void textDcode::SetStatusToBox(Ui::Widget *ui)
 void textDcode::SetStatusToGBox(QGridLayout *gridLayout)
 {
     int i = 0;
-    qDebug() << " protect status" << tbsUnit[29].uintVal;
+    // qDebug() << " protect status" << tbsUnit[29].uintVal;
 
     foreach(QString statName, alarmStat)
     {
@@ -493,7 +493,7 @@ void textDcode::SetStatusToGBox(QGridLayout *gridLayout)
 void textDcode::SetStatusToLBox(QGridLayout *gridLayout, QList<QString> strL, QList<QLabel*> labelL, uint32_t val)
 {
     int i = 0;
-    qDebug() << "status val" << val;
+    // qDebug() << "status val" << val;
 
     foreach(QString statName, strL)
     {
@@ -513,11 +513,17 @@ void textDcode::SetStatusToLBox(QGridLayout *gridLayout, QList<QString> strL, QL
         } else {
             labelL[iX3 + 1]->setStyleSheet("QLabel { background-color: green}");
         }
-        qDebug() << i << iX3;
+//        qDebug() << i << iX3;
         i++;
     }
 }
 
+QString textDcode::GetTime(QString csvData)
+{
+    int left = csvData.indexOf("[") + 1;
+    int right = csvData.indexOf("]") - 1;
+    return csvData.mid(left, right - left + 1);
+}
 // // 把从csv中读取到的行数据写入tbs中
 // bool textDcode::CsvToTbs(QByteArray csvData)
 // {

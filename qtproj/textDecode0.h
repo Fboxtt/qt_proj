@@ -87,6 +87,8 @@ public:
     void SetStatusToLBox(QGridLayout *gridLayout, QList<QString> strL, QList<QLabel*> labelL, uint32_t val);
 
     bool CsvToTbs(QByteArray csvData);
+
+    QString GetTime(QString csvData);
 private:
 
 };

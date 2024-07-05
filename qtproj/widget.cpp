@@ -137,9 +137,9 @@ void Widget::SetTbsToTableAndChart(QListWidgetItem *item, int flag)
     qDebug() << "=================" << dcode0.ItemToTbs(item->text()) << flag;
     if(dcode0.ItemToTbs(item->text())) {
         if(flag == 1) {
-            chartV0->lineAddPoint("pack电压", (*dcode0.tbsUnion)[0].uintVal);
-            chartV0->lineAddPoint("电芯电压", (*dcode0.tbsUnion)[2].uintVal);
-            chartV0->lineAddPoint("ntc1", (*dcode0.tbsUnion)[19].uintVal);
+            chartV0->lineAddPoint("pack电压", QTime::currentTime(), (*dcode0.tbsUnion)[0].uintVal);
+            chartV0->lineAddPoint("电芯电压", QTime::currentTime(), (*dcode0.tbsUnion)[2].uintVal);
+            chartV0->lineAddPoint("ntc1",    QTime::currentTime(), (*dcode0.tbsUnion)[19].uintVal);
         }
         dcode0.itemToTable(&itemTableList);
 
@@ -231,6 +231,7 @@ void Widget::on_pushButton_3_clicked()
         tbsTim->start();
         ui->pushButton_3->setText("停止读取tbs");
 
+
     } else if (ui->pushButton_3->text() == "停止读取tbs") {
         tbsTim->stop();
         ui->pushButton_3->setText("继续读取tbs");
@@ -310,12 +311,15 @@ void Widget::on_pushButton_clicked()
         ui->lineEdit_3->setText(saveFileUrl);
 
         csv::ReadCsv(&csvFile, saveFileUrl);
+        chartV0->lineClearPoint("pack电压");
+        chartV0->lineClearPoint("电芯电压");
+        chartV0->lineClearPoint("ntc1");
         while(true) {
             QByteArray lineData = csvFile.readLine();
             if(lineData == nullptr) {
                 break;
             }
-            qDebug() << lineData << "||";
+            // qDebug() << lineData << "||";
 
             ui->listWidget->addItem(lineData);
             QListWidgetItem* item = ui->listWidget->item(ui->listWidget->count() - 1);
@@ -324,14 +328,18 @@ void Widget::on_pushButton_clicked()
                 ui->listWidget->takeItem(ui->listWidget->count() - 1);
                 continue;
             }
+            QString TimStr = dcode0.GetTime(item->text());
+
 
 
             int row = ui->listWidget->count();
             ui->listWidget->setCurrentRow(row - 1);
 
-            chartV0->lineAddPoint("pack电压", (*dcode0.tbsUnion)[0].uintVal);
-            chartV0->lineAddPoint("电芯电压", (*dcode0.tbsUnion)[2].uintVal);
-            chartV0->lineAddPoint("ntc1", (*dcode0.tbsUnion)[19].uintVal);
+//            qDebug() << "TimStr" << TimStr;
+//            qDebug() << "1 time " << QTime::fromString(TimStr, "HH:mm:ss:zzz").toString("HH:mm:ss:zzz");
+            chartV0->lineAddPoint("pack电压", QTime::fromString(TimStr, "HH:mm:ss:zzz"),(*dcode0.tbsUnion)[0].uintVal);
+            chartV0->lineAddPoint("电芯电压", QTime::fromString(TimStr, "HH:mm:ss:zzz"), (*dcode0.tbsUnion)[2].uintVal);
+            chartV0->lineAddPoint("ntc1",    QTime::fromString(TimStr, "HH:mm:ss:zzz"), (*dcode0.tbsUnion)[19].uintVal);
 
             dcode0.clearTableItem(&itemTableList);
             dcode0.itemToTable(&itemTableList);

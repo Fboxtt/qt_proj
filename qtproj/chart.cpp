@@ -38,12 +38,12 @@ void chartV::addNewChart(QWidget *parent, QString chartName, QString lineName, Q
 
     chart1->addNewLine(lineName, axisYName);
 }
-void chartV::lineAddPoint(QString lineName, int newY)
+void chartV::lineAddPoint(QString lineName, QTime inputTim, int newY)
 {
     QLineSeries* series = nullptr;
     chart* chDest = nullptr;
     static int x = 0;
-    static QTime startTim = QTime::currentTime();
+//    static QTime FirstPTim = QTime::currentTime();
 
     foreach(chart* ch0, this->chartMap.values()) {
         if(ch0->seriesMap.contains(lineName)) {
@@ -57,7 +57,11 @@ void chartV::lineAddPoint(QString lineName, int newY)
         return;
     }
 
-    x = startTim.secsTo(QTime::currentTime());
+    if(series->count() == 0){
+        chDest->firstTim = inputTim;
+    }
+//    qDebug() << "2 fist time" << chDest->firstTim.toString() << "inputTim" << inputTim.toString();
+    x = chDest->firstTim.secsTo(inputTim);
     *(series) << QPointF(x,newY);
 
     // 求出曲线极值，让Y轴随着Y极值变化，形成活动窗口
@@ -69,7 +73,34 @@ void chartV::lineAddPoint(QString lineName, int newY)
     }
 
     chDest->axisX->setRange(0, x);
-    qDebug() << "x = " << startTim.secsTo(QTime::currentTime()) << "newy = " << newY;
+    qDebug() << "x = " << x << "newy = " << newY;
+}
+
+void chartV::lineClearPoint(QString lineName)
+{
+    QLineSeries* series = nullptr;
+    chart* chDest = nullptr;
+
+    foreach(chart* ch0, this->chartMap.values()) {
+        if(ch0->seriesMap.contains(lineName)) {
+            chDest = ch0;
+            series = ch0->seriesMap.value(lineName);
+        }
+    }
+
+    if(series == nullptr) {
+        qDebug() << "not this series" << lineName;
+        return;
+    }
+
+    series->clear();
+
+    chDest->maxY = 5;
+    chDest->minY = 0;
+    // 求出曲线极值，让Y轴随着Y极值变化，形成活动窗口
+
+    chDest->axisX->setRange(0, 1);
+//    qDebug() << "x = " << inputTim.secsTo(QTime::currentTime()) << "newy = " << newY;
 }
 
 void chart::addNewLine(QString lineName, QString axisYName)
