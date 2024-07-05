@@ -43,7 +43,7 @@ Widget::Widget(QWidget *parent)
 
 
     // 设置listwidget最大宽度
-    ui->listWidget->setMaximumWidth(300);
+    // ui->listWidget->setMaximumWidth(300);
     // listWidget设置
     ui->listWidget->setWordWrap(true); // 设置可以换行 listwidget格式设置
     ui->listWidget->setStyleSheet("QListWidget{font-size:10px;}"); // 设置字体大小 listwidget格式设置
@@ -134,8 +134,8 @@ void Widget::SetTbsToTableAndChart(QListWidgetItem *item, int flag)
     dcode0.clearTableItem(&itemTableList);
 
     // 判断listwidget最后一个item是否是tbs数据，是则写入到tbsUnit中
-    qDebug() << "=================" << dcode0.ItemToTbs(item) << flag;
-    if(dcode0.ItemToTbs(item)) {
+    qDebug() << "=================" << dcode0.ItemToTbs(item->text()) << flag;
+    if(dcode0.ItemToTbs(item->text())) {
         if(flag == 1) {
             chartV0->lineAddPoint("pack电压", (*dcode0.tbsUnion)[0].uintVal);
             chartV0->lineAddPoint("电芯电压", (*dcode0.tbsUnion)[2].uintVal);
@@ -316,11 +316,15 @@ void Widget::on_pushButton_clicked()
                 break;
             }
             qDebug() << lineData << "||";
+
             ui->listWidget->addItem(lineData);
             QListWidgetItem* item = ui->listWidget->item(ui->listWidget->count() - 1);
-            if(dcode0.ItemToTbs(item) == false) {
+            if(dcode0.ItemToTbs(item->text()) == false) {
+                qDebug() << "csv itemtotbs false";
+                ui->listWidget->takeItem(ui->listWidget->count() - 1);
                 continue;
             }
+
 
             int row = ui->listWidget->count();
             ui->listWidget->setCurrentRow(row - 1);

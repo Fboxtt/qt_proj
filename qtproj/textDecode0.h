@@ -81,7 +81,7 @@ public:
     QMap<uint32_t, QString> ackCode;
 
     QVector<tbs>* tbsUnion;
-    bool ItemToTbs(QListWidgetItem *item);
+    bool ItemToTbs(QString text);
     void SetStatusToBox(Ui::Widget *ui);
     void SetStatusToGBox(QGridLayout *gridLayout);
     void SetStatusToLBox(QGridLayout *gridLayout, QList<QString> strL, QList<QLabel*> labelL, uint32_t val);

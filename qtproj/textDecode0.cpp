@@ -423,11 +423,11 @@ QVector<tbs> textDcode::IntWriteTbs(QStringList dataList)
 
 
 // 从输入的item判断数据是否是tbs数据，如果是则解析再写入到tbsUnit
-bool textDcode::ItemToTbs(QListWidgetItem *item)
+bool textDcode::ItemToTbs(QString text)
 {
     QStringList timeAndDataList, dataList;
 
-    timeAndDataList = item->text().split(COMUT_BAT_SEP);
+    timeAndDataList = text.split(COMUT_BAT_SEP);
     if(timeAndDataList.begin()->contains("TX") || timeAndDataList.size() < 2) {
         return false;
     }
