@@ -102,7 +102,24 @@ void chartV::lineClearPoint(QString lineName)
     chDest->axisX->setRange(0, 1);
 //    qDebug() << "x = " << inputTim.secsTo(QTime::currentTime()) << "newy = " << newY;
 }
+void chartV::ClearAllSeries(void)
+{
 
+    foreach(chart* ch0, this->chartMap.values()) {
+        foreach(QLineSeries* series, ch0->seriesMap.values()) {
+            if(series == nullptr) {
+                qDebug() << "not this series";
+                continue;
+            }
+            series->clear();
+
+            ch0->maxY = 5;
+            ch0->minY = 0;
+            // 求出曲线极值，让Y轴随着Y极值变化，形成活动窗口
+            ch0->axisX->setRange(0, 1);
+        }
+    }
+}
 void chart::addNewLine(QString lineName, QString axisYName)
 {
     if(seriesMap.contains(lineName))

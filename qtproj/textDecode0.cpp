@@ -191,7 +191,7 @@ QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
     foreach(QString hexStr, hexStrLis) {
         hexVector.append((uint8_t)hexStr.toInt(&ok, 16));
     }
-
+    qDebug() << "size hexStrLis = " << hexStrLis.size() << "decodeStr.lenth = " << decodeStr.length();
     for (uint32_t i = 0, limit = Command.size(); i < limit; i++) {
         qDebug() << i << "datid=" << datId << "codeList = " << hexStrLis[datId] << codeList;
         if (Command[i] == "地址") {
@@ -524,35 +524,4 @@ QString textDcode::GetTime(QString csvData)
     int right = csvData.indexOf("]") - 1;
     return csvData.mid(left, right - left + 1);
 }
-// // 把从csv中读取到的行数据写入tbs中
-// bool textDcode::CsvToTbs(QByteArray csvData)
-// {
-//     QString tbsStr = QString::fromLocal8Bit(csvData);
-//     tbsStr.remove(QChar::LineFeed);
-//     tbsStr.remove(QChar::CarriageReturn);
-//     QStringList strList = tbsStr.split(",");
-//     if(strList.value(-1) == "") {
-//         strList.removeLast();
-//     }
-//     if(strList.value(0) == "") {
-//         strList.removeFirst();
-//     }
-// //    if(tbsStr.contains(QRegExp("[\\x4e00-\\x9fa5]+"))) {
-// //        return false;
-// //    }
-//     if(strList.size() != tbsUnit.size())
-//     {
-//         qDebug() << "csvstring size error" << strList.size() << tbsUnit.size() << strList;
 
-//         return false;
-//     }
-//     int i = 0;
-//     bool ok = false;
-//     foreach(QString str, strList){
-//         tbsUnit[i].uintVal = str.toInt(&ok, 10);
-//         qDebug() << tbsUnit[i].uintVal;
-//         i++;
-//     }
-
-//     return true;
-// }

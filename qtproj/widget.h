@@ -61,7 +61,7 @@ private slots:
 private:
     Ui::Widget *ui; //似乎是定义了一个类指针
     QTimer *tim;
-    QTimer *tbsTim;
+    QTimer *tbsTim = nullptr;
 
 public slots:
     void ReadSerialTimeOut();

@@ -36,6 +36,7 @@ public:
     void addNewChart(QWidget *parent, QString chartName, QString lineName, QString axisYName);
     void lineAddPoint(QString lineName, QTime inputTim, int newY);
     void lineClearPoint(QString lineName);
+    void ClearAllSeries(void);
 };
 
 #endif // CHART_H

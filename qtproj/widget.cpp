@@ -225,12 +225,14 @@ void Widget::sendCmdRecieveWave()
 void Widget::on_pushButton_3_clicked()
 {
     if(ui->pushButton_3->text() == "开始读取tbs") {
-        tbsTim = new QTimer();
-        tbsTim->setInterval(1000);
-        connect(tbsTim, SIGNAL(timeout()), this, SLOT(sendCmdRecieveWave()));
+        if(tbsTim == nullptr) {
+            tbsTim = new QTimer();
+            tbsTim->setInterval(1000);
+            connect(tbsTim, SIGNAL(timeout()), this, SLOT(sendCmdRecieveWave()));
+        }
+        chartV0->ClearAllSeries();
         tbsTim->start();
         ui->pushButton_3->setText("停止读取tbs");
-
 
     } else if (ui->pushButton_3->text() == "停止读取tbs") {
         tbsTim->stop();
@@ -239,6 +241,7 @@ void Widget::on_pushButton_3_clicked()
     } else if (ui->pushButton_3->text() == "继续读取tbs") {
         tbsTim->start();
         ui->pushButton_3->setText("停止读取tbs");
+        chartV0->ClearAllSeries();
     }
 
 }
@@ -268,6 +271,7 @@ void Widget::on_PopupRightMenu(const QPoint& pos)
 void Widget::on_clearReceiveDataButton_2_clicked()
 {
     ui->listWidget->clear();
+    chartV0->ClearAllSeries();
 }
 
 
@@ -319,24 +323,26 @@ void Widget::on_pushButton_clicked()
             if(lineData == nullptr) {
                 break;
             }
-            // qDebug() << lineData << "||";
 
+            //去除item
             ui->listWidget->addItem(lineData);
             QListWidgetItem* item = ui->listWidget->item(ui->listWidget->count() - 1);
+            //判断item->是否有效
             if(dcode0.ItemToTbs(item->text()) == false) {
                 qDebug() << "csv itemtotbs false";
+                // 删除无效item
                 ui->listWidget->takeItem(ui->listWidget->count() - 1);
                 continue;
             }
+            // 获取text内的时间戳
             QString TimStr = dcode0.GetTime(item->text());
 
 
-
+            // 移动光标到最新item
             int row = ui->listWidget->count();
             ui->listWidget->setCurrentRow(row - 1);
 
-//            qDebug() << "TimStr" << TimStr;
-//            qDebug() << "1 time " << QTime::fromString(TimStr, "HH:mm:ss:zzz").toString("HH:mm:ss:zzz");
+            // 添加从item中解析到的数据到tablewidget，label，listwidget中
             chartV0->lineAddPoint("pack电压", QTime::fromString(TimStr, "HH:mm:ss:zzz"),(*dcode0.tbsUnion)[0].uintVal);
             chartV0->lineAddPoint("电芯电压", QTime::fromString(TimStr, "HH:mm:ss:zzz"), (*dcode0.tbsUnion)[2].uintVal);
             chartV0->lineAddPoint("ntc1",    QTime::fromString(TimStr, "HH:mm:ss:zzz"), (*dcode0.tbsUnion)[19].uintVal);
