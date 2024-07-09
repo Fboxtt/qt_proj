@@ -236,12 +236,12 @@ QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
     }
 
     // dataList = timeAndDataList[1].split(" "); // 需要改，防止溢出
-    if(hexStrLis.size() <= 8 || (hexStrLis[3] != "93" && codeList[0] != "bat状态")) {
+    if(hexStrLis.size() <= 8 || (hexStrLis[4] != "93")) {
         qDebug() << "dataList <= 8 or datalist[4] != 93";
     } else {
         // 把数据写入tbsUnit
         QVector<tbs> decodeList = this->HexWriteTbs(hexStrLis.mid(8, -1)); // 需要改成自适应
-    }
+    } 
 
     qDebug() << "codelist.join = " << codeList.join(COMUT_SEP);
     return codeList.join(COMUT_SEP);
