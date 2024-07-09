@@ -48,7 +48,7 @@ void chartV::lineAddPoint(QString lineName, QTime inputTim, int newY)
     foreach(chart* ch0, this->chartMap.values()) {
         if(ch0->seriesMap.contains(lineName)) {
             chDest = ch0;
-            series = ch0->seriesMap.value(lineName);
+            series = chDest->seriesMap.value(lineName);
         }
     }
 
