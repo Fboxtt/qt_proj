@@ -125,6 +125,8 @@ void serial::ClickOpenSerPort(Ui::Widget *ui)
         ui->searchBtn->setEnabled(false);
         //发送按键使能
         ui->sendBox->setEnabled(true);
+        // 读取tbs按键使能
+        ui->pushButton_3->setEnabled(true);
     }
     // 关闭串口
     else
@@ -141,6 +143,9 @@ void serial::ClickOpenSerPort(Ui::Widget *ui)
         ui->searchBtn->setEnabled(true);
         //发送按键使能
         ui->sendBox->setEnabled(false);
+        // 读取tbs按键关闭
+        ui->pushButton_3->setEnabled(false);
+
     }
 }
 void serial::TimeOut(QTimer *tim)

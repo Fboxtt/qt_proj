@@ -25,7 +25,6 @@ QVector<QTableWidgetItem> itemTableList(80);
 
 chartV* chartV0;
 
-
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
@@ -219,6 +218,14 @@ void Widget::on_sendRegisterBox_clicked()
 void Widget::sendCmdRecieveWave()
 {
     QString sendData = "00 00 04 01 13 55 AA 17";
+    // 如果串口处于关闭状态，并且tbs正在读取中，则停止tbs读取
+    if(ui->openBtn->text() == "打开串口") {
+        if (ui->pushButton_3->text() == "停止读取tbs") {
+            this->on_pushButton_3_clicked();
+            ui->pushButton_3->setEnabled(false);
+        }
+        return;
+    }
     this->SendAndDecode(sendData);
 }
 
