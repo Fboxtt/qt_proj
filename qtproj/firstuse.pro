@@ -18,6 +18,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     csv1.cpp \
+    hexDecode.cpp \
     main.cpp \
     openSeril0.cpp \
     textDecode0.cpp \
@@ -27,6 +28,7 @@ SOURCES += \
 
 HEADERS += \
     csv1.h \
+    hexDecode.h \
     serial0.h \
     textDecode0.h \
     chart.h \
