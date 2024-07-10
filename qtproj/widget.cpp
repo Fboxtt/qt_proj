@@ -17,13 +17,14 @@
 #include "serial0.h"
 #include "csv1.h"
 #include "chart.h"
-
+#include "hexDecode.h"
 
 serial se;
 textDcode dcode0;
 QVector<QTableWidgetItem> itemTableList(80);
 
 chartV* chartV0;
+hexDecode hexFile;
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -89,12 +90,19 @@ void Widget::on_selectFileButton_clicked()
 {
     QString fileName = QFileDialog::getOpenFileName(this,
           tr("Open hex"), "/home/jana", tr("(*.hex)"));
+
+    QFile file;
     if (fileName.isEmpty()) {
 //        QMessageBox::warning(this, "Warning!", "Failed to open the file!");
         ui->lineEdit->setText("未选择文件");
     }
     else {
         ui->lineEdit->setText(fileName);
+        if(hexFile.OpenHexFile(&file, fileName)) {
+            hexFile.ReadHexFile(&file);
+
+        }
+
     }
 }
 
