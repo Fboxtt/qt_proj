@@ -4,7 +4,11 @@ hexDecode::hexDecode(void)
 {
 
 }
-
+uint8_t hexDecode::toUInt(QByteArray inputArray)
+{
+    bool ok;
+    return QString::fromLocal8Bit(inputArray).toUInt(&ok, 16);
+}
 bool hexDecode::OpenHexFile(QFile *pfile, QString fileUrl)
 {
     pfile->setFileName(fileUrl);
@@ -25,55 +29,51 @@ bool hexDecode::OpenHexFile(QFile *pfile, QString fileUrl)
 #define R_N_L 2
 #define DATA_START (COLON_L + DATAL_L + ADDRESS_L + TYPE_L)
 #define NOT_DATA_L (COLON_L + DATAL_L + ADDRESS_L + TYPE_L + CHECK_L + R_N_L)
-void hexDecode::ReadHexFile(QFile *file)
+QString hexDecode::ReadHexFile(QFile *file)
 {
     QByteArray lineData;
+    bool ok = false;
+    uint32_t lineNumber = 0;
     while(true) {
         lineData = file->readLine();
         if(lineData == "") {
             break;
         }
-        qDebug() << "hex data" << lineData << "len = " << lineData.size();
+        // 判断线数据【0】是否是“：“
         if(lineData[0] != ':') {
-            qDebug() << "hex data err , no exist \":\"";
+            return(QString("decode .hex : no exist \":\"   .lineNum = %1").arg(lineNumber));
         }
         if(lineData.size() < COLON_L + DATAL_L + R_N_L) {
             qDebug() << "lenth < 5";
-            break;
+            return(QString("decode .hex : datalenth err   .lineNum = %1").arg(lineNumber));
         }
-        bool ok = false;
+        // datalenth
         QString lenthStr = QString::fromLocal8Bit(lineData.mid(1, 2));
         uint32_t dateLenth = lenthStr.toUInt(&ok, 16);
-        qDebug() << lenthStr << "line data lenth" << dateLenth;
 
-
-
-
-
-        if((NOT_DATA_L + dateLenth * 2) != (lineData.size())) {
+        // 计算实际长度和datalenth是否相等
+        if((NOT_DATA_L + dateLenth * 2) != (uint32_t)(lineData.size())) {
             qDebug() << (NOT_DATA_L + dateLenth * 2) << (lineData.size());
+            return(QString("decode .hex : datalenth err   .lineNum = %1").arg(lineNumber));
 
-            break;
         }
 
-        uint32_t dataAddress = QString::fromLocal8Bit(lineData.mid(COLON_L + DATAL_L, 4)).toUInt(&ok, 16);
+        // 获取.HEX行数据的基本信息
+        uint32_t dataAddress = this->toUInt(lineData.mid(COLON_L + DATAL_L, 4));
+        uint32_t dataType     = this->toUInt(lineData.mid(COLON_L + DATAL_L + ADDRESS_L, 2));
+        uint8_t dataCheckSum = (uint8_t)dateLenth + this->toUInt(lineData.mid(COLON_L + DATAL_L, 2)) + this->toUInt(lineData.mid(COLON_L + DATAL_L + 2, 2)) + dataType;
+        uint8_t dataCheck    = this->toUInt(lineData.mid(lineData.size() - 4, 2));
 
-        uint32_t dataType     = QString::fromLocal8Bit(lineData.mid(COLON_L + DATAL_L + ADDRESS_L, 2)).toUInt(&ok, 16);
-
-        uint8_t dataCheck    = QString::fromLocal8Bit(lineData.mid(lineData.size() - 4, 2)).toUInt(&ok, 16);
-
-        uint8_t dataCheckSum = (uint8_t)dateLenth + (uint8_t)dataAddress + dataType;
-        qDebug() << dataType << "dataType";
-//        QByteArray data;
+        // 把.HEX内的字符串数据，转换成HEX存入对象
         for(uint32_t i = 0; i < dateLenth; i++) {
             uint8_t byteNum = QString::fromLocal8Bit(lineData.mid(DATA_START + i * 2, 2)).toUInt(&ok, 16);
-            qDebug() << "byteNum" << byteNum <<  lineData.mid(DATA_START + i * 2, 2);
             dataCheckSum += (uint8_t)byteNum;
             switch(dataType) {
             case 0:
-                this->hexArray.append(byteNum);
                 this->n00dataArray.append(byteNum);
                 this->lenth++;
+                if(lineNumber == 1)
+                    this->address = dataAddress;
                 break;
             case 1:
                 this->n01endArray.append(byteNum);
@@ -91,21 +91,33 @@ void hexDecode::ReadHexFile(QFile *file)
                 this->n05startLinearArray.append(byteNum);
                 break;
             default:
-                qDebug() << "decode .hex : no this datatype";
+                return(QString("decode .hex : no this datatype   .lineNum = %1").arg(lineNumber));
             }
         }
 
-
-
-        if((uint8_t)((~dataCheckSum)+ 1) != dataCheck) {
-            qDebug() << "decode .hex : checkSum err" << (uint8_t)((~dataCheckSum)+1) << dataCheck;
+        // 检查校验和是否正确
+        if(dataCheckSum != (uint8_t)(0x100 - dataCheck)) {
+            return(QString("decode .hex : checkSum err   .lineNum = %1").arg(lineNumber));
         } else {
-            qDebug() << "decode .hex : checkSum right";
+//            return(QString("decode .hex : checkSum right. lineNum = %1").arg(lineNumber));
         }
     }
-    // 获取扩展线性地址 08 00 -> 0x0800
-    qDebug() << "size extendarray" << this->n04extendLinearArray.length();
-    this->extendLinearAddress = (uint8_t)(this->n04extendLinearArray.at(0)) * 256 + (uint8_t)this->n04extendLinearArray.at(1);
-//    qDebug() << "dataArray" << n00dataArray;
-    qDebug() << "lenth" << lenth << "dataArraylenth" << n00dataArray.size();
+    // 获取扩展线性地址 08 00 -> 0x0800, 获取程序起始地址
+    this->extendLinearAddress = QString::fromLocal8Bit(this->n04extendLinearArray).toUInt(&ok, 16);
+    this->address = this->address + (this->extendLinearAddress << 4);
+    lineNumber++;
+    return "decode .hex : right";
+}
+void hexDecode::Clear(void)
+{
+    lenth = 0;
+    address = 0;
+    extendLinearAddress = 0;
+    dataType = 0;
+    n00dataArray.clear();
+    n01endArray.clear();
+    n02extendArray.clear();
+    n03startArray.clear();
+    n04extendLinearArray.clear();
+    n05startLinearArray.clear();
 }

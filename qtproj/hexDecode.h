@@ -35,5 +35,9 @@ public:
     QList<uint32_t> hexArray;
 
     bool OpenHexFile(QFile *file, QString fileUrl);
-    void ReadHexFile(QFile *file);
+    QString ReadHexFile(QFile *file);
+    void Clear(void);
+
+private:
+    uint8_t toUInt(QByteArray str);
 };
