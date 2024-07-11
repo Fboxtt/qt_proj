@@ -100,9 +100,11 @@ void Widget::on_selectFileButton_clicked()
         ui->lineEdit->setText(fileName);
         if(hexFile.OpenHexFile(&file, fileName)) {
             hexFile.ReadHexFile(&file);
-
+            QString HexStatus = QString("大小 = %1字节\n扩展线性地址 = 0x%2\n起始地址 = 0x%3\n").arg(hexFile.lenth).arg(hexFile.extendLinearAddress,4,16).arg(hexFile.address,4,16);
+            ui->label->setText(HexStatus);
         }
 
+        file.close();
     }
 }
 

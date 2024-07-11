@@ -22,14 +22,15 @@ public:
 //    ~hexDecode();
     uint32_t lenth;
     uint32_t address;
+    uint32_t extendLinearAddress;
     uint32_t dataType;
 
-    QByteArray dataArray;
-    QByteArray endArray;
-    QByteArray extendArray;
-    QByteArray startArray;
-    QByteArray extendLinearArray;
-    QByteArray startLinearArray;
+    QByteArray n00dataArray;
+    QByteArray n01endArray;
+    QByteArray n02extendArray;
+    QByteArray n03startArray;
+    QByteArray n04extendLinearArray;
+    QByteArray n05startLinearArray;
 
     QList<uint32_t> hexArray;
 
