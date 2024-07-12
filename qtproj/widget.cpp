@@ -101,7 +101,11 @@ void Widget::on_selectFileButton_clicked()
         if(hexFile.OpenHexFile(&file, fileName)) {
             hexFile.Clear();
             QString errLog = hexFile.ReadHexFile(&file);
-            QString HexStatus = QString("大小 = %1字节\n扩展线性地址 = 0x%2\n起始地址 = 0x%3\n %4")\
+            QString HexStatus = QString("\
+大小         = %1字节\n\
+扩展线性地址 = 0x%2\n\
+起始地址     = 0x%3\n\
+解析HEX结果:\n%4")\
                     .arg(hexFile.lenth)\
                     .arg(hexFile.extendLinearAddress, 4, 16, QChar('0'))\
                     .arg(hexFile.address, 4, 16, QChar('0'))\

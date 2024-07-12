@@ -34,6 +34,7 @@ QString hexDecode::ReadHexFile(QFile *file)
     QByteArray lineData;
     bool ok = false;
     uint32_t lineNumber = 0;
+    QString decodeLog = "";
     while(true) {
         lineData = file->readLine();
         if(lineData == "") {
@@ -41,11 +42,13 @@ QString hexDecode::ReadHexFile(QFile *file)
         }
         // 判断线数据【0】是否是“：“
         if(lineData[0] != ':') {
-            return(QString("decode .hex : no exist \":\"   .lineNum = %1").arg(lineNumber));
+            decodeLog += QString(": 字符错误，缺失冒号--错误行号 = %1\n").arg(lineNumber);
         }
         if(lineData.size() < COLON_L + DATAL_L + R_N_L) {
             qDebug() << "lenth < 5";
-            return(QString("decode .hex : datalenth err   .lineNum = %1").arg(lineNumber));
+            decodeLog += QString(": 长度错误----------错误行号 = %1\n").arg(lineNumber);
+            //长度错误，为避免内存越界，故读取下一行数据
+            continue;
         }
         // datalenth
         QString lenthStr = QString::fromLocal8Bit(lineData.mid(1, 2));
@@ -54,8 +57,9 @@ QString hexDecode::ReadHexFile(QFile *file)
         // 计算实际长度和datalenth是否相等
         if((NOT_DATA_L + dateLenth * 2) != (uint32_t)(lineData.size())) {
             qDebug() << (NOT_DATA_L + dateLenth * 2) << (lineData.size());
-            return(QString("decode .hex : datalenth err   .lineNum = %1").arg(lineNumber));
-
+            decodeLog += QString(": 长度错误----------错误行号 = %1\n").arg(lineNumber);
+            //长度错误，为避免内存越界，故读取下一行数据
+            continue;
         }
 
         // 获取.HEX行数据的基本信息
@@ -68,6 +72,10 @@ QString hexDecode::ReadHexFile(QFile *file)
         for(uint32_t i = 0; i < dateLenth; i++) {
             uint8_t byteNum = QString::fromLocal8Bit(lineData.mid(DATA_START + i * 2, 2)).toUInt(&ok, 16);
             dataCheckSum += (uint8_t)byteNum;
+            if(dataType > 6) {
+                decodeLog += QString(": 数据类型错误-------错误行号 = %1\n").arg(lineNumber);
+                break;
+            }
             switch(dataType) {
             case 0:
                 this->n00dataArray.append(byteNum);
@@ -90,23 +98,24 @@ QString hexDecode::ReadHexFile(QFile *file)
             case 5:
                 this->n05startLinearArray.append(byteNum);
                 break;
-            default:
-                return(QString("decode .hex : no this datatype   .lineNum = %1").arg(lineNumber));
             }
         }
 
         // 检查校验和是否正确
         if(dataCheckSum != (uint8_t)(0x100 - dataCheck)) {
-            return(QString("decode .hex : checkSum err   .lineNum = %1").arg(lineNumber));
+            decodeLog += QString(": 校验错误----------错误行号 = %1\n").arg(lineNumber);
         } else {
 //            return(QString("decode .hex : checkSum right. lineNum = %1").arg(lineNumber));
         }
+        lineNumber++;
     }
     // 获取扩展线性地址 08 00 -> 0x0800, 获取程序起始地址
     this->extendLinearAddress = QString::fromLocal8Bit(this->n04extendLinearArray).toUInt(&ok, 16);
     this->address = this->address + (this->extendLinearAddress << 4);
-    lineNumber++;
-    return "decode .hex : right";
+    if(decodeLog == "") {
+        decodeLog += ": 正确---------------------错误行号 = 无\n";
+    }
+    return decodeLog;
 }
 void hexDecode::Clear(void)
 {
