@@ -39,5 +39,5 @@ public:
     void Clear(void);
 
 private:
-    uint8_t toUInt(QByteArray str);
+    uint32_t toUInt(QByteArray str);
 };
