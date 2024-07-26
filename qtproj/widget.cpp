@@ -64,10 +64,10 @@ Widget::Widget(QWidget *parent)
     chartV0 = new chartV();
     chartV0->addNewChart(ui->tab_2,"总电压",   "pack电压", "mV");
     chartV0->addNewChart(ui->tab_2,"总电压",   "电芯总压", "mV");
-    chartV0->addNewChart(ui->tab_2,"电芯电压", "电芯0",    "mV");
     chartV0->addNewChart(ui->tab_2,"电芯电压", "电芯1",    "mV");
     chartV0->addNewChart(ui->tab_2,"电芯电压", "电芯2",    "mV");
     chartV0->addNewChart(ui->tab_2,"电芯电压", "电芯3",    "mV");
+    chartV0->addNewChart(ui->tab_2,"电芯电压", "电芯4",    "mV");
     chartV0->addNewChart(ui->tab_2,"温度",     "ntc1",     "C");
     chartV0->addNewChart(ui->tab_2,"容量",     "RM",       "AH");
 
@@ -166,10 +166,10 @@ void Widget::SetTbsToTableAndChart(QListWidgetItem *item, int flag)
             chartV0->lineAddPoint("pack电压", currentTim,(*dcode0.tbsUnion)[0].uintVal);
             chartV0->lineAddPoint("电芯总压",  currentTim,(*dcode0.tbsUnion)[1].uintVal);
 
-            chartV0->lineAddPoint("电芯0",    currentTim, (*dcode0.tbsUnion)[2].uintVal);
-            chartV0->lineAddPoint("电芯0",    currentTim, (*dcode0.tbsUnion)[3].uintVal);
-            chartV0->lineAddPoint("电芯0",    currentTim, (*dcode0.tbsUnion)[4].uintVal);
-            chartV0->lineAddPoint("电芯0",    currentTim, (*dcode0.tbsUnion)[5].uintVal);
+            chartV0->lineAddPoint("电芯1",    currentTim, (*dcode0.tbsUnion)[2].uintVal);
+            chartV0->lineAddPoint("电芯2",    currentTim, (*dcode0.tbsUnion)[3].uintVal);
+            chartV0->lineAddPoint("电芯3",    currentTim, (*dcode0.tbsUnion)[4].uintVal);
+            chartV0->lineAddPoint("电芯4",    currentTim, (*dcode0.tbsUnion)[5].uintVal);
 
             chartV0->lineAddPoint("ntc1",    currentTim, (*dcode0.tbsUnion)[19].uintVal);
             chartV0->lineAddPoint("RM",      currentTim, (*dcode0.tbsUnion)[24].uintVal);
@@ -392,10 +392,10 @@ void Widget::on_pushButton_clicked()
             chartV0->lineAddPoint("pack电压", QTime::fromString(TimStr, "HH:mm:ss:zzz"),(*dcode0.tbsUnion)[0].uintVal);
             chartV0->lineAddPoint("电芯总压", QTime::fromString(TimStr, "HH:mm:ss:zzz"),(*dcode0.tbsUnion)[1].uintVal);
 
-            chartV0->lineAddPoint("电芯0", QTime::fromString(TimStr, "HH:mm:ss:zzz"), (*dcode0.tbsUnion)[2].uintVal);
-            chartV0->lineAddPoint("电芯0", QTime::fromString(TimStr, "HH:mm:ss:zzz"), (*dcode0.tbsUnion)[3].uintVal);
-            chartV0->lineAddPoint("电芯0", QTime::fromString(TimStr, "HH:mm:ss:zzz"), (*dcode0.tbsUnion)[4].uintVal);
-            chartV0->lineAddPoint("电芯0", QTime::fromString(TimStr, "HH:mm:ss:zzz"), (*dcode0.tbsUnion)[5].uintVal);
+            chartV0->lineAddPoint("电芯1", QTime::fromString(TimStr, "HH:mm:ss:zzz"), (*dcode0.tbsUnion)[2].uintVal);
+            chartV0->lineAddPoint("电芯2", QTime::fromString(TimStr, "HH:mm:ss:zzz"), (*dcode0.tbsUnion)[3].uintVal);
+            chartV0->lineAddPoint("电芯3", QTime::fromString(TimStr, "HH:mm:ss:zzz"), (*dcode0.tbsUnion)[4].uintVal);
+            chartV0->lineAddPoint("电芯4", QTime::fromString(TimStr, "HH:mm:ss:zzz"), (*dcode0.tbsUnion)[5].uintVal);
 
             chartV0->lineAddPoint("ntc1",  QTime::fromString(TimStr, "HH:mm:ss:zzz"), (*dcode0.tbsUnion)[19].uintVal);
             chartV0->lineAddPoint("RM",    QTime::fromString(TimStr, "HH:mm:ss:zzz"), (*dcode0.tbsUnion)[24].uintVal);
