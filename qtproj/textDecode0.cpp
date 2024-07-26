@@ -71,7 +71,7 @@ QVector<tbs> tbsUnit = {
     {"错误状态", datTypDic::ULONG}, \
     {"均衡状态", datTypDic::ULONG}, \
 
-    {"BattStatus", datTypDic::USHORT}, \
+    {"电池状态", datTypDic::USHORT}, \
     {"剩余容量%", datTypDic::USHORT}, \
     {"电池健康%", datTypDic::ULONG}, \
     {"放电次数", datTypDic::ULONG}, \
