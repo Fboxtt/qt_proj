@@ -108,43 +108,19 @@ QList<QLabel*> otherLabel;
 QList<QLabel*> batlabel;
 
 QList<QString> alarmStat = {
-    "Pack过压",
-    "电池组过压",
-    "单体电芯过压",
-    "电池组欠压",
-    "单体电芯欠压",
-    "充电过流",
-    "放电过流",
-    "充电高温",
-    "放电高温",
-    "充电低温",
-    "放电低温",
-    "容量低",
-    "放电短路",
-    "反接",
-    "低温充电过流",
-    "低温充电过流",
-    "低温充电过压",
-    "充电短路",
+    "","","单节过压保护","",                    "","单节低压保护","充电过流保护","放电过流保护",
+    "充电高温","放电高温","充电低温","放电低温",  "","","短路保护","",
+    "","","低温单节过压保护","",                 "","","","MOS高温保护",
 };
 QList<QString> loseStat = {
-    "电压传感器失效",
-    "温度传感器失效",
-    "充电管失效",
-    "放电管失效",
-    "电芯损坏",
-    "加热器失效",
-    "面板开关关闭",
-    "限流充电回路失效",
-    "保险丝熔断失效",
+    "电压传感器失效","温度传感器失效","充电控制异常","放电控制异常",   "电芯异常","","","",
+    "电芯寿命终止",
 };
-QList<QString> otherStat = {
-    "加热器",
-    "满充计时",
-    "电压校准",
-    "电流校准",
-    "充电限流",
 
+QList<QString> otherInfo = {
+    "","加热器开启","","","","","充电MOS断开","放电MOS断开",
+    "","","","","","","","",
+    "","","","","","自加热模式","","",
 };
 QList<QString> batStat = {
     "空闲",
@@ -449,8 +425,9 @@ void textDcode::SetStatusToBox(Ui::Widget *ui)
 {
     this->SetStatusToGBox(ui->gridLayout_7);
     this->SetStatusToLBox(ui->loseGridLayout,  loseStat,  loseLabel,  tbsUnit[31].uintVal);
-    this->SetStatusToLBox(ui->otherGridLayout, otherStat, otherLabel, tbsUnit[32].uintVal);
+    this->SetStatusToLBox(ui->otherGridLayout, otherInfo, otherLabel, tbsUnit[32].uintVal);
     this->SetStatusToLBox(ui->batGridLayout,   batStat,   batlabel,    tbsUnit[33].uintVal);
+//    this->SetStatusToLBox(ui->batGridLayout,   batStat,   batlabel,    tbsUnit[33].uintVal);
 }
 
 // 把告警状态和保护状态写入到groupBox中
@@ -461,6 +438,9 @@ void textDcode::SetStatusToGBox(QGridLayout *gridLayout)
 
     foreach(QString statName, alarmStat)
     {
+        if(statName == "") {
+            continue;
+        }
         int iX3 = i * 3;
         if(alarmLabel.value(iX3) == 0) {
             alarmLabel.append(new QLabel());
@@ -495,11 +475,15 @@ void textDcode::SetStatusToLBox(QGridLayout *gridLayout, QList<QString> strL, QL
 
     foreach(QString statName, strL)
     {
+        if(statName == "") {
+            continue;
+        }
+
         int iX3 = i * 2;
         if(labelL.value(iX3) == 0) {
             labelL.append(new QLabel());
             labelL.append(new QLabel());
-
+            // 偶数是名称，奇数是状态
             gridLayout->addWidget(labelL[iX3],     i, 0);
             gridLayout->addWidget(labelL[iX3 + 1], i, 1);
         }
