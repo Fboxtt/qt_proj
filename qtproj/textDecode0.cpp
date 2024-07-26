@@ -82,7 +82,7 @@ textDcode::textDcode(void)
 {
     funcCode =  {{0x01,"产品注册"} \
                 ,{0x02,"断开注册"}\
-                ,{0x13,"bat状态"}\
+                ,{0x13,"TBS数据"}\
                 ,{0x0A,"开chg fet"}\
                 ,{0x0B,"关chg fet"}\
                 ,{0x0C,"开dchg fet"}\
@@ -93,11 +93,11 @@ textDcode::textDcode(void)
                 ,{0x64,"休眠命令"}};
 
     ackCode =   {{0x00,"ACK无异常"}\
-                ,{0x01,"长度错误"}\
-                ,{0x03,"类型错误"}\
-                ,{0x04,"id错误"}\
-                ,{0x05,"握手错误"}\
-                ,{0x06,"校验错误"}};
+                ,{0x01,"ACK长度错误"}\
+                ,{0x03,"ACK类型错误"}\
+                ,{0x04,"ACKid错误"}\
+                ,{0x05,"ACK握手错误"}\
+                ,{0x06,"ACK校验错误"}};
 
     this->tbsUnion = &tbsUnit;
 }
@@ -210,7 +210,6 @@ QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
                 codeList.append("校验错误");
             }
         } else {
-            // codeList.append(hexStrLis[datId]);
             dataSum += hexVector[datId];
         }
         datId++;
@@ -219,10 +218,10 @@ QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
     // dataList = timeAndDataList[1].split(" "); // 需要改，防止溢出
     if(hexStrLis.size() <= 8 || (hexStrLis[4] != "93")) {
         qDebug() << "dataList <= 8 or datalist[4] != 93";
-    } else {
-        // 把数据写入tbsUnit
+        } else {
+            // 把数据写入tbsUnit
         QVector<tbs> decodeList = this->HexWriteTbs(hexStrLis.mid(8, -1)); // 需要改成自适应
-    } 
+        }
 
     qDebug() << "codelist.join = " << codeList.join(COMUT_SEP);
     return codeList.join(COMUT_SEP);
@@ -315,14 +314,24 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
 
     } else if (dataList.size() > 8 && dataList.size() < 200) {
         dataText = readDataDocode(dataList, dataText) + COMUT_SEP + timeAndDataList[0] + COMUT_BAT_SEP;
-        foreach(tbs tbsU, tbsUnit) {
-            QString tbsStr;
-            dataText += tbsStr.setNum(tbsU.uintVal, 10) + BAT_SEP;
+        if(dataText.contains("产品注册")) {
+            if(dataText.contains("校验正确")) {
+                ui->portStatus->setText(ui->portStatus->text() + "产品注册成功");
+            } else {
+                ui->portStatus->setText(ui->portStatus->text() + "产品注册失败");
+            }
+        } else if(dataText.contains("TBS数据")) {
+            if(dataText.contains("校验正确")) {
+                foreach(tbs tbsU, tbsUnit) {
+                    QString tbsStr;
+                    dataText += tbsStr.setNum(tbsU.uintVal, 10) + BAT_SEP;
+                }
+                ui->listWidget->addItem(dataText);
+            }
         }
-        ui->listWidget->addItem(dataText);
     } else {
         qDebug() << "数据非法";
-        dataText = QString("数据非法") + dataText ;
+        dataText = QString("数据非法") + dataText;
     }
     qDebug() << "split = " << timeText << dataText;
 

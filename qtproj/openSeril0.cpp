@@ -106,6 +106,7 @@ void serial::ClickOpenSerPort(Ui::Widget *ui)
             case 2: SerialPort.setStopBits(QSerialPort::TwoStop); break;
             default: break;
             }
+            ui->portStatus->setText("串口已连接");
         }
         //打开串口
         else
@@ -145,7 +146,7 @@ void serial::ClickOpenSerPort(Ui::Widget *ui)
         ui->sendBox->setEnabled(false);
         // 读取tbs按键关闭
         ui->pushButton_3->setEnabled(false);
-
+        ui->portStatus->setText("串口未连接");
     }
 }
 void serial::TimeOut(QTimer *tim)

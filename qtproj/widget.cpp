@@ -149,7 +149,9 @@ void Widget::ReadSerialTimeOut()
         return;
     }
     int row = ui->listWidget->count();
-    
+    if(row == 0) {
+        return;
+    }
     ui->listWidget->setCurrentRow(row - 1);
     this->SetTbsToTableAndChart(ui->listWidget->item(row - 1), 1);
 }
@@ -195,6 +197,10 @@ void Widget::on_openBtn_clicked()
     tim = new QTimer();
     tim->setInterval(400);
     connect(tim, SIGNAL(timeout()),this,SLOT(ReadSerialTimeOut()));
+    if(ui->portStatus->text() == "串口已连接") {
+        this->on_sendRegisterBox_clicked();
+        ui->portStatus->setText("注册中");
+    }
 }
 
 void Widget::SerialPortReadyRead_slot()
@@ -248,7 +254,7 @@ void Widget::on_sendTbs_clicked()
 
 void Widget::on_sendRegisterBox_clicked()
 {
-    QString sendData = "00 00 04 01 01 55 AA 06";
+    QString sendData = "00 00 04 01 01 55 AA 05";
     this->SendAndDecode(sendData);
 }
 
