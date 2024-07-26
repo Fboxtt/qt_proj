@@ -316,9 +316,9 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
         dataText = readDataDocode(dataList, dataText) + COMUT_SEP + timeAndDataList[0] + COMUT_BAT_SEP;
         if(dataText.contains("产品注册")) {
             if(dataText.contains("校验正确")) {
-                ui->portStatus->setText(ui->portStatus->text() + "产品注册成功");
+                ui->portStatus->setText("产品注册成功");
             } else {
-                ui->portStatus->setText(ui->portStatus->text() + "产品注册失败");
+                ui->portStatus->setText("产品注册失败");
             }
         } else if(dataText.contains("TBS数据")) {
             if(dataText.contains("校验正确")) {
