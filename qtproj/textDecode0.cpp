@@ -38,9 +38,8 @@ tbs::tbs(QString valName,datTypDic::DATA_TYPE dataType)
 }
 
 QVector<tbs> tbsUnit = {
-    {"端口电压mV", datTypDic::ULONG}, \
+    {"PACK电压mV", datTypDic::ULONG}, \
     {"电池电压mV", datTypDic::ULONG}, \
-    {"0电芯电压mV", datTypDic::USHORT}, \
     {"1电芯电压mV", datTypDic::USHORT}, \
     {"2电芯电压mV", datTypDic::USHORT}, \
     {"3电芯电压mV", datTypDic::USHORT}, \
@@ -56,28 +55,27 @@ QVector<tbs> tbsUnit = {
     {"13电芯电压mV", datTypDic::USHORT}, \
     {"14电芯电压mV", datTypDic::USHORT}, \
     {"15电芯电压mV", datTypDic::USHORT}, \
+    {"16电芯电压mV", datTypDic::USHORT}, \
     {"电流值mA", datTypDic::LONG}, \
     {"0温度值℃", datTypDic::SHORT}, \
     {"1温度值℃", datTypDic::SHORT}, \
     {"2温度值℃", datTypDic::SHORT}, \
     {"3温度值℃", datTypDic::SHORT}, \
     {"4温度值℃", datTypDic::SHORT}, \
-    {"usRmAH", datTypDic::USHORT}, \
-    {"usFccAH", datTypDic::USHORT}, \
-    {"usBiaAH", datTypDic::USHORT}, \
-    {"otherInfo", datTypDic::ULONG}, \
-    {"alarmStatus", datTypDic::ULONG}, \
-    {"protectStatus", datTypDic::ULONG}, \
-    {"faultStatus", datTypDic::ULONG}, \
-    {"balanceStatus", datTypDic::ULONG}, \
+    {"剩余容量AH", datTypDic::USHORT}, \
+    {"满充容量AH", datTypDic::USHORT}, \
+    {"显示和真实容量差", datTypDic::USHORT}, \
+    {"其他信息", datTypDic::ULONG}, \
+    {"告警状态", datTypDic::ULONG}, \
+    {"保护状态", datTypDic::ULONG}, \
+    {"错误状态", datTypDic::ULONG}, \
+    {"均衡状态", datTypDic::ULONG}, \
 
     {"BattStatus", datTypDic::USHORT}, \
-
-    {"SOCPct%", datTypDic::USHORT}, \
-
-    {"SOHPct%", datTypDic::ULONG}, \
-    {"DisTimes次", datTypDic::ULONG}, \
-    {"TotalDisAH", datTypDic::ULONG}, \
+    {"剩余容量%", datTypDic::USHORT}, \
+    {"电池健康%", datTypDic::ULONG}, \
+    {"放电次数", datTypDic::ULONG}, \
+    {"总充电次数", datTypDic::ULONG}, \
 };
 
 textDcode::textDcode(void)
@@ -340,14 +338,14 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
         }
         ui->listWidget->addItem(dataText);
     } else {
-        qDebug() << "无法解析";
-        dataText = QString("无法解析") + dataText ;
+        qDebug() << "数据非法";
+        dataText = QString("数据非法") + dataText ;
     }
     qDebug() << "split = " << timeText << dataText;
 
     //单独解码
     // Widget.SetTbsToTableAndChart(dataText, 1);
-    return "";
+    return dataText;
 
 }
 
