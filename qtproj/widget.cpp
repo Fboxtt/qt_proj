@@ -53,10 +53,10 @@ Widget::Widget(QWidget *parent)
     ui->tableWidget->setFixedSize(600,800);
     ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    ui->tableWidget->setVerticalHeaderLabels({"1","2","3","4","5","6","7","8","9","10", \
-                                             "11","12","13","14","15","16","17","18","19","20"});
+    ui->tableWidget->setVerticalHeaderLabels({"","","","","","","","","","", \
+                                             "","","","","","","","","",""});
     for(int idx = 0, limit = itemTableList.size(); idx < limit; idx++) {
-        itemTableList[idx].setText(QString("%1").arg(idx,0,10));
+//        itemTableList[idx].setText(QString("%1").arg(idx,0,10));
         ui->tableWidget->setItem(idx / 4, idx % 4, &itemTableList[idx]);
     }
 
