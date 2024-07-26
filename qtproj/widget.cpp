@@ -201,6 +201,12 @@ void Widget::on_openBtn_clicked()
         this->on_sendRegisterBox_clicked();
         ui->portStatus->setText("注册中");
     }
+    if(ui->openBtn->text() == "打开串口") {
+        if(ui->pushButton_3->text() == "停止读取tbs") {
+            this->on_pushButton_3_clicked();
+        }
+    }
+
 }
 
 void Widget::SerialPortReadyRead_slot()
