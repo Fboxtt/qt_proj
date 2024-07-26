@@ -75,9 +75,9 @@ Widget::Widget(QWidget *parent)
     ui->gridLayout_5->addWidget(chartV0->chartMap.value("电芯电压")->chartview, 0, 1);
     ui->gridLayout_5->addWidget(chartV0->chartMap.value("温度")->chartview,     1, 0);
     ui->gridLayout_5->addWidget(chartV0->chartMap.value("容量")->chartview,     1, 1);
-//    chartV0->addNewChart(ui->tab_2, "", "", "");
 
-    ui->alarmGroupBox->setMinimumWidth(150);
+    // 状态盒默认尺寸设置
+    ui->alarmGroupBox->setMinimumWidth(300);
 }
 
 Widget::~Widget()
