@@ -37,6 +37,8 @@ QString hexDecode::ReadHexFile(QFile *file)
     uint32_t lineNumber = 0;
     QString decodeLog = "";
     uint32_t lastAddr;
+    // 如果解析正确，则exist
+    this->exist = false;
     while(true) {
         lineNumber++;
         lineData = file->readLine();
@@ -127,6 +129,7 @@ QString hexDecode::ReadHexFile(QFile *file)
     this->address = this->address + (this->extendLinearAddress << 4);
     if(decodeLog == "") {
         decodeLog += ": 正确---------------------错误行号 = 无\n";
+        this->exist = true;
     }
     return decodeLog;
 }

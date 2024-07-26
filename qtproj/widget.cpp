@@ -106,10 +106,10 @@ void Widget::on_selectFileButton_clicked()
 扩展线性地址 = 0x%2\n\
 起始地址     = 0x%3\n\
 解析HEX结果:\n%4")\
-                    .arg(hexFile.lenth)\
-                    .arg(hexFile.extendLinearAddress, 4, 16, QChar('0'))\
-                    .arg(hexFile.address, 4, 16, QChar('0'))\
-                    .arg(errLog);
+.arg(hexFile.lenth)\
+.arg(hexFile.extendLinearAddress, 4, 16, QChar('0'))\
+.arg(hexFile.address, 4, 16, QChar('0'))\
+.arg(errLog);
             ui->label->setText(HexStatus);
         }
 
@@ -318,7 +318,12 @@ void Widget::on_clearReceiveDataButton_2_clicked()
 
 void Widget::on_pushButton_4_clicked()
 {
-//    delete(tableItem);
+    if(hexFile.exist == true && ui->openBtn->text() == "关闭串口") {
+//        this->SendAndDecode();
+        se.SerialSend(ui,hexFile.n00dataArray.mid(0,100));
+    } else {
+        qDebug() << "hex文件err，或者串口未打开";
+    }
 }
 
 void Widget::on_pushButton_8_clicked()

@@ -220,3 +220,11 @@ QString serial::SerialSend(Ui::Widget *ui, QString Data)
     SerialPort.write(Data_1);
     return Data;
 }
+
+void serial::SerialSend(Ui::Widget *ui, QByteArray Data)
+{
+    // 写入发送缓存区
+    qDebug() << Data << "send data";
+    SerialPort.write(Data);
+    return;
+}

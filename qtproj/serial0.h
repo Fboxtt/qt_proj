@@ -21,6 +21,7 @@ public:
     void RefreshSerial(Ui::Widget *ui);
     void serial_Read(Ui::Widget *ui, QTimer *tim);
     QString SerialSend(Ui::Widget *ui, QString Data);
+    void SerialSend(Ui::Widget *ui, QByteArray Data);
     QSerialPort SerialPort;
 private:
 

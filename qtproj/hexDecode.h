@@ -20,6 +20,8 @@ class hexDecode {
 public:
     hexDecode();
 //    ~hexDecode();
+    bool exist = false;
+
     uint32_t lenth;
     uint32_t address;
     uint32_t extendLinearAddress;
