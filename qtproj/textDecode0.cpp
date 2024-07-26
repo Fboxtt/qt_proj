@@ -424,9 +424,9 @@ bool textDcode::ItemToTbs(QString text)
 void textDcode::SetStatusToBox(Ui::Widget *ui)
 {
     this->SetStatusToGBox(ui->gridLayout_7);
-    this->SetStatusToLBox(ui->loseGridLayout,  loseStat,  loseLabel,  tbsUnit[31].uintVal);
-    this->SetStatusToLBox(ui->otherGridLayout, otherInfo, otherLabel, tbsUnit[32].uintVal);
-    this->SetStatusToLBox(ui->batGridLayout,   batStat,   batlabel,    tbsUnit[33].uintVal);
+    this->SetStatusToLBox(ui->loseGridLayout,  loseStat,  loseLabel,  tbsUnit[30].uintVal);
+    this->SetStatusToLBox(ui->otherGridLayout, otherInfo, otherLabel, tbsUnit[27].uintVal);
+    this->SetStatusToLBox(ui->batGridLayout,   batStat,   batlabel,    tbsUnit[32].uintVal);
 //    this->SetStatusToLBox(ui->batGridLayout,   batStat,   batlabel,    tbsUnit[33].uintVal);
 }
 
