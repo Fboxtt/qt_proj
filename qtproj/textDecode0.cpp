@@ -57,11 +57,11 @@ QVector<tbs> tbsUnit = {
     {"15电芯电压mV", datTypDic::USHORT}, \
     {"16电芯电压mV", datTypDic::USHORT}, \
     {"电流值mA", datTypDic::LONG}, \
-    {"0温度值℃", datTypDic::SHORT}, \
     {"1温度值℃", datTypDic::SHORT}, \
     {"2温度值℃", datTypDic::SHORT}, \
     {"3温度值℃", datTypDic::SHORT}, \
     {"4温度值℃", datTypDic::SHORT}, \
+    {"5温度值℃", datTypDic::SHORT}, \
     {"剩余容量AH", datTypDic::USHORT}, \
     {"满充容量AH", datTypDic::USHORT}, \
     {"显示和真实容量差", datTypDic::USHORT}, \
