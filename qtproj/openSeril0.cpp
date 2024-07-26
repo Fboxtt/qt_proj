@@ -165,6 +165,7 @@ void serial::serial_Read(Ui::Widget *ui, QTimer *tim)
     if(!buffer.isEmpty())//如果非空说明有数据接收
     {   //转换成16进制大写
         QString str=buffer.toHex().data();
+        QString gbkBuffer = QString::fromLocal8Bit(buffer);
         str=str.toUpper();
 
         //一个16进制占4位，8位为一字节，所以每两位16进制空一格
@@ -191,7 +192,7 @@ void serial::serial_Read(Ui::Widget *ui, QTimer *tim)
             receive += QString("[%1]:RX ->").arg(QTime::currentTime().toString("HH:mm:ss:zzz")) + COMUT_BAT_SEP;
         }
         if(ui->hexDisplay->checkState() == Qt::Unchecked){ // 加数据
-            receive += QString(buffer); 
+            receive += QString(gbkBuffer);
         }//直接显示
         else{
             receive += QString(buffer_1);

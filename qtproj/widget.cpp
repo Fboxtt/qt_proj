@@ -142,12 +142,13 @@ void Widget::ReadSerialTimeOut()
     se.TimeOut(tim);
 
     QString receiveDecode = dcode0.PlainTextDecode(ui);
-
+    if(receiveDecode.contains("数据非法")) {
+        return;
+    }
     int row = ui->listWidget->count();
+    
     ui->listWidget->setCurrentRow(row - 1);
     this->SetTbsToTableAndChart(ui->listWidget->item(row - 1), 1);
-
-    
 }
 
 // 解析listWidget内的数据，并写入到tableWidget中
@@ -189,7 +190,7 @@ void Widget::on_openBtn_clicked()
     connect(&se.SerialPort, &QSerialPort::readyRead, this, &Widget::SerialPortReadyRead_slot);
 
     tim = new QTimer();
-    tim->setInterval(100);
+    tim->setInterval(400);
     connect(tim, SIGNAL(timeout()),this,SLOT(ReadSerialTimeOut()));
 }
 
@@ -320,7 +321,7 @@ void Widget::on_pushButton_4_clicked()
 {
     if(hexFile.exist == true && ui->openBtn->text() == "关闭串口") {
 //        this->SendAndDecode();
-        se.SerialSend(ui,hexFile.n00dataArray.mid(0,100));
+        se.SerialSend(ui,hexFile.n00dataArray);
     } else {
         qDebug() << "hex文件err，或者串口未打开";
     }
