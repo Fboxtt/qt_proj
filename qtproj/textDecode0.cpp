@@ -105,7 +105,8 @@ textDcode::textDcode(void)
 QList<QLabel*> alarmLabel;
 QList<QLabel*> loseLabel;
 QList<QLabel*> otherLabel;
-QList<QLabel*> batlabel;
+QList<QLabel*> batLabel;
+QList<QLabel*> balanceLabel;
 
 QList<QString> alarmStat = {
     "","","单节过压保护","",                    "","单节低压保护","充电过流保护","放电过流保护",
@@ -129,6 +130,12 @@ QList<QString> batStat = {
     "满电",
 
 };
+
+QList<QString> balanceStat = {
+    "电芯1","电芯2","电芯3","电芯4",        "电芯5","电芯6","电芯7","电芯8",
+    "电芯9","电芯10","电芯11","电芯12",     "电芯13","电芯14","电芯15","电芯16",
+};
+
 // 输入值，输出对应字符串
 QString textDcode::ByteDecode(QMap<uint32_t, QString> mapCode, uint8_t keys)
 {
@@ -426,7 +433,9 @@ void textDcode::SetStatusToBox(Ui::Widget *ui)
     this->SetStatusToGBox(ui->gridLayout_7);
     this->SetStatusToLBox(ui->loseGridLayout,  loseStat,  loseLabel,  tbsUnit[30].uintVal);
     this->SetStatusToLBox(ui->otherGridLayout, otherInfo, otherLabel, tbsUnit[27].uintVal);
-    this->SetStatusToLBox(ui->batGridLayout,   batStat,   batlabel,    tbsUnit[32].uintVal);
+    this->SetStatusToLBox(ui->batGridLayout,   batStat,   batLabel,    tbsUnit[32].uintVal);
+    this->SetStatusToLBox(ui->balanceGridLayout,   balanceStat,   balanceLabel,    tbsUnit[32].uintVal);
+
 //    this->SetStatusToLBox(ui->batGridLayout,   batStat,   batlabel,    tbsUnit[33].uintVal);
 }
 
