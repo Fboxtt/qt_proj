@@ -26,6 +26,7 @@ QVector<QTableWidgetItem> itemTableList(80);
 chartV* chartV0;
 hexDecode hexFile;
 
+
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
@@ -86,6 +87,7 @@ Widget::Widget(QWidget *parent)
 Widget::~Widget()
 {
     delete ui;
+//    delete refreshData;
 }
 
 
@@ -421,4 +423,23 @@ void Widget::on_pushButton_clicked()
         }
 
     }
+}
+
+void Widget::on_pushButton_5_clicked()
+{
+   QWidget * refreshData=new QWidget();
+   QLabel * refreshLabel = new QLabel(refreshData);
+   refreshData->resize(800,800);
+   refreshLabel->setText("\
+0.0.2更新内容\n\
+电池状态颜色意义done\n\
+电池序号 done\n\
+电池状态信息显示改成中文 done\n\
+串口连接信息显示done\n\
+状态显示表优化 done\n\
+代码中电芯名称修改 done\n\
+状态信息顺序修正 done\n\
+增加均衡状态 done\n"
+               );
+   refreshData->show();
 }
