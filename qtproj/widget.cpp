@@ -78,6 +78,9 @@ Widget::Widget(QWidget *parent)
 
     // 状态盒默认尺寸设置
     ui->alarmGroupBox->setMinimumWidth(300);
+
+    ui->label_8->setStyleSheet("QLabel { background-color: green}");
+    ui->label_10->setStyleSheet("QLabel { background-color: red}");
 }
 
 Widget::~Widget()
