@@ -124,10 +124,10 @@ QList<QString> otherInfo = {
     "","","","",                               "","自加热模式      ","","",
 };
 QList<QString> batStat = {
-    "空闲",
     "充电",
     "放电",
     "满电            ",
+    "空闲",
 
 };
 
@@ -512,12 +512,21 @@ void textDcode::SetStatusToLBox(QGridLayout *gridLayout, QList<QString> strL, QL
         }
 
         labelL[iX3]->setText(statName);
-
+        // 空闲状态值为0x00，与其他状态相反
+        if(statName == "空闲") {
+            if(val == 0x0) {
+                labelL[iX3 + 1]->setStyleSheet("QLabel { background-color: red}");
+            } else {
+                labelL[iX3 + 1]->setStyleSheet("QLabel { background-color: green}");
+            }
+            break;
+        }
         if((val & 0x1 << i) != 0) {
             labelL[iX3 + 1]->setStyleSheet("QLabel { background-color: red}");
         } else {
             labelL[iX3 + 1]->setStyleSheet("QLabel { background-color: green}");
         }
+
 //        qDebug() << i << iX3;
         i++;
     }
