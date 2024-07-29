@@ -65,13 +65,13 @@ QVector<tbs> tbsUnit = {
     {"剩余容量AH", datTypDic::USHORT}, \
     {"满充容量AH", datTypDic::USHORT}, \
     {"显示和真实容量差", datTypDic::USHORT}, \
-    {"其他信息", datTypDic::ULONG}, \
-    {"告警状态", datTypDic::ULONG}, \
-    {"保护状态", datTypDic::ULONG}, \
-    {"错误状态", datTypDic::ULONG}, \
-    {"均衡状态", datTypDic::ULONG}, \
+    {"其他信息HEX", datTypDic::ULONG}, \
+    {"告警状态HEX", datTypDic::ULONG}, \
+    {"保护状态HEX", datTypDic::ULONG}, \
+    {"错误状态HEX", datTypDic::ULONG}, \
+    {"均衡状态HEX", datTypDic::ULONG}, \
 
-    {"电池状态", datTypDic::USHORT}, \
+    {"电池状态HEX", datTypDic::USHORT}, \
     {"剩余容量%", datTypDic::USHORT}, \
     {"电池健康%", datTypDic::ULONG}, \
     {"放电次数", datTypDic::ULONG}, \
@@ -357,7 +357,12 @@ void textDcode::itemToTable(QVector<QTableWidgetItem>* itemTableList)
     uint32_t idx = 0;
     foreach(tbs unit, tbsUnit) {
         (*itemTableList)[idx * 2].setText(unit.valName);
-        (*itemTableList)[idx * 2 + 1].setText(QString("%1").arg(unit.uintVal,0,10));
+         if(unit.valName.contains("HEX")) {
+             (*itemTableList)[idx * 2 + 1].setText(QString("0x%1").arg(unit.uintVal,0,16));
+         } else {
+             (*itemTableList)[idx * 2 + 1].setText(QString("%1").arg(unit.uintVal,0,10));
+         }
+
         idx++;
     }
 }
