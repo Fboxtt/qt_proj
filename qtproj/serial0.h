@@ -19,14 +19,14 @@ public:
     void Init(Ui::Widget *ui);
     void ClickOpenSerPort(Ui::Widget *ui);
     void RefreshSerial(Ui::Widget *ui);
-    void serial_Read(Ui::Widget *ui, QTimer *tim);
+    void ReadyRead(QTimer *tim);
     QString SerialSend(Ui::Widget *ui, QString Data);
     void SerialSend(Ui::Widget *ui, QByteArray Data);
     QSerialPort SerialPort;
 private:
 
 public:
-    void TimeOut(QTimer *tim);
+    void TimeOut(Ui::Widget *ui, QTimer *tim);
 
     enum BAT_COMMAND_SEND_STATUS {
         COMPLETE,

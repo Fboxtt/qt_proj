@@ -148,7 +148,7 @@ void Widget::on_listWidget_itemClicked(QListWidgetItem *item)
 // 串口读取函数的定时器链接的函数，保证接收数据的完整
 void Widget::ReadSerialTimeOut()
 {
-    se.TimeOut(tim);
+    se.TimeOut(ui, tim);
 
     QString receiveDecode = dcode0.PlainTextDecode(ui);
     if(receiveDecode.contains("数据非法")) {
@@ -218,7 +218,7 @@ void Widget::on_openBtn_clicked()
 void Widget::SerialPortReadyRead_slot()
 {
     qDebug() << "in ready slot";
-    se.serial_Read(ui,tim);
+    se.ReadyRead(tim);
 }
 
 void Widget::on_sendBox_clicked()
@@ -243,7 +243,7 @@ void Widget::SendAndDecode(QString sendData)
 {
     sendData = se.SerialSend(ui, sendData);
     qDebug() << "sendata = " << sendData;
-    se.batComSendStatus = serial::COMPLETE;
+    // se.batComSendStatus = serial::COMPLETE;
     QString dcodeData = dcode0.AddTimeStamp(ui, sendData);
     dcode0.PlainTextDecode(ui);
 }
@@ -278,6 +278,7 @@ void Widget::sendCmdRecieveWave()
         if (ui->pushButton_3->text() == "停止读取tbs") {
             this->on_pushButton_3_clicked();
             ui->pushButton_3->setEnabled(false);
+            tbsTim->stop();
         }
         return;
     }

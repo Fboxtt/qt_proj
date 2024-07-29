@@ -71,6 +71,7 @@ public slots:
     void sendCmdRecieveWave();
 };
 
+
 #define BAT_SEP (",")
 #define COMUT_SEP (";")
 #define COMUT_BAT_SEP (";,")

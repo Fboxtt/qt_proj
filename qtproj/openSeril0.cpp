@@ -149,15 +149,9 @@ void serial::ClickOpenSerPort(Ui::Widget *ui)
         ui->portStatus->setText("串口未连接");
     }
 }
-void serial::TimeOut(QTimer *tim)
+void serial::TimeOut(Ui::Widget *ui, QTimer *tim)
 {
-    serial::batComSendStatus = serial::COMPLETE;
-    tim->stop();
-}
-
-void serial::serial_Read(Ui::Widget *ui, QTimer *tim)
-{
-    QString buffer_1;
+    QString utf8Buffer;
     //从缓冲区中读取数据
     QByteArray buffer = SerialPort.readAll();
     QByteArray testbu ;
@@ -173,22 +167,22 @@ void serial::serial_Read(Ui::Widget *ui, QTimer *tim)
         for(int i=0;i<str.length();i+=2)
         {
                QString str_1 = str.mid (i,2);
-               buffer_1 += str_1;
-               buffer_1 += " ";
+               utf8Buffer += str_1;
+               utf8Buffer += " ";
         }
-        // buffer_1 = buffer_1.simplified();
+        // utf8Buffer = utf8Buffer.simplified();
         //读取之前显示数据
         QString receive = ui->receiveData->toPlainText();
         //清空显示
         ui->receiveData->clear();
         //重新显示
 
-        if(serial::batComSendStatus == serial::COMPLETE) // 加换行符
-        {
+//        if(serial::batComSendStatus == serial::COMPLETE) // 加换行符
+//        {
             qDebug() << "complete func in" << "\r";
             receive += "\r";
-        }
-        if (ui->TimeCheckBox->isChecked() && serial::batComSendStatus != serial::INCOMPLETE) // 加时间戳
+//        }
+        if (ui->TimeCheckBox->isChecked()) // 加时间戳
         {
             receive += QString("[%1]:RX ->").arg(QTime::currentTime().toString("HH:mm:ss:zzz")) + COMUT_BAT_SEP;
         }
@@ -196,14 +190,20 @@ void serial::serial_Read(Ui::Widget *ui, QTimer *tim)
             receive += QString(gbkBuffer);
         }//直接显示
         else{
-            receive += QString(buffer_1);
+            receive += QString(utf8Buffer);
         }//16进制显示
 
         ui->receiveData->appendPlainText(receive);
-        serial::batComSendStatus = serial::INCOMPLETE;
-        tim->start(); // 开启定时器，如果100ms后没有收到数据，则换行；
+//        serial::batComSendStatus = serial::INCOMPLETE;
     }
+    tim->stop(); // 开启定时器，如果100ms后没有收到数据，则换行；
     buffer.clear();
+}
+
+void serial::ReadyRead(QTimer *tim)
+{
+//    serial::batComSendStatus = serial::COMPLETE;
+    tim->start();
 }
 
 QString serial::SerialSend(Ui::Widget *ui, QString Data)
