@@ -80,6 +80,10 @@ Widget::Widget(QWidget *parent)
     // 状态盒默认尺寸设置
     ui->alarmGroupBox->setMinimumWidth(300);
 
+    ui->alarmGroupBox->setMaximumWidth(400);
+    ui->groupBox_3->setMaximumWidth(400);
+
+    // 设置状态颜色提示信息，红色和绿色代表什么颜色
     ui->label_8->setStyleSheet("QLabel { background-color: green}");
     ui->label_10->setStyleSheet("QLabel { background-color: red}");
 }
