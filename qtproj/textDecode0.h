@@ -20,6 +20,7 @@ public:
         USHORT,
         SHORT,
         CHAR,
+        UCHAR,
         STRING,
     };
     enum ENDIAN_TYPE {
@@ -41,9 +42,10 @@ public:
 
 class tver
 {
-    static uint32_t datInCmdAddr;
-    static uint32_t datLenth;
+
     public:
+        // static uint32_t datInCmdAddr;
+        // static uint32_t datLenth;
         tver(QString valName, datTypDic::DATA_TYPE dataType, uint32_t lenth);
         tver(QString valName, datTypDic::DATA_TYPE dataType);
         tver(){};
@@ -66,12 +68,13 @@ class tverStruct
         tverStruct();
         tver value(QString valName);
         QMap<QString, tver> tverMap;
+        uint32_t dataLenth;
 };
 
 class tbs
 {
-    static uint32_t datInCmdAddr;
-    static uint32_t datLenth;
+    // static uint32_t datInCmdAddr;
+    // static uint32_t datLenth;
 
 public:
     tbs(QString valName, datTypDic::DATA_TYPE dataType);
@@ -108,6 +111,7 @@ public:
     void clearTableItem(QVector<QTableWidgetItem>* itemTableList);
     QVector<tbs> HexWriteTbs(QStringList dataList);
     QVector<tbs> IntWriteTbs(QStringList dataList);
+    QString HexWriteTver(QStringList dataList, tverStruct* tver);
     void unsignedToSigned(uint32_t val, datTypDic typedic);
     QMap<uint32_t, QString> typeCode;
     QMap<uint32_t, QString> funcCode;
