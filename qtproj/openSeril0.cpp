@@ -210,12 +210,20 @@ QString serial::SerialSend(Ui::Widget *ui, QString Data)
 {
     QByteArray Data_1;
     //获取输入窗口sendData的数据
-
+    uint8_t checkSum = 0;
     if(ui->hexSendBox->checkState() == 0) {
         Data_1 = Data.toUtf8();//转换成utf8格式的字节流发送
     } else {
-        Data_1 = QByteArray::fromHex (Data.toLatin1().data());//按十六进制编码发送
+        Data_1 = QByteArray::fromHex(Data.toLatin1().data());//按十六进制编码发送
         Data = Data.remove(QChar('\n'), Qt::CaseInsensitive);
+    }
+    if(Data_1.size() == 8) {
+        for(uint8_t i = 1; i <= 6; i++) {
+            checkSum += Data_1[i];
+        }
+        if((uint8_t)Data_1[7] != checkSum){
+            ui->portStatus->setText("发送校验错误，正确是0x" + QString::number(checkSum, 16));
+        }
     }
     // 写入发送缓存区
     qDebug() << Data_1 << "send data";
