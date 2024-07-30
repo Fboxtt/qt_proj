@@ -25,7 +25,7 @@ QVector<QTableWidgetItem> itemTableList(80);
 
 chartV* chartV0;
 hexDecode hexFile;
-
+tverStruct *tverStru;
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -86,6 +86,10 @@ Widget::Widget(QWidget *parent)
     // 设置状态颜色提示信息，红色和绿色代表什么颜色
     ui->label_8->setStyleSheet("QLabel { background-color: green}");
     ui->label_10->setStyleSheet("QLabel { background-color: red}");
+
+
+//     数据结构体初始化函数
+    tverStru = new tverStruct();
 }
 
 Widget::~Widget()

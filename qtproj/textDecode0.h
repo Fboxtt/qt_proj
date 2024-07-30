@@ -20,6 +20,7 @@ public:
         USHORT,
         SHORT,
         CHAR,
+        STRING,
     };
     enum ENDIAN_TYPE {
         LITTLE,
@@ -36,6 +37,35 @@ public:
     uint32_t typeLenth;
     ENDIAN_TYPE endianType;
     SIGNED_TYPE signedType;
+};
+
+class tver
+{
+    static uint32_t datInCmdAddr;
+    static uint32_t datLenth;
+    public:
+        tver(QString valName, datTypDic::DATA_TYPE dataType, uint32_t lenth);
+        tver(QString valName, datTypDic::DATA_TYPE dataType);
+        tver(){};
+        QString valName;
+        uint32_t unitInCmdAddr;
+        uint32_t unitInDatAddr;
+        datTypDic::DATA_TYPE dataType;
+        datTypDic::ENDIAN_TYPE endianType;
+        datTypDic::SIGNED_TYPE signedType;
+
+        uint32_t typeLenth;
+        uint32_t uintVal;
+        QByteArray byteArray;
+};
+
+class tverStruct
+{
+    public:
+//        tverStruct();
+        tverStruct();
+        tver value(QString valName);
+        QMap<QString, tver> tverMap;
 };
 
 class tbs
@@ -58,6 +88,9 @@ public:
     uint32_t uintVal;
 //    void Init(QString* valName, uint32_t address, uint32_t cmdAddress);
 };
+
+
+
 
 class textDcode
 {

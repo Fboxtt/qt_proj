@@ -17,7 +17,64 @@ QList<datTypDic> TypUnion = {
     {datTypDic::USHORT, "USHORT", 2, datTypDic::LITTLE, datTypDic::UNSIGNED},
     {datTypDic::SHORT,   "SHORT", 2, datTypDic::LITTLE, datTypDic::SIGNED},
     {datTypDic::CHAR,     "CHAR", 1, datTypDic::LITTLE, datTypDic::SIGNED},
+    {datTypDic::STRING,     "STRING", 1, datTypDic::LITTLE, datTypDic::UNSIGNED},
 };
+
+
+uint32_t tver::datInCmdAddr = 8;
+uint32_t tver::datLenth = 0;
+
+tver::tver(QString valName, datTypDic::DATA_TYPE dataType, uint32_t lenth)
+{
+    this->valName = valName;
+    this->unitInCmdAddr = tver::datInCmdAddr + tver::datLenth;
+    this->unitInDatAddr = tver::datLenth;
+    this->dataType = dataType;
+
+    foreach(datTypDic unit, TypUnion) {
+        if(unit.type == this->dataType) {
+            this->typeLenth = lenth;
+            this->datLenth += lenth;
+            this->endianType = unit.endianType;
+            this->signedType = unit.signedType;
+        }
+    }
+}
+tver::tver(QString valName, datTypDic::DATA_TYPE dataType)
+{
+    this->valName = valName;
+    this->unitInCmdAddr = tver::datInCmdAddr + tver::datLenth;
+    this->unitInDatAddr = tver::datLenth;
+    this->dataType = dataType;
+
+    foreach(datTypDic unit, TypUnion) {
+        if(unit.type == this->dataType) {
+            this->typeLenth = unit.typeLenth;
+            this->datLenth += unit.typeLenth;
+            this->endianType = unit.endianType;
+            this->signedType = unit.signedType;
+        }
+    }
+}
+
+tverStruct::tverStruct()
+{
+    tverMap.insert("主版本号", {"主版本号", datTypDic::USHORT});
+    tverMap.insert("次版本号", {"次版本号", datTypDic::USHORT});
+    tverMap.insert("修订版本", {"修订版本", datTypDic::USHORT});
+    tverMap.insert("编译年  ", {"编译年", datTypDic::USHORT});
+    tverMap.insert("编译月", {"编译月", datTypDic::USHORT});
+    tverMap.insert("编译日", {"编译日", datTypDic::USHORT});
+    tverMap.insert("硬件版本", {"硬件版本", datTypDic::USHORT, 30});
+    tverMap.insert("功能版本", {"功能版本", datTypDic::USHORT, 40});
+    qDebug() << this->value("主版本号").valName;
+};
+tver tverStruct::value(QString valName)
+{
+    return tverMap.value(valName);
+}
+
+
 uint32_t tbs::datInCmdAddr = 8;
 uint32_t tbs::datLenth = 0;
 tbs::tbs(QString valName,datTypDic::DATA_TYPE dataType)
@@ -224,13 +281,14 @@ QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
         datId++;
     }
 
-    // dataList = timeAndDataList[1].split(" "); // 需要改，防止溢出
-    if(hexStrLis.size() <= 8 || (hexStrLis[4] != "93")) {
-        qDebug() << "dataList <= 8 or datalist[4] != 93";
-        } else {
-            // 把数据写入tbsUnit
+    if(hexStrLis.size() > 8 && (hexStrLis[4] == "93")) {
+        // 把数据写入tbsUnit
         QVector<tbs> decodeList = this->HexWriteTbs(hexStrLis.mid(8, -1)); // 需要改成自适应
-        }
+    } else if (hexStrLis.size() > 8 && (hexStrLis[4] == "96")) {
+
+    } else {
+        qDebug() << "dataList <= 8 or datalist[4] != 93";
+    }
 
     qDebug() << "codelist.join = " << codeList.join(COMUT_SEP);
     return codeList.join(COMUT_SEP);
