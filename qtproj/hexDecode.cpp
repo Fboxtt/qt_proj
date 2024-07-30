@@ -36,7 +36,7 @@ QString hexDecode::ReadHexFile(QFile *file)
     bool ok = false;
     uint32_t lineNumber = 0;
     QString decodeLog = "";
-    uint32_t lastAddr;
+    uint32_t lastAddr = 0;
     // 如果解析正确，则exist
     this->exist = false;
     while(true) {
