@@ -261,85 +261,8 @@
       <enum>QTabWidget::North</enum>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
-     <widget class="QWidget" name="tab">
-      <attribute name="title">
-       <string>sendCode</string>
-      </attribute>
-      <layout class="QFormLayout" name="formLayout_4">
-       <item row="1" column="1">
-        <layout class="QGridLayout" name="gridLayout_2">
-         <item row="2" column="2">
-          <widget class="QPushButton" name="clearReceiveDataButton">
-           <property name="text">
-            <string>清空数据</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QCheckBox" name="TimeCheckBox">
-           <property name="autoFillBackground">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>时间戳显示</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QCheckBox" name="hexDisplay">
-           <property name="text">
-            <string>16进制显示</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0" colspan="3">
-          <widget class="QPlainTextEdit" name="receiveData"/>
-         </item>
-        </layout>
-       </item>
-       <item row="2" column="1">
-        <layout class="QFormLayout" name="formLayout_2">
-         <item row="0" column="0" colspan="2">
-          <widget class="QPlainTextEdit" name="sendData"/>
-         </item>
-         <item row="1" column="0">
-          <widget class="QCheckBox" name="hexSendBox">
-           <property name="text">
-            <string>16进制发送</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QPushButton" name="sendBox">
-           <property name="text">
-            <string>发送</string>
-           </property>
-           <property name="autoDefault">
-            <bool>false</bool>
-           </property>
-           <property name="default">
-            <bool>false</bool>
-           </property>
-           <property name="flat">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </widget>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
        <string>batStatus</string>
@@ -532,6 +455,12 @@
           </item>
           <item row="0" column="0">
            <widget class="QLabel" name="label_8">
+            <property name="maximumSize">
+             <size>
+              <width>50</width>
+              <height>50</height>
+             </size>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -539,6 +468,12 @@
           </item>
           <item row="2" column="0">
            <widget class="QLabel" name="label_10">
+            <property name="maximumSize">
+             <size>
+              <width>50</width>
+              <height>50</height>
+             </size>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -575,6 +510,83 @@
       <layout class="QFormLayout" name="formLayout_5">
        <item row="0" column="1">
         <layout class="QGridLayout" name="gridLayout_5"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>sendCode</string>
+      </attribute>
+      <layout class="QFormLayout" name="formLayout_4">
+       <item row="1" column="1">
+        <layout class="QGridLayout" name="gridLayout_2">
+         <item row="2" column="2">
+          <widget class="QPushButton" name="clearReceiveDataButton">
+           <property name="text">
+            <string>清空数据</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QCheckBox" name="TimeCheckBox">
+           <property name="autoFillBackground">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>时间戳显示</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QCheckBox" name="hexDisplay">
+           <property name="text">
+            <string>16进制显示</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" colspan="3">
+          <widget class="QPlainTextEdit" name="receiveData"/>
+         </item>
+        </layout>
+       </item>
+       <item row="2" column="1">
+        <layout class="QFormLayout" name="formLayout_2">
+         <item row="0" column="0" colspan="2">
+          <widget class="QPlainTextEdit" name="sendData"/>
+         </item>
+         <item row="1" column="0">
+          <widget class="QCheckBox" name="hexSendBox">
+           <property name="text">
+            <string>16进制发送</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QPushButton" name="sendBox">
+           <property name="text">
+            <string>发送</string>
+           </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
+           <property name="default">
+            <bool>false</bool>
+           </property>
+           <property name="flat">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
