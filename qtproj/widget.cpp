@@ -223,9 +223,6 @@ void Widget::on_openBtn_clicked()
             this->on_pushButton_3_clicked();
         }
     }
-    if(ui->openBtn->text() == "关闭串口") {
-        this->on_getVersionButton_clicked();
-    }
 
 }
 
