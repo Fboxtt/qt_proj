@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1178</width>
-    <height>603</height>
+    <height>605</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -261,7 +261,7 @@
       <enum>QTabWidget::North</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
@@ -587,6 +587,138 @@
           </widget>
          </item>
         </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="calibrationTab">
+      <attribute name="title">
+       <string>校准模块</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_18">
+       <item row="1" column="0">
+        <widget class="QPushButton" name="pushButton_6">
+         <property name="text">
+          <string>更新</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QPushButton" name="pushButton_9">
+         <property name="text">
+          <string>自动计算</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QPushButton" name="pushButton_10">
+         <property name="text">
+          <string>写入</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0" colspan="3">
+        <widget class="QTableWidget" name="tableWidget_2">
+         <row>
+          <property name="text">
+           <string>电芯1</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>电芯2</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>电芯3</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>电芯4</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>电芯5</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>电芯6</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>电芯7</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>电芯8</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>电芯9</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>电芯10</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>电芯11</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>电芯12</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>电芯13</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>电芯14</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>电芯15</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>电芯16</string>
+          </property>
+         </row>
+         <column>
+          <property name="text">
+           <string>新建列</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>实际值</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>原k值</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>新k值</string>
+          </property>
+         </column>
+        </widget>
        </item>
       </layout>
      </widget>
