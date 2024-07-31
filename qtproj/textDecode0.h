@@ -64,10 +64,13 @@ class tver
 class tverStruct
 {
     public:
-//        tverStruct();
         tverStruct();
         tver value(QString valName);
+        void insert(tver addTver);
+        bool newDataStatus;
+
         QMap<QString, tver> tverMap;
+        QList<QString> keyList;
         uint32_t dataLenth;
 };
 

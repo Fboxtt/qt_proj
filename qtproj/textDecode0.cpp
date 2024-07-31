@@ -60,23 +60,29 @@ tver::tver(QString valName, datTypDic::DATA_TYPE dataType)
 
 tverStruct::tverStruct()
 {
-    tverMap.insert("主版本号", {"主版本号", datTypDic::USHORT});
-    tverMap.insert("次版本号", {"次版本号", datTypDic::USHORT});
-    tverMap.insert("修订版本", {"修订版本", datTypDic::USHORT});
-    tverMap.insert("编译年  ", {"编译年", datTypDic::USHORT});
-    tverMap.insert("编译月", {"编译月", datTypDic::UCHAR});
-    tverMap.insert("编译日", {"编译日", datTypDic::UCHAR});
-    tverMap.insert("硬件版本", {"硬件版本", datTypDic::CHAR, 30});
-    tverMap.insert("功能版本", {"功能版本", datTypDic::CHAR, 40});
     this->dataLenth = 0;
-    foreach(tver unit, this->tverMap.values()) {
-        this->dataLenth += unit.typeLenth;
-    }
+    this->newDataStatus = false;
+    this->insert({"主版本号", datTypDic::USHORT});
+    this->insert({"次版本号", datTypDic::USHORT});
+    this->insert({"修订版本", datTypDic::USHORT});
+    this->insert({"编译年", datTypDic::USHORT});
+    this->insert({"编译月", datTypDic::UCHAR});
+    this->insert({"编译日", datTypDic::UCHAR});
+    this->insert({"硬件版本", datTypDic::STRING, 30});
+    this->insert({"功能版本", datTypDic::STRING, 40});
+
     qDebug() << this->value("主版本号").valName << this->dataLenth;
 };
 tver tverStruct::value(QString valName)
 {
     return tverMap.value(valName);
+}
+
+void tverStruct::insert(tver addTver)
+{
+    keyList.append(addTver.valName);
+    tverMap.insert(addTver.valName, addTver);
+    this->dataLenth += addTver.typeLenth;
 }
 
 
@@ -225,7 +231,7 @@ uint32_t textDcode::CalCheckSum(QVector<uint8_t> hexVector)
     }
     return checkSum;
 }
-extern tverStruct *tverStru;
+extern tverStruct *tverStru0;
 // 把收到的所有数据，替换成type，ack和data.
 QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
 {
@@ -286,7 +292,7 @@ QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
         // 把数据写入tbsUnit
         QVector<tbs> decodeList = this->HexWriteTbs(hexStrLis.mid(8, -1)); // 需要改成自适应
     } else if (hexStrLis.size() > 8 && (hexStrLis[4] == "96")) {
-        HexWriteTver(hexStrLis.mid(8, 80), tverStru);
+        HexWriteTver(hexStrLis.mid(8, 80), tverStru0);
     } else {
         qDebug() << "dataList <= 8 or datalist[4] != 93";
     }
@@ -504,25 +510,28 @@ QString textDcode::HexWriteTver(QStringList dataList, tverStruct* tverStuObject)
         return "tver数据长度不对";
     }
 
-    QMap<QString, tver>::iterator it;
-    it = tverStuObject->tverMap.begin();
-
+    QList<QString>::iterator it;
+    it = tverStuObject->keyList.begin();
+    tver tver0 = tverStuObject->tverMap.value(*it);
     foreach(uint8_t hex, hexVector) {
-            if(byteInUnit == it.value().typeLenth) {
-                it.value().uintVal = uintVal;
-                uintVal = 0;
-                byteInUnit = 0;
-                if(it == tverStuObject->tverMap.end()){
-                    break;
-                }
-                qDebug() << it.value().valName << it.value().uintVal << it.value().byteArray;
-                it++;
-            }
-            uintVal += (((uint32_t)hex) <<  (byteInUnit * 8));
-            it.value().byteArray.append(hex);
-
+        uintVal += (((uint32_t)hex) <<  (byteInUnit * 8));
+        tver0.byteArray.append(hex);
         byteInUnit++;
+        if(byteInUnit == tver0.typeLenth) {
+            tver0.uintVal = uintVal;
+            uintVal = 0;
+            byteInUnit = 0;
+            qDebug() << tver0.valName << tver0.uintVal << tver0.byteArray;
+            tverStuObject->tverMap.insert(*it,tver0);
+            qDebug() << tverStuObject->tverMap.value(*it).valName << tverStuObject->tverMap.value(*it).uintVal << tverStuObject->tverMap.value(*it).byteArray;
+            it++;
+            if(it == tverStuObject->keyList.end()){
+                break;
+            }
+            tver0 = tverStuObject->tverMap.value(*it);
+        }
     }
+    tverStuObject->newDataStatus = true;
     return "tver解析正确";
 }
 

@@ -25,7 +25,7 @@ QVector<QTableWidgetItem> itemTableList(80);
 
 chartV* chartV0;
 hexDecode hexFile;
-tverStruct *tverStru;
+tverStruct *tverStru0;
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -39,7 +39,7 @@ Widget::Widget(QWidget *parent)
     // 设置listWidget右键菜单
     ui->listWidget->setContextMenuPolicy(Qt::CustomContextMenu); 
     // 链接右击和on_PopupRightMenu槽函数
-    connect(ui->listWidget,&QListWidget::customContextMenuRequested,this,&Widget::on_PopupRightMenu); 
+    connect(ui->listWidget,&QListWidget::customContextMenuRequested,this,&Widget::on_PopupRightMenu);
 
 
 
@@ -89,7 +89,7 @@ Widget::Widget(QWidget *parent)
 
 
 //     数据结构体初始化函数
-    tverStru = new tverStruct();
+    tverStru0 = new tverStruct();
 }
 
 Widget::~Widget()
@@ -155,6 +155,11 @@ void Widget::ReadSerialTimeOut()
     se.TimeOut(ui, tim);
 
     QString receiveDecode = dcode0.PlainTextDecode(ui);
+    // 如果检测到某个结构体已经发生更新，则显示
+    if(tverStru0->newDataStatus == true) {
+        this->SetVersionLable();
+    }
+
     if(receiveDecode.contains("数据非法")) {
         return;
     }
@@ -457,4 +462,18 @@ void Widget::on_getVersionButton_clicked()
 {
     QString sendData = "00 00 04 01 16 55 AA 1A";
     this->SendAndDecode(sendData);
+//    connect(ui->listWidget,&QListWidget::customContextMenuRequested,this,&Widget::SetVersionLable);
+}
+void Widget::SetVersionLable()
+{
+    QString output = "";
+    foreach(QString key, tverStru0->keyList) {
+        if(tverStru0->value(key).dataType == datTypDic::STRING) {
+            output += tverStru0->value(key).valName + ":" + QString(tverStru0->value(key).byteArray);
+        } else {
+            output += tverStru0->value(key).valName + ":" + QString::number(tverStru0->value(key).uintVal);
+        }
+        output += "\n";
+    }
+    ui->versionLabel->setText(output);
 }
