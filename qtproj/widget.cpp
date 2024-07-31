@@ -209,9 +209,11 @@ void Widget::on_openBtn_clicked()
     /* 创建接收数据信号槽 */
     connect(&se.SerialPort, &QSerialPort::readyRead, this, &Widget::SerialPortReadyRead_slot);
 
+    // 创建延迟读取数据定时器
     tim = new QTimer();
     tim->setInterval(400);
     connect(tim, SIGNAL(timeout()),this,SLOT(ReadSerialTimeOut()));
+
     if(ui->portStatus->text() == "串口已连接") {
         this->on_sendRegisterBox_clicked();
         ui->portStatus->setText("注册中");
@@ -220,6 +222,9 @@ void Widget::on_openBtn_clicked()
         if(ui->pushButton_3->text() == "停止读取tbs") {
             this->on_pushButton_3_clicked();
         }
+    }
+    if(ui->openBtn->text() == "关闭串口") {
+        this->on_getVersionButton_clicked();
     }
 
 }
@@ -444,7 +449,8 @@ void Widget::on_pushButton_5_clicked()
    QWidget * refreshData=new QWidget();
    QLabel * refreshLabel = new QLabel(refreshData);
    refreshData->resize(800,800);
-   refreshLabel->setText("\
+   refreshLabel->setText(
+               "\
 0.0.2更新内容\n\
 电池状态颜色意义done\n\
 电池序号 done\n\
@@ -453,7 +459,13 @@ void Widget::on_pushButton_5_clicked()
 状态显示表优化 done\n\
 代码中电芯名称修改 done\n\
 状态信息顺序修正 done\n\
-增加均衡状态 done\n"
+增加均衡状态 done\n\
+0.0.3更新内容\n\
+设置groupbox最大宽度改善ui\n\
+改变串口函数读取模式\n\
+解决状态显示错误问题（自加热，均衡，空闲）\n\
+增加电池版本信息读取\n\
+"
                );
    refreshData->show();
 }
@@ -462,7 +474,6 @@ void Widget::on_getVersionButton_clicked()
 {
     QString sendData = "00 00 04 01 16 55 AA 1A";
     this->SendAndDecode(sendData);
-//    connect(ui->listWidget,&QListWidget::customContextMenuRequested,this,&Widget::SetVersionLable);
 }
 void Widget::SetVersionLable()
 {
