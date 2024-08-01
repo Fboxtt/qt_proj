@@ -20,11 +20,91 @@ QList<datTypDic> TypUnion = {
     {datTypDic::UCHAR,     "UCHAR", 1, datTypDic::LITTLE, datTypDic::SIGNED},
     {datTypDic::STRING,     "STRING", 1, datTypDic::LITTLE, datTypDic::UNSIGNED},
 };
+// ***************************************dataCell**************************************//
+// ***************************************dataCell**************************************//
+dataCell::dataCell(QString valName, datTypDic::DATA_TYPE dataType, uint32_t lenth)
+{
+    this->valName = valName;
+//    this->unitInCmdAddr = tver::datInCmdAddr;
+    // this->unitInDatAddr = tver::datLenth;
+    this->dataType = dataType;
 
+    foreach(datTypDic unit, TypUnion) {
+        if(unit.type == this->dataType) {
+            this->typeLenth = lenth;
+            // this->datLenth += lenth;
+            this->endianType = unit.endianType;
+            this->signedType = unit.signedType;
+        }
+    }
+}
+dataCell::dataCell(QString valName, datTypDic::DATA_TYPE dataType)
+{
+    this->valName = valName;
+    // this->unitInCmdAddr = tver::datInCmdAddr + tver::datLenth;
+    // this->unitInDatAddr = tver::datLenth;
+    this->dataType = dataType;
 
-// uint32_t tver::datInCmdAddr = 8;
-// uint32_t tver::datLenth = 0;
+    foreach(datTypDic unit, TypUnion) {
+        if(unit.type == this->dataType) {
+            this->typeLenth = unit.typeLenth;
+            // this->datLenth += unit.typeLenth;
+            this->endianType = unit.endianType;
+            this->signedType = unit.signedType;
+        }
+    }
+}
+// ***************************************dataStruct**************************************//
+// ***************************************dataStruct**************************************//
+dataStruct::dataStruct()
+{
+    this->newDataStatus = false;
+    this->dataLenth = 0;
+}
 
+dataCell dataStruct::value(QString valName)
+{
+    return dataMap.value(valName);
+}
+
+void dataStruct::insert(dataCell addCell)
+{
+    keyList.append(addCell.valName);
+    this->dataMap.insert(addCell.valName, addCell);
+    this->dataLenth += addCell.typeLenth;
+}
+// ***************************************cliStruct**************************************//
+// ***************************************cliStruct**************************************//
+caliStruct::caliStruct()
+{
+    this->insert({"usPackVk", datTypDic::USHORT});
+    this->insert({"usBattVk", datTypDic::USHORT});
+
+    for(uint8_t i = 1; i <= 16; i++)
+    {
+        this->insert({"电芯" + QString::number(i,10), datTypDic::USHORT});//
+    }
+
+    this->insert({"usChgCurrK", datTypDic::USHORT});
+    this->insert({"sChgCurrB", datTypDic::SHORT});
+    this->insert({"usDisCurrK", datTypDic::USHORT});
+    this->insert({"sDisCurrB", datTypDic::SHORT});
+    this->insert({"usChgCurrSK", datTypDic::USHORT});
+    this->insert({"sChgCurrSB", datTypDic::SHORT});
+    this->insert({"usDisCurrSK", datTypDic::USHORT});
+    this->insert({"sDisCurrSB", datTypDic::SHORT});
+    this->insert({"usChgCurrSSK", datTypDic::USHORT});
+    this->insert({"sChgCurrSSB;", datTypDic::SHORT});
+    this->insert({"usDisCurrSSK", datTypDic::USHORT});
+    this->insert({"sDisCurrSSB", datTypDic::SHORT});
+    for(uint8_t i = 1; i <= 5; i++)
+    {
+        this->insert({"temp" + QString::number(i,10), datTypDic::USHORT});//
+    }
+
+    qDebug() << this->value("usChgCurrK").valName << this->dataLenth;
+}
+// ***************************************tver**************************************//
 tver::tver(QString valName, datTypDic::DATA_TYPE dataType, uint32_t lenth)
 {
     this->valName = valName;
@@ -85,7 +165,20 @@ void tverStruct::insert(tver addTver)
     this->dataLenth += addTver.typeLenth;
 }
 
+/********************************calibration*******************************/
+/********************************calibration*******************************/
 
+//tver caliStruct::value(QString valName)
+//{
+//    return tverMap.value(valName);
+//}
+
+//void caliStruct::insert(tver addTver)
+//{
+//    keyList.append(addTver.valName);
+//    tverMap.insert(addTver.valName, addTver);
+//    this->dataLenth += addTver.typeLenth;
+//}
 tbs::tbs(QString valName,datTypDic::DATA_TYPE dataType)
 {
     this->valName = valName;
@@ -490,7 +583,7 @@ QVector<tbs> textDcode::IntWriteTbs(QStringList dataList)
     return tbsUnit;
 }
 
-// 将字符串str转换成真实的int值，再转换成str写入tbsUnit
+// 将字符串str转换成真实的int值，再转换成str写入tverStruct
 QString textDcode::HexWriteTver(QStringList dataList, tverStruct* tverStuObject)
 {
 
@@ -534,7 +627,50 @@ QString textDcode::HexWriteTver(QStringList dataList, tverStruct* tverStuObject)
     tverStuObject->newDataStatus = true;
     return "tver解析正确";
 }
+//// 将字符串str转换成真实的int值，再转换成str写入dataStruct
+QString textDcode::HexWriteDataStruct(QStringList dataList, dataStruct* struObject)
+{
 
+    bool ok;
+    QVector<uint8_t> hexVector;
+    uint8_t byteInUnit = 0;
+    uint32_t  uintVal = 0;
+
+    foreach(QString hexStr, dataList) {
+        hexStr.toInt(&ok, 16);
+        if (ok == true) {
+            hexVector.append((uint8_t)hexStr.toInt(&ok, 16));
+        }
+    }
+
+    if((uint32_t)hexVector.size() != struObject->dataLenth) {
+        return "tver数据长度不对";
+    }
+
+    QList<QString>::iterator it;
+    it = struObject->keyList.begin();
+    dataCell cell0 = struObject->dataMap.value(*it);
+    foreach(uint8_t hex, hexVector) {
+        uintVal += (((uint32_t)hex) <<  (byteInUnit * 8));
+        cell0.byteArray.append(hex);
+        byteInUnit++;
+        if(byteInUnit == cell0.typeLenth) {
+            cell0.uintVal = uintVal;
+            uintVal = 0;
+            byteInUnit = 0;
+            qDebug() << cell0.valName << cell0.uintVal << cell0.byteArray;
+            struObject->dataMap.insert(*it,cell0);
+            qDebug() << struObject->dataMap.value(*it).valName << struObject->dataMap.value(*it).uintVal << struObject->dataMap.value(*it).byteArray;
+            it++;
+            if(it == struObject->keyList.end()){
+                break;
+            }
+            cell0 = struObject->dataMap.value(*it);
+        }
+    }
+    struObject->newDataStatus = true;
+    return "tver解析正确";
+}
 // 从输入的item判断数据是否是tbs数据，如果是则解析再写入到tbsUnit
 bool textDcode::ItemToTbs(QString text)
 {

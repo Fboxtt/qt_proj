@@ -25,8 +25,9 @@ QVector<QTableWidgetItem> itemTableList(80);
 
 chartV* chartV0;
 hexDecode hexFile;
-tverStruct *tverStru0;
 
+tverStruct *tverStru0;
+caliStruct *calistru0;
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
@@ -90,6 +91,7 @@ Widget::Widget(QWidget *parent)
 
 //     数据结构体初始化函数
     tverStru0 = new tverStruct();
+    calistru0 = new caliStruct();
 }
 
 Widget::~Widget()

@@ -60,7 +60,44 @@ class tver
         uint32_t uintVal;
         QByteArray byteArray;
 };
+class dataCell
+{
 
+    public:
+        dataCell(QString valName, datTypDic::DATA_TYPE dataType, uint32_t lenth);
+        dataCell(QString valName, datTypDic::DATA_TYPE dataType);
+        dataCell(){};
+        QString valName;
+        uint32_t unitInCmdAddr;
+        uint32_t unitInDatAddr;
+        datTypDic::DATA_TYPE dataType;
+        datTypDic::ENDIAN_TYPE endianType;
+        datTypDic::SIGNED_TYPE signedType;
+
+        uint32_t typeLenth;
+        uint32_t uintVal;
+        QByteArray byteArray;
+};
+
+class dataStruct
+{
+public:
+    dataStruct();
+    dataCell value(QString valName);
+    void insert(dataCell addCell);
+    bool newDataStatus;
+
+    QMap<QString, dataCell> dataMap;
+    QList<QString> keyList;
+    uint32_t dataLenth;
+};
+
+class caliStruct:public dataStruct
+{
+    using dataStruct::dataStruct;
+    public:
+        caliStruct();
+};
 class tverStruct
 {
     public:
@@ -74,15 +111,12 @@ class tverStruct
         uint32_t dataLenth;
 };
 
+
 class tbs
 {
-    // static uint32_t datInCmdAddr;
-    // static uint32_t datLenth;
-
 public:
     tbs(QString valName, datTypDic::DATA_TYPE dataType);
     tbs(){};
-//    datTypDic getType(void);
     QString valName;
     uint32_t unitInCmdAddr;
     uint32_t unitInDatAddr;
@@ -115,6 +149,9 @@ public:
     QVector<tbs> HexWriteTbs(QStringList dataList);
     QVector<tbs> IntWriteTbs(QStringList dataList);
     QString HexWriteTver(QStringList dataList, tverStruct* tver);
+    QString HexWriteDataStruct(QStringList dataList, dataStruct* struObject);
+
+
     void unsignedToSigned(uint32_t val, datTypDic typedic);
     QMap<uint32_t, QString> typeCode;
     QMap<uint32_t, QString> funcCode;
