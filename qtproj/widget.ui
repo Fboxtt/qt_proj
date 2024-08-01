@@ -596,9 +596,9 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout_18">
        <item row="1" column="0">
-        <widget class="QPushButton" name="pushButton_6">
+        <widget class="QPushButton" name="getKB">
          <property name="text">
-          <string>更新</string>
+          <string>读取KB</string>
          </property>
         </widget>
        </item>
@@ -620,92 +620,182 @@
         <widget class="QTableWidget" name="tableWidget_2">
          <row>
           <property name="text">
-           <string>电芯1</string>
+           <string/>
           </property>
          </row>
          <row>
           <property name="text">
-           <string>电芯2</string>
+           <string/>
           </property>
          </row>
          <row>
           <property name="text">
-           <string>电芯3</string>
+           <string/>
           </property>
          </row>
          <row>
           <property name="text">
-           <string>电芯4</string>
+           <string/>
           </property>
          </row>
          <row>
           <property name="text">
-           <string>电芯5</string>
+           <string/>
           </property>
          </row>
          <row>
           <property name="text">
-           <string>电芯6</string>
+           <string/>
           </property>
          </row>
          <row>
           <property name="text">
-           <string>电芯7</string>
+           <string/>
           </property>
          </row>
          <row>
           <property name="text">
-           <string>电芯8</string>
+           <string/>
           </property>
          </row>
          <row>
           <property name="text">
-           <string>电芯9</string>
+           <string/>
           </property>
          </row>
          <row>
           <property name="text">
-           <string>电芯10</string>
+           <string/>
           </property>
          </row>
          <row>
           <property name="text">
-           <string>电芯11</string>
+           <string/>
           </property>
          </row>
          <row>
           <property name="text">
-           <string>电芯12</string>
+           <string/>
           </property>
          </row>
          <row>
           <property name="text">
-           <string>电芯13</string>
+           <string/>
           </property>
          </row>
          <row>
           <property name="text">
-           <string>电芯14</string>
+           <string/>
           </property>
          </row>
          <row>
           <property name="text">
-           <string>电芯15</string>
+           <string/>
           </property>
          </row>
          <row>
           <property name="text">
-           <string>电芯16</string>
+           <string/>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string/>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string/>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string/>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string/>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string/>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string/>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string/>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string/>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string/>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string/>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string/>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string/>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string/>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string/>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string/>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string/>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string/>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string/>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string/>
           </property>
          </row>
          <column>
           <property name="text">
-           <string>新建列</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>实际值</string>
+           <string>名称</string>
           </property>
          </column>
          <column>
@@ -716,6 +806,16 @@
          <column>
           <property name="text">
            <string>新k值</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>板子参数</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>测量参数</string>
           </property>
          </column>
         </widget>

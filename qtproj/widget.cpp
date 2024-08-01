@@ -27,7 +27,7 @@ chartV* chartV0;
 hexDecode hexFile;
 
 tverStruct *tverStru0;
-caliStruct *calistru0;
+caliStruct *caliStru0;
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
@@ -61,6 +61,9 @@ Widget::Widget(QWidget *parent)
 //        itemTableList[idx].setText(QString("%1").arg(idx,0,10));
         ui->tableWidget->setItem(idx / 4, idx % 4, &itemTableList[idx]);
     }
+    // k值校准tableWidget设置
+    ui->tableWidget_2->setFont(QFont("黑体", 7)); // table字体设置
+    ui->tableWidget_2->setFixedSize(600,800);
 
     // 波形chart配置
     chartV0 = new chartV();
@@ -91,7 +94,7 @@ Widget::Widget(QWidget *parent)
 
 //     数据结构体初始化函数
     tverStru0 = new tverStruct();
-    calistru0 = new caliStruct();
+    caliStru0 = new caliStruct();
 }
 
 Widget::~Widget()
@@ -160,8 +163,12 @@ void Widget::ReadSerialTimeOut()
     // 如果检测到某个结构体已经发生更新，则显示
     if(tverStru0->newDataStatus == true) {
         this->SetVersionLable();
+        tverStru0->newDataStatus = false;
     }
-
+    if(caliStru0->newDataStatus == true) {
+        this->GetKB();
+        caliStru0->newDataStatus == false;
+    }
     if(receiveDecode.contains("数据非法")) {
         return;
     }
@@ -486,4 +493,32 @@ void Widget::SetVersionLable()
         output += "\n";
     }
     ui->versionLabel->setText(output);
+}
+
+
+QVector<QTableWidgetItem*> cliNameItem;
+QVector<QTableWidgetItem*> valNameItem;
+QVector<QTableWidgetItem*> newKItem;
+void Widget::GetKB()
+{
+    QString output = "";
+    int idx = 0;
+    foreach(QString key, caliStru0->keyList) {
+//        qDebug() << key << idx << ;
+        if((uint32_t)cliNameItem.size() < caliStru0->dataLenth) {
+            cliNameItem.append(new QTableWidgetItem());
+            valNameItem.append(new QTableWidgetItem());
+            ui->tableWidget_2->setItem(idx, 0, cliNameItem[idx]);
+            ui->tableWidget_2->setItem(idx, 1, valNameItem[idx]);
+        }
+        cliNameItem[idx]->setText(caliStru0->value(key).valName);
+        valNameItem[idx]->setText(QString::number(caliStru0->value(key).uintVal));
+        idx++;
+    }
+}
+
+void Widget::on_getKB_clicked()
+{
+    QString sendData = "00 00 04 01 07 55 AA 0B";
+    this->SendAndDecode(sendData);
 }

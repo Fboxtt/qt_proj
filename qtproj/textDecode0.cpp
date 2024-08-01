@@ -1,6 +1,7 @@
 #include <textDecode0.h>
 
-
+extern tverStruct *tverStru0;
+extern caliStruct *caliStru0;
 
 datTypDic::datTypDic(DATA_TYPE type, QString typeName, uint32_t typeLenth, ENDIAN_TYPE endianType, SIGNED_TYPE signedType)
 {
@@ -165,20 +166,7 @@ void tverStruct::insert(tver addTver)
     this->dataLenth += addTver.typeLenth;
 }
 
-/********************************calibration*******************************/
-/********************************calibration*******************************/
 
-//tver caliStruct::value(QString valName)
-//{
-//    return tverMap.value(valName);
-//}
-
-//void caliStruct::insert(tver addTver)
-//{
-//    keyList.append(addTver.valName);
-//    tverMap.insert(addTver.valName, addTver);
-//    this->dataLenth += addTver.typeLenth;
-//}
 tbs::tbs(QString valName,datTypDic::DATA_TYPE dataType)
 {
     this->valName = valName;
@@ -324,7 +312,7 @@ uint32_t textDcode::CalCheckSum(QVector<uint8_t> hexVector)
     }
     return checkSum;
 }
-extern tverStruct *tverStru0;
+
 // 把收到的所有数据，替换成type，ack和data.
 QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
 {
@@ -386,6 +374,8 @@ QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
         QVector<tbs> decodeList = this->HexWriteTbs(hexStrLis.mid(8, -1)); // 需要改成自适应
     } else if (hexStrLis.size() > 8 && (hexStrLis[4] == "96")) {
         HexWriteTver(hexStrLis.mid(8, 80), tverStru0);
+    } else if (hexStrLis.size() > 8 && (hexStrLis[4] == "87")) {
+        HexWriteDataStruct(hexStrLis.mid(8, caliStru0->dataLenth), caliStru0);
     } else {
         qDebug() << "dataList <= 8 or datalist[4] != 93";
     }

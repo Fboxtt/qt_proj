@@ -62,6 +62,8 @@ private slots:
 
     void on_getVersionButton_clicked();
 
+    void on_getKB_clicked();
+
 private:
     Ui::Widget *ui; //似乎是定义了一个类指针
     QTimer *tim;
@@ -72,6 +74,7 @@ public slots:
     void SetTbsToTableAndChart(QListWidgetItem *item, int flag);
     void sendCmdRecieveWave();
     void SetVersionLable();
+    void GetKB();
 };
 
 
