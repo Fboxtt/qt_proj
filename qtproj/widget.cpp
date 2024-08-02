@@ -586,3 +586,33 @@ void Widget::on_pushButton_10_clicked()
 
     this->SendAndDecode(sendStr);
 }
+
+void Widget::on_pushButton_6_clicked()
+{
+    if((*dcode0.tbsUnion)[0].uintVal == 0) {
+        ui->portStatus->setText("没有读取电压！！！");
+        return;
+    }
+    if(newKItem.size() == 0) {
+        ui->portStatus->setText("需要先读取k值！！！");
+        return;
+    }
+    for(uint8_t i = 0; i < 18; i++) {
+        measureItem[i]->setText(QString::number((*dcode0.tbsUnion)[i].uintVal,10));
+    }
+}
+
+void Widget::on_pushButton_9_clicked()
+{
+    bool ok = true;
+    if(exMeasureItem.size() == 0 || measureItem.size() == 0) {
+        ui->portStatus->setText("没有电压！！！");
+        return;
+    }
+    for(uint8_t i = 0; i < 18; i++) {
+        if(exMeasureItem[i]->text() != "" && measureItem[i]->text() != "") {
+            uint64_t newKB = exMeasureItem[i]->text().toInt(&ok, 10) * 10000 / measureItem[i]->text().toInt(&ok, 10);
+            newKItem[i]->setText(QString::number((newKB * valNameItem[i]->text().toInt(&ok, 10) / 10000), 10));
+        }
+    }
+}

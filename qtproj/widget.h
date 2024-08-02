@@ -66,6 +66,10 @@ private slots:
 
     void on_pushButton_10_clicked();
 
+    void on_pushButton_6_clicked();
+
+    void on_pushButton_9_clicked();
+
 private:
     Ui::Widget *ui; //似乎是定义了一个类指针
     QTimer *tim;

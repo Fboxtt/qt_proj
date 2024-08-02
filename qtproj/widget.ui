@@ -149,7 +149,7 @@
      <item row="3" column="0">
       <widget class="QPushButton" name="sendTbs">
        <property name="text">
-        <string>tbs测试</string>
+        <string>单次获取tbs数据</string>
        </property>
       </widget>
      </item>
@@ -838,7 +838,7 @@
        <item row="1" column="1">
         <widget class="QPushButton" name="pushButton_6">
          <property name="text">
-          <string>获取电压</string>
+          <string>更新电压</string>
          </property>
         </widget>
        </item>
