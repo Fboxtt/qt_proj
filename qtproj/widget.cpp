@@ -462,6 +462,9 @@ void Widget::on_pushButton_5_clicked()
 增加电池版本信息读取\n\
 0.0.4更新内容\n\
 打通kb校准流程ui\n\
+0.0.5更新内容\n\
+解决充放电管状态显示错误问题\n\
+开关充放电管时暂停tbs读取，但好像还是会报错\n\
 "
                );
    refreshData->show();
