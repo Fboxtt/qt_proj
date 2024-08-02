@@ -269,17 +269,6 @@ void Widget::SendAndDecode(QString sendData)
 }
 void Widget::on_sendTbs_clicked()
 {
-//     QString sendData = "00 00 65 01 93 55 AA 00 13 33 00\
-//  00 5F 33 00 00 DA 0C D8 0C D8\
-//  0C D5 0C 00 00 00 00 00 00 00\
-//  00 00 00 00 00 00 00 00 00 00\
-//  00 00 00 00 00 00 00 00 00 00\
-//  00 18 00 18 00 00 00 00 00 00\
-//  00 AE 0F 40 1F 00 00 00 00 00\
-//  00 00 00 00 00 00 00 00 00 00\
-//  00 00 00 00 00 00 00 00 00 32\
-//  00 50 00 00 00 00 00 00 00 00\
-//  00 00 00 2D";
     QString sendData = "00 00 04 01 13 55 AA 17";
     this->SendAndDecode(sendData);
 }
@@ -561,7 +550,10 @@ void Widget::on_pushButton_10_clicked()
     QByteArray sendArray, dataArray;
     qDebug() << "===============点击设置kb值按钮";
     sendArray += QByteArray(1, 0x00);
-
+    if(newKItem.size() == 0) {
+        ui->portStatus->setText("需要先读取KB值！！！");
+        return;
+    }
     foreach(QString key, caliStru0->keyList) {
         QByteArray newCellArray;
         if(newKItem[idx]->text() != "") {
