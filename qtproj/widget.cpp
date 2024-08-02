@@ -149,7 +149,7 @@ void Widget::on_searchBtn_clicked()
 void Widget::on_listWidget_itemClicked(QListWidgetItem *item)
 {
     static int count = 0;
-    qDebug() << "listWidget item click" << count;
+    qDebug() << "=====================listWidget item click" << count;
     count++;
     this->SetTbsToTableAndChart(item, 0);
 }
@@ -167,7 +167,7 @@ void Widget::ReadSerialTimeOut()
     }
     if(caliStru0->newDataStatus == true) {
         this->GetKB();
-        caliStru0->newDataStatus == false;
+        caliStru0->newDataStatus = false;
     }
     if(receiveDecode.contains("数据非法")) {
         return;
@@ -188,7 +188,7 @@ void Widget::SetTbsToTableAndChart(QListWidgetItem *item, int flag)
     dcode0.clearTableItem(&itemTableList);
 
     // 判断listwidget最后一个item是否是tbs数据，是则写入到tbsUnit中
-    qDebug() << "=================" << dcode0.ItemToTbs(item->text()) << flag;
+    qDebug() << "=================解析listwidget数据，写入到tablewidget中" << dcode0.ItemToTbs(item->text()) << flag;
     QTime currentTim = QTime::currentTime();
     if(dcode0.ItemToTbs(item->text())) {
         if(flag == 1) {
@@ -213,7 +213,7 @@ void Widget::SetTbsToTableAndChart(QListWidgetItem *item, int flag)
 
 void Widget::on_openBtn_clicked()
 {
-    qDebug() << "open serial btn";
+    qDebug() << "===================点击打开串口按钮";
     se.ClickOpenSerPort(ui);
     /* 创建接收数据信号槽 */
     connect(&se.SerialPort, &QSerialPort::readyRead, this, &Widget::SerialPortReadyRead_slot);
@@ -237,7 +237,7 @@ void Widget::on_openBtn_clicked()
 
 void Widget::SerialPortReadyRead_slot()
 {
-    qDebug() << "in ready slot";
+    qDebug() << "===============串口收到数据";
     se.ReadyRead(tim);
 }
 
@@ -246,7 +246,7 @@ void Widget::on_sendBox_clicked()
     QString sendData = ui->sendData->toPlainText();
     sendData = se.SerialSend(ui, sendData);
 
-    qDebug() << "sendata = " << sendData;
+    qDebug() << "================点击串口数据发送，sendata = " << sendData;
 
     se.batComSendStatus = serial::COMPLETE;
 
@@ -262,7 +262,7 @@ void Widget::on_clearReceiveDataButton_clicked()
 void Widget::SendAndDecode(QString sendData)
 {
     sendData = se.SerialSend(ui, sendData);
-    qDebug() << "sendata = " << sendData;
+    qDebug() << "==================发送数据函数sendata = " << sendData;
     // se.batComSendStatus = serial::COMPLETE;
     QString dcodeData = dcode0.AddTimeStamp(ui, sendData);
     dcode0.PlainTextDecode(ui);
@@ -528,6 +528,7 @@ void Widget::GetKB()
 void Widget::on_getKB_clicked()
 {
     QString sendData = "00 00 04 01 07 55 AA 0B";
+    qDebug() << "================点击获取kb值按钮";
     this->SendAndDecode(sendData);
 }
 
@@ -558,14 +559,13 @@ void Widget::on_pushButton_10_clicked()
     int idx = 0;
     bool ok;
     QByteArray sendArray, dataArray;
-
+    qDebug() << "===============点击设置kb值按钮";
     sendArray += QByteArray(1, 0x00);
 
     foreach(QString key, caliStru0->keyList) {
         QByteArray newCellArray;
-        qDebug() << "table item" << idx << "=" << ui->tableWidget_2->item(idx, 2)->text();
-        if(ui->tableWidget_2->item(idx, 2)->text() != "") {
-            uint16_t newKValue = ui->tableWidget_2->item(idx, 2)->text().toUInt(&ok, 10);
+        if(newKItem[idx]->text() != "") {
+            uint16_t newKValue = newKItem[idx]->text().toUInt(&ok, 10);
             dataArray += IntToByte(newKValue, caliStru0->value(key).typeLenth, caliStru0->value(key).endianType);
         } else {
             dataArray += caliStru0->value(key).byteArray;
@@ -589,11 +589,8 @@ void Widget::on_pushButton_10_clicked()
     QString sendStr;
 
     foreach(uint8_t val, sendArray) {
-//        sendStr += (QString::number(val, 16) + " ");
         sendStr += QString("%1").arg(val, 2, 16, QChar('0')) + ' ';
     }
-    qDebug() << "sendStr kbdata " << sendStr;
-    qDebug() << "size = " << sendStr.size();
 
     this->SendAndDecode(sendStr);
 }
