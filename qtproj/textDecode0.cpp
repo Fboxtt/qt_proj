@@ -98,7 +98,7 @@ caliStruct::caliStruct()
     this->insert({"sChgCurrSSB;", datTypDic::SHORT});
     this->insert({"usDisCurrSSK", datTypDic::USHORT});
     this->insert({"sDisCurrSSB", datTypDic::SHORT});
-    for(uint8_t i = 1; i <= 5; i++)
+    for(uint8_t i = 1; i <= 8; i++)
     {
         this->insert({"temp" + QString::number(i,10), datTypDic::USHORT});//
     }
@@ -640,15 +640,17 @@ QString textDcode::HexWriteDataStruct(QStringList dataList, dataStruct* struObje
     QList<QString>::iterator it;
     it = struObject->keyList.begin();
     dataCell cell0 = struObject->dataMap.value(*it);
+    cell0.bigEndianBArray.clear();
+    cell0.byteArray.clear();
     foreach(uint8_t hex, hexVector) {
         uintVal += (((uint32_t)hex) <<  (byteInUnit * 8));
         cell0.byteArray.append(hex);
+        cell0.bigEndianBArray.insert(0, hex);
         byteInUnit++;
         if(byteInUnit == cell0.typeLenth) {
             cell0.uintVal = uintVal;
             uintVal = 0;
             byteInUnit = 0;
-            qDebug() << cell0.valName << cell0.uintVal << cell0.byteArray;
             struObject->dataMap.insert(*it,cell0);
             qDebug() << struObject->dataMap.value(*it).valName << struObject->dataMap.value(*it).uintVal << struObject->dataMap.value(*it).byteArray;
             it++;
@@ -656,7 +658,10 @@ QString textDcode::HexWriteDataStruct(QStringList dataList, dataStruct* struObje
                 break;
             }
             cell0 = struObject->dataMap.value(*it);
+            cell0.bigEndianBArray.clear();
+            cell0.byteArray.clear();
         }
+        qDebug() << cell0.valName << cell0.uintVal << cell0.byteArray;
     }
     struObject->newDataStatus = true;
     return "tver解析正确";
