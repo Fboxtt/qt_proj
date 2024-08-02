@@ -622,23 +622,35 @@ void Widget::on_pushButton_9_clicked()
 void Widget::on_openChgFet_clicked()
 {
     QString sendData = "00 00 04 01 0A 55 AA 0E";
+    if(tbsTim != nullptr) {
+        tbsTim->stop();
+    }
     this->SendAndDecode(sendData);
 }
 
 void Widget::on_closeChgFet_clicked()
 {
     QString sendData = "00 00 04 01 0B 55 AA 0F";
+    if(tbsTim != nullptr) {
+        tbsTim->stop();
+    }
     this->SendAndDecode(sendData);
 }
 
 void Widget::on_openDisFet_clicked()
 {
     QString sendData = "00 00 04 01 0C 55 AA 10";
+    if(tbsTim != nullptr) {
+        tbsTim->stop();
+    }
     this->SendAndDecode(sendData);
 }
 
 void Widget::on_closeDisFet_clicked()
 {
     QString sendData = "00 00 04 01 0D 55 AA 11";
+    if(tbsTim != nullptr) {
+        tbsTim->stop();
+    }
     this->SendAndDecode(sendData);
 }

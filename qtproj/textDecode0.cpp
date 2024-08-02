@@ -707,9 +707,10 @@ void textDcode::SetStatusToGBox(QGridLayout *gridLayout)
 {
     int i = 0;
     // qDebug() << " protect status" << tbsUnit[29].uintVal;
-
+    int bitNum = -1;
     foreach(QString statName, alarmStat)
     {
+        bitNum++;
         if(statName == "") {
             continue;
         }
@@ -727,12 +728,12 @@ void textDcode::SetStatusToGBox(QGridLayout *gridLayout)
         }
 
         alarmLabel[iX3]->setText(statName);
-        if((tbsUnit[28].uintVal & 0x1 << i) != 0) {
+        if((tbsUnit[28].uintVal & 0x1 << bitNum) != 0) {
             alarmLabel[iX3 + 1]->setStyleSheet("QLabel { background-color: red}");
         } else {
             alarmLabel[iX3 + 1]->setStyleSheet("QLabel { background-color: green}");
         }
-        if((tbsUnit[29].uintVal & 0x1 << i) != 0) {
+        if((tbsUnit[29].uintVal & 0x1 << bitNum) != 0) {
             alarmLabel[iX3 + 2]->setStyleSheet("QLabel { background-color: red}");
         } else {
             alarmLabel[iX3 + 2]->setStyleSheet("QLabel { background-color: green}");
@@ -745,10 +746,12 @@ void textDcode::SetStatusToGBox(QGridLayout *gridLayout)
 void textDcode::SetStatusToLBox(QGridLayout *gridLayout, QList<QString> strL, QList<QLabel*> labelL, uint32_t val)
 {
     int i = 0;
+    int bitNum = -1;
     // qDebug() << "status val" << val;
 
     foreach(QString statName, strL)
     {
+        bitNum++;
         if(statName == "") {
             continue;
         }
@@ -773,7 +776,7 @@ void textDcode::SetStatusToLBox(QGridLayout *gridLayout, QList<QString> strL, QL
             }
             break;
         }
-        if((val & (0x1 << i)) != 0) {
+        if((val & (0x1 << bitNum)) != 0) {
             labelL[iX3 + 1]->setStyleSheet("QLabel { background-color: red}");
         } else {
             labelL[iX3 + 1]->setStyleSheet("QLabel { background-color: green}");
