@@ -460,6 +460,8 @@ void Widget::on_pushButton_5_clicked()
 改变串口函数读取模式\n\
 解决状态显示错误问题（自加热，均衡，空闲）\n\
 增加电池版本信息读取\n\
+0.0.4更新内容\n\
+打通kb校准流程ui\n\
 "
                );
    refreshData->show();
