@@ -77,6 +77,7 @@ class dataCell
         uint32_t typeLenth;
         uint32_t uintVal;
         QByteArray byteArray;
+        QByteArray bigEndianBArray;
 };
 
 class dataStruct

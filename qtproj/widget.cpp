@@ -63,7 +63,7 @@ Widget::Widget(QWidget *parent)
     }
     // k值校准tableWidget设置
     ui->tableWidget_2->setFont(QFont("黑体", 7)); // table字体设置
-    ui->tableWidget_2->setFixedSize(600,800);
+    ui->tableWidget_2->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch); //自动适应列宽
 
     // 波形chart配置
     chartV0 = new chartV();
@@ -499,6 +499,8 @@ void Widget::SetVersionLable()
 QVector<QTableWidgetItem*> cliNameItem;
 QVector<QTableWidgetItem*> valNameItem;
 QVector<QTableWidgetItem*> newKItem;
+QVector<QTableWidgetItem*> measureItem;
+QVector<QTableWidgetItem*> exMeasureItem;
 void Widget::GetKB()
 {
     QString output = "";
@@ -508,8 +510,14 @@ void Widget::GetKB()
         if((uint32_t)cliNameItem.size() < caliStru0->dataLenth) {
             cliNameItem.append(new QTableWidgetItem());
             valNameItem.append(new QTableWidgetItem());
+            newKItem.append(new QTableWidgetItem());
+            measureItem.append(new QTableWidgetItem());
+            exMeasureItem.append(new QTableWidgetItem());
             ui->tableWidget_2->setItem(idx, 0, cliNameItem[idx]);
             ui->tableWidget_2->setItem(idx, 1, valNameItem[idx]);
+            ui->tableWidget_2->setItem(idx, 2, newKItem[idx]);
+            ui->tableWidget_2->setItem(idx, 3, measureItem[idx]);
+            ui->tableWidget_2->setItem(idx, 4, exMeasureItem[idx]);
         }
         cliNameItem[idx]->setText(caliStru0->value(key).valName);
         valNameItem[idx]->setText(QString::number(caliStru0->value(key).uintVal));
@@ -521,4 +529,71 @@ void Widget::on_getKB_clicked()
 {
     QString sendData = "00 00 04 01 07 55 AA 0B";
     this->SendAndDecode(sendData);
+}
+
+QByteArray IntToByte(uint32_t val, uint32_t lenth, datTypDic::ENDIAN_TYPE endianType) {
+    QByteArray outPut;
+    uint8_t byte = (uint8_t)(val >> 0 & 0xff);
+    if(endianType == datTypDic::LITTLE) {
+        for(int i = 0; i < (int)lenth; i++) {
+            byte = (uint8_t)(val >> (i * 8) & 0xff);
+            outPut.append(byte);
+        }
+    } else {
+        for(int i = (int)lenth - 1; i >= 0; i--) {
+            byte = (uint8_t)(val >> (i * 8) & 0xff);
+            outPut.append(byte);
+        }
+    }
+    return outPut;
+}
+
+void Widget::SetKb()
+{
+
+}
+
+void Widget::on_pushButton_10_clicked()
+{
+    int idx = 0;
+    bool ok;
+    QByteArray sendArray, dataArray;
+
+    sendArray += QByteArray(1, 0x00);
+
+    foreach(QString key, caliStru0->keyList) {
+        QByteArray newCellArray;
+        qDebug() << "table item" << idx << "=" << ui->tableWidget_2->item(idx, 2)->text();
+        if(ui->tableWidget_2->item(idx, 2)->text() != "") {
+            uint16_t newKValue = ui->tableWidget_2->item(idx, 2)->text().toUInt(&ok, 10);
+            dataArray += IntToByte(newKValue, caliStru0->value(key).typeLenth, caliStru0->value(key).endianType);
+        } else {
+            dataArray += caliStru0->value(key).byteArray;
+        }
+        idx++;
+    }
+    sendArray += IntToByte(dataArray.size() + 4, 2, datTypDic::BIG); // 加4是单板类型到握手字2的长度
+    sendArray.push_back(0x01); // 单板类型
+    sendArray.push_back(0x08); // 命令类型
+    sendArray.push_back(0x55); // 握手字1
+    sendArray.push_back(0xAA); // 握手字2
+    sendArray += dataArray;
+
+    QByteArray checkArray = sendArray.mid(1, -1);
+    uint8_t checkSum = 0;
+    foreach(uint8_t val, checkArray) {
+        checkSum += val;
+    }
+    sendArray.push_back(checkSum);
+
+    QString sendStr;
+
+    foreach(uint8_t val, sendArray) {
+//        sendStr += (QString::number(val, 16) + " ");
+        sendStr += QString("%1").arg(val, 2, 16, QChar('0')) + ' ';
+    }
+    qDebug() << "sendStr kbdata " << sendStr;
+    qDebug() << "size = " << sendStr.size();
+
+    this->SendAndDecode(sendStr);
 }
