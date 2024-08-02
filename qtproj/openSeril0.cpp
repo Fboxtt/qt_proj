@@ -217,11 +217,11 @@ QString serial::SerialSend(Ui::Widget *ui, QString Data)
         Data_1 = QByteArray::fromHex(Data.toLatin1().data());//按十六进制编码发送
         Data = Data.remove(QChar('\n'), Qt::CaseInsensitive);
     }
-    if(Data_1.size() == 8) {
-        for(uint8_t i = 1; i <= 6; i++) {
+    if(Data_1.size() >= 8) {
+        for(uint8_t i = 1; i <= Data_1.size() - 2; i++) {
             checkSum += Data_1[i];
         }
-        if((uint8_t)Data_1[7] != checkSum){
+        if((uint8_t)Data_1[Data_1.size() - 1] != checkSum){
             ui->portStatus->setText("发送校验错误，正确是0x" + QString::number(checkSum, 16));
         }
     }
