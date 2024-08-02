@@ -261,13 +261,74 @@
       <enum>QTabWidget::North</enum>
      </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
        <string>batStatus</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
+       <item row="3" column="1" rowspan="2">
+        <widget class="QGroupBox" name="alarmGroupBox">
+         <property name="title">
+          <string>名称     告警|保护</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_8">
+          <item row="0" column="0">
+           <layout class="QGridLayout" name="gridLayout_7"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="3" column="2" rowspan="2">
+        <widget class="QGroupBox" name="balanceGroup">
+         <property name="title">
+          <string>均衡状态</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_16">
+          <item row="0" column="0">
+           <layout class="QGridLayout" name="balanceGridLayout"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="5" column="2">
+        <widget class="QGroupBox" name="groupBox_10">
+         <property name="title">
+          <string>GroupBox</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_19">
+          <item row="0" column="0">
+           <widget class="QPushButton" name="openChgFet">
+            <property name="text">
+             <string>打开充电管</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QPushButton" name="closeChgFet">
+            <property name="text">
+             <string>关闭充电管</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QPushButton" name="openDisFet">
+            <property name="text">
+             <string>打开放电管</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QPushButton" name="closeDisFet">
+            <property name="text">
+             <string>关闭放电管</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
        <item row="2" column="2">
         <widget class="QGroupBox" name="groupBox">
          <property name="title">
@@ -280,7 +341,26 @@
          </layout>
         </widget>
        </item>
-       <item row="2" column="0" rowspan="4">
+       <item row="2" column="1">
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="title">
+          <string>其他状态</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_11">
+          <item row="0" column="0">
+           <layout class="QGridLayout" name="otherGridLayout"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="6" column="1">
+        <widget class="QPushButton" name="pushButton_2">
+         <property name="text">
+          <string>test alarm</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" rowspan="5">
         <widget class="QTableWidget" name="tableWidget">
          <row>
           <property name="text">
@@ -409,31 +489,7 @@
          </item>
         </widget>
        </item>
-       <item row="3" column="1">
-        <widget class="QGroupBox" name="alarmGroupBox">
-         <property name="title">
-          <string>名称     告警|保护</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_8">
-          <item row="0" column="0">
-           <layout class="QGridLayout" name="gridLayout_7"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QGroupBox" name="groupBox_2">
-         <property name="title">
-          <string>其他状态</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_11">
-          <item row="0" column="0">
-           <layout class="QGridLayout" name="otherGridLayout"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="4" column="1">
+       <item row="5" column="1">
         <widget class="QGroupBox" name="groupBox_8">
          <property name="title">
           <string>状态解释</string>
@@ -478,25 +534,6 @@
              <string/>
             </property>
            </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="5" column="1">
-        <widget class="QPushButton" name="pushButton_2">
-         <property name="text">
-          <string>test alarm</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="2" rowspan="2">
-        <widget class="QGroupBox" name="balanceGroup">
-         <property name="title">
-          <string>均衡状态</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_16">
-          <item row="0" column="0">
-           <layout class="QGridLayout" name="balanceGridLayout"/>
           </item>
          </layout>
         </widget>
