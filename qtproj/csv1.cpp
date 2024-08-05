@@ -42,18 +42,8 @@ void csv::tbsToCsv(Ui::Widget *ui, QString fileName, textDcode* dcode0)
             strListToCsv.append(strToCsv);
             continue;
         }
-        // qDebug() << "idx" << idx;
         item = ui->listWidget->item(idx);
-        // timeAndDataList = item->text().split("->");
-        // dataList = timeAndDataList[1].split(","); // 需要改，设置成固定函数
 
-        // QVector<tbs> decodeList = dcode0->IntWriteTbs(dataList); // 需要改成自适应
-
-        // strToCsv = "";
-
-        // foreach(tbs tbsUnit, decodeList) {
-        //     strToCsv += QString("%1").arg(tbsUnit.uintVal,0,10) + ",";
-        // }
 
          strListToCsv.append(item->text() + "\n");
     }
