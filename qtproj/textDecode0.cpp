@@ -480,8 +480,15 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
         } else if(dataText.contains("TBS数据")) {
             if(dataText.contains("校验正确")) {
                 foreach(tbs tbsU, tbsUnit) {
-                    QString tbsStr;
-                    dataText += tbsStr.setNum(tbsU.uintVal, 10) + BAT_SEP;
+                    QString tbsStr;         
+                    if(tbsU.valName.contains("HEX")) {
+                        dataText += QString("0x%1").arg(tbsU.uintVal,0,16) + BAT_SEP;
+                    } else if(tbsU.valName.contains("电流")) {
+                        dataText += QString("%1").arg((int)tbsU.uintVal,0,10) + BAT_SEP;
+                    } else {
+                        dataText += QString("%1").arg(tbsU.uintVal,0,10) + BAT_SEP;
+                    }
+                    // dataText += tbsStr.setNum(tbsU.uintVal, 10) + BAT_SEP;
                 }
                 ui->listWidget->addItem(dataText);
             }
@@ -516,6 +523,8 @@ void textDcode::itemToTable(QVector<QTableWidgetItem>* itemTableList)
         (*itemTableList)[idx * 2].setText(unit.valName);
          if(unit.valName.contains("HEX")) {
              (*itemTableList)[idx * 2 + 1].setText(QString("0x%1").arg(unit.uintVal,0,16));
+         } else if(unit.valName.contains("电流")) {
+             (*itemTableList)[idx * 2 + 1].setText(QString("%1").arg((int)unit.uintVal,0,10));
          } else {
              (*itemTableList)[idx * 2 + 1].setText(QString("%1").arg(unit.uintVal,0,10));
          }
@@ -561,11 +570,19 @@ QVector<tbs> textDcode::IntWriteTbs(QStringList dataList)
     uint32_t tbsUnitIdx = 0, uintVal = 0;
 
     foreach(QString hexStr, dataList) {
-        uintVal = hexStr.toInt(&ok, 10);
-        tbsUnit[tbsUnitIdx].uintVal = uintVal;
+        if(tbsUnit[tbsUnitIdx].valName.contains("HEX")) {
+            uintVal = hexStr.toUInt(&ok, 16);
+            tbsUnit[tbsUnitIdx].uintVal = uintVal;
+        } else if(tbsUnit[tbsUnitIdx].valName.contains("电流")) {
+            uintVal = hexStr.toUInt(&ok, 10);
+            tbsUnit[tbsUnitIdx].uintVal = uintVal;
+        } else {
+            uintVal = hexStr.toUInt(&ok, 10);
+            tbsUnit[tbsUnitIdx].uintVal = uintVal;
+        }
+
         tbsUnitIdx++;
         if(tbsUnitIdx >= (uint32_t)tbsUnit.size()) {
-
             qDebug() << "tbsUnit.size()" << tbsUnit.size();
             break;
         }
