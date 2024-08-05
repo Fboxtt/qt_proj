@@ -100,7 +100,7 @@ caliStruct::caliStruct()
     this->insert({"sDisCurrSSB", datTypDic::SHORT});
     for(uint8_t i = 1; i <= 8; i++)
     {
-        this->insert({"temp" + QString::number(i,10), datTypDic::USHORT});//
+        this->insert({"温度" + QString::number(i,10), datTypDic::USHORT});//
     }
 
     qDebug() << this->value("usChgCurrK").valName << this->dataLenth;
