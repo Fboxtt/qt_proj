@@ -86,7 +86,7 @@ private:
 public slots:
     void ReadSerialTimeOut();
     void SetTbsToTableAndChart(QListWidgetItem *item, int flag);
-    void sendCmdRecieveWave();
+    void sendCmdListFunc();
     void SetVersionLable();
     void GetKB();
     void SetKb();

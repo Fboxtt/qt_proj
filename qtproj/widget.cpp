@@ -28,6 +28,11 @@ hexDecode hexFile;
 
 tverStruct *tverStru0;
 caliStruct *caliStru0;
+
+QStringList waitSendList;
+QStringList readySendList;
+QTimer *sendTim;
+
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
@@ -92,9 +97,15 @@ Widget::Widget(QWidget *parent)
     ui->label_10->setStyleSheet("QLabel { background-color: red}");
 
 
-//     数据结构体初始化函数
+    // 数据结构体初始化函数
     tverStru0 = new tverStruct();
     caliStru0 = new caliStruct();
+
+    // 发送定时器初始化
+    sendTim = new QTimer();
+    sendTim->setInterval(1000);
+    connect(sendTim, SIGNAL(timeout()), this, SLOT(sendCmdListFunc()));
+    sendTim->start();
 }
 
 Widget::~Widget()
@@ -270,48 +281,52 @@ void Widget::SendAndDecode(QString sendData)
 void Widget::on_sendTbs_clicked()
 {
     QString sendData = "00 00 04 01 13 55 AA 17";
-    this->SendAndDecode(sendData);
+    waitSendList.append(sendData);
 }
 
 void Widget::on_sendRegisterBox_clicked()
 {
     QString sendData = "00 00 04 01 01 55 AA 05";
-    this->SendAndDecode(sendData);
+    waitSendList.append(sendData);
 }
 
-void Widget::sendCmdRecieveWave()
+void Widget::sendCmdListFunc()
 {
-    QString sendData = "00 00 04 01 13 55 AA 17";
-    // 如果串口处于关闭状态，并且tbs正在读取中，则停止tbs读取
-    if(ui->openBtn->text() == "打开串口") {
+    QString tbsSendData = "00 00 04 01 13 55 AA 17";
+
+    // 如果waitSendList有命令则发送最新入栈的cmd
+    if(waitSendList.size() > 0) {
+        readySendList.append(waitSendList.last());
+        waitSendList.removeLast();
+    } else {
+    // 如果没有命令则发送tbs读取命令
+
         if (ui->pushButton_3->text() == "停止读取tbs") {
-            this->on_pushButton_3_clicked();
-            ui->pushButton_3->setEnabled(false);
-            tbsTim->stop();
+            if(ui->openBtn->text() == "打开串口") {
+                this->on_pushButton_3_clicked();
+                ui->pushButton_3->setEnabled(false);
+            } else {
+                readySendList.append(tbsSendData);
+            }
         }
-        return;
     }
-    this->SendAndDecode(sendData);
+
+    if(readySendList.size() > 0) {
+        SendAndDecode(readySendList.last());
+        readySendList.removeLast();
+    }
 }
 
 void Widget::on_pushButton_3_clicked()
 {
     if(ui->pushButton_3->text() == "开始读取tbs") {
-        if(tbsTim == nullptr) {
-            tbsTim = new QTimer();
-            tbsTim->setInterval(1000);
-            connect(tbsTim, SIGNAL(timeout()), this, SLOT(sendCmdRecieveWave()));
-        }
-        chartV0->ClearAllSeries();
-        tbsTim->start();
+
         ui->pushButton_3->setText("停止读取tbs");
 
     } else if (ui->pushButton_3->text() == "停止读取tbs") {
-        tbsTim->stop();
         ui->pushButton_3->setText("继续读取tbs");
 
     } else if (ui->pushButton_3->text() == "继续读取tbs") {
-        tbsTim->start();
         ui->pushButton_3->setText("停止读取tbs");
         chartV0->ClearAllSeries();
     }
@@ -351,7 +366,7 @@ void Widget::on_clearReceiveDataButton_2_clicked()
 void Widget::on_pushButton_4_clicked()
 {
     if(hexFile.exist == true && ui->openBtn->text() == "关闭串口") {
-//        this->SendAndDecode();
+
         se.SerialSend(ui,hexFile.n00dataArray);
     } else {
         qDebug() << "hex文件err，或者串口未打开";
@@ -473,7 +488,7 @@ void Widget::on_pushButton_5_clicked()
 void Widget::on_getVersionButton_clicked()
 {
     QString sendData = "00 00 04 01 16 55 AA 1A";
-    this->SendAndDecode(sendData);
+    waitSendList.append(sendData);
 }
 void Widget::SetVersionLable()
 {
@@ -523,7 +538,7 @@ void Widget::on_getKB_clicked()
 {
     QString sendData = "00 00 04 01 07 55 AA 0B";
     qDebug() << "================点击获取kb值按钮";
-    this->SendAndDecode(sendData);
+    waitSendList.append(sendData);
 }
 
 QByteArray IntToByte(uint32_t val, uint32_t lenth, datTypDic::ENDIAN_TYPE endianType) {
@@ -589,7 +604,7 @@ void Widget::on_pushButton_10_clicked()
         sendStr += QString("%1").arg(val, 2, 16, QChar('0')) + ' ';
     }
 
-    this->SendAndDecode(sendStr);
+    waitSendList.append(sendStr);
 }
 
 void Widget::on_pushButton_6_clicked()
@@ -625,35 +640,23 @@ void Widget::on_pushButton_9_clicked()
 void Widget::on_openChgFet_clicked()
 {
     QString sendData = "00 00 04 01 0A 55 AA 0E";
-    if(tbsTim != nullptr) {
-        tbsTim->stop();
-    }
-    this->SendAndDecode(sendData);
+    waitSendList.append(sendData);
 }
 
 void Widget::on_closeChgFet_clicked()
 {
     QString sendData = "00 00 04 01 0B 55 AA 0F";
-    if(tbsTim != nullptr) {
-        tbsTim->stop();
-    }
-    this->SendAndDecode(sendData);
+    waitSendList.append(sendData);
 }
 
 void Widget::on_openDisFet_clicked()
 {
     QString sendData = "00 00 04 01 0C 55 AA 10";
-    if(tbsTim != nullptr) {
-        tbsTim->stop();
-    }
-    this->SendAndDecode(sendData);
+    waitSendList.append(sendData);
 }
 
 void Widget::on_closeDisFet_clicked()
 {
     QString sendData = "00 00 04 01 0D 55 AA 11";
-    if(tbsTim != nullptr) {
-        tbsTim->stop();
-    }
-    this->SendAndDecode(sendData);
+    waitSendList.append(sendData);
 }
