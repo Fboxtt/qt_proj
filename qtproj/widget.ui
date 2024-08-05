@@ -261,7 +261,7 @@
       <enum>QTabWidget::North</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
@@ -852,22 +852,22 @@
          </column>
          <column>
           <property name="text">
-           <string>原k值</string>
+           <string>读取k值</string>
           </property>
          </column>
          <column>
           <property name="text">
-           <string>新k值</string>
+           <string>传入k值</string>
           </property>
          </column>
          <column>
           <property name="text">
-           <string>板子参数</string>
+           <string>板子采样参数</string>
           </property>
          </column>
          <column>
           <property name="text">
-           <string>测量参数</string>
+           <string>外部测量参数</string>
           </property>
          </column>
         </widget>
