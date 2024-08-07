@@ -452,11 +452,11 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
         timeText = timeAndDataList[0];
         dataText = timeAndDataList[1];
     } else {
-        return QString("数据非法") + dataText;
+        return QString("数据非法,无;,") + dataText;
     }
 
     if (dataText.contains(QRegExp("^[0-9a-fA-F]{1,}$")) == true) {
-        return QString("数据非法") + COMUT_SEP + timeAndDataList[0] + COMUT_BAT_SEP + timeAndDataList[1];
+        return QString("数据非法,包含非法字符") + COMUT_SEP + timeAndDataList[0] + COMUT_BAT_SEP + timeAndDataList[1];
     }
     qDebug()  << "text block" << textBlock.text();
 
@@ -494,8 +494,8 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
             }
         }
     } else {
-        qDebug() << "数据非法";
-        dataText = QString("数据非法") + dataText;
+        qDebug() << "数据非法长度错误";
+        dataText = QString("数据非法长度错误") + dataText;
     }
     qDebug() << "split = " << timeText << dataText;
 
