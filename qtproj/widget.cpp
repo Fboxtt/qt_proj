@@ -363,15 +363,7 @@ void Widget::on_clearReceiveDataButton_2_clicked()
 
 
 
-void Widget::on_pushButton_4_clicked()
-{
-    if(hexFile.exist == true && ui->openBtn->text() == "关闭串口") {
 
-        se.SerialSend(ui,hexFile.n00dataArray);
-    } else {
-        qDebug() << "hex文件err，或者串口未打开";
-    }
-}
 
 void Widget::on_pushButton_8_clicked()
 {
@@ -659,4 +651,24 @@ void Widget::on_closeDisFet_clicked()
 {
     QString sendData = "00 00 04 01 0D 55 AA 11";
     waitSendList.append(sendData);
+}
+void Widget::on_pushButton_4_clicked()
+{
+//    if(hexFile.exist == true && ui->openBtn->text() == "关闭串口") {
+
+//        se.SerialSend(ui,hexFile.n00dataArray);
+//    } else {
+//        qDebug() << "hex文件err，或者串口未打开";
+//    }
+    // 开始烧录
+    QString sendData = "00 00 04 01 53 55 AA 57";
+    waitSendList.append(sendData);
+
+}
+void Widget::on_pushButton_11_clicked()
+{
+    // 读取ic
+    QString sendData = "00 00 04 01 51 55 AA 55";
+    waitSendList.append(sendData);
+
 }
