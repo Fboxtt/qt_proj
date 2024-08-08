@@ -90,7 +90,6 @@ public:
     void insert(dataCell addCell);
     bool newDataStatus;
 
-    QMap<QString, dataCell> dataMap;
     QList<QString> keyList;
     QList<dataCell> dataCellList;
     uint32_t dataLenth;

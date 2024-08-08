@@ -79,7 +79,8 @@ dataCell* dataStruct::value(QString valName)
 void dataStruct::insert(dataCell addCell)
 {
     keyList.append(addCell.valName);
-    this->dataMap.insert(addCell.valName, addCell);
+    addCell.uintVal = 0;
+//    this->dataMap.insert(addCell.valName, addCell);
     this->dataCellList.append(addCell);
     this->dataLenth += addCell.typeLenth;
 }
@@ -712,29 +713,28 @@ QString textDcode::HexWriteDataStruct(QStringList dataList, dataStruct* struObje
 
     QList<QString>::iterator it;
     it = struObject->keyList.begin();
-    dataCell cell0 = struObject->dataMap.value(*it);
-    cell0.bigEndianBArray.clear();
-    cell0.byteArray.clear();
+    dataCell* cell0 = struObject->value(*it);
+    cell0->bigEndianBArray.clear();
+    cell0->byteArray.clear();
     foreach(uint8_t hex, hexVector) {
         uintVal += (((uint32_t)hex) <<  (byteInUnit * 8));
-        cell0.byteArray.append(hex);
-        cell0.bigEndianBArray.insert(0, hex);
+        cell0->byteArray.append(hex);
+        cell0->bigEndianBArray.insert(0, hex);
         byteInUnit++;
-        if(byteInUnit == cell0.typeLenth) {
-            cell0.uintVal = uintVal;
+        if(byteInUnit == cell0->typeLenth) {
+            cell0->uintVal = uintVal;
             uintVal = 0;
             byteInUnit = 0;
-            struObject->dataMap.insert(*it,cell0);
-            qDebug() << struObject->dataMap.value(*it).valName << struObject->dataMap.value(*it).uintVal << struObject->dataMap.value(*it).byteArray;
+            qDebug() << struObject->value(*it)->valName << struObject->value(*it)->uintVal << struObject->value(*it)->byteArray;
             it++;
             if(it == struObject->keyList.end()){
                 break;
             }
-            cell0 = struObject->dataMap.value(*it);
-            cell0.bigEndianBArray.clear();
-            cell0.byteArray.clear();
+            cell0 = struObject->value(*it);
+            cell0->bigEndianBArray.clear();
+            cell0->byteArray.clear();
         }
-        qDebug() << cell0.valName << cell0.uintVal << cell0.byteArray;
+        qDebug() << cell0->valName << cell0->uintVal << cell0->byteArray;
     }
     struObject->newDataStatus = true;
     return "tver解析正确";
