@@ -672,3 +672,14 @@ void Widget::on_pushButton_11_clicked()
     waitSendList.append(sendData);
 
 }
+
+void Widget::on_pushButton_12_clicked()
+{
+
+}
+void Widget::tbsRepayInit()
+{
+
+//    ui->groupBox_11
+}
+

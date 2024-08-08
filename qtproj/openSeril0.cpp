@@ -157,12 +157,13 @@ void serial::TimeOut(Ui::Widget *ui, QTimer *tim)
     QByteArray testbu ;
 
     qDebug() << buffer << "serial read buffer";
+    QString gbkBuffer;
     if(!buffer.isEmpty())//如果非空说明有数据接收
     {   //转换成16进制大写
         QString str=buffer.toHex().data();
-        QString gbkBuffer = QString::fromLocal8Bit(buffer);
         str=str.toUpper();
-
+        
+        gbkBuffer = QString::fromLocal8Bit(buffer);
         //一个16进制占4位，8位为一字节，所以每两位16进制空一格
         for(int i=0;i<str.length();i+=2)
         {

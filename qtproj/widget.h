@@ -80,6 +80,8 @@ private slots:
 
     void on_pushButton_11_clicked();
 
+    void on_pushButton_12_clicked();
+
 private:
     Ui::Widget *ui; //似乎是定义了一个类指针
     QTimer *tim;
@@ -92,6 +94,7 @@ public slots:
     void SetVersionLable();
     void GetKB();
     void SetKb();
+    void tbsRepayInit();
 };
 
 
