@@ -2,7 +2,7 @@
 
 extern tverStruct *tverStru0;
 extern caliStruct *caliStru0;
-
+extern tbsStruct *tbsStru0;
 datTypDic::datTypDic(DATA_TYPE type, QString typeName, uint32_t typeLenth, ENDIAN_TYPE endianType, SIGNED_TYPE signedType)
 {
     this->type = type;
@@ -426,7 +426,7 @@ QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
 
     if(hexStrLis.size() > 8 && (hexStrLis[4] == "93")) {
         // 把数据写入tbsUnit
-        QVector<tbs> decodeList = this->HexWriteTbs(hexStrLis.mid(8, -1)); // 需要改成自适应
+        HexWriteDataStruct(hexStrLis.mid(8, 96), tbsStru0); // 需要改成自适应
     } else if (hexStrLis.size() > 8 && (hexStrLis[4] == "96")) {
         HexWriteTver(hexStrLis.mid(8, 80), tverStru0);
     } else if (hexStrLis.size() > 8 && (hexStrLis[4] == "87")) {
@@ -534,16 +534,16 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
             }
         } else if(dataText.contains("TBS数据")) {
             if(dataText.contains("校验正确")) {
-                foreach(tbs tbsU, tbsUnit) {
+                foreach(dataCell cell, tbsStru0->dataCellList) {
                     QString tbsStr;         
-                    if(tbsU.valName.contains("HEX")) {
-                        dataText += QString("0x%1").arg(tbsU.uintVal,0,16) + BAT_SEP;
-                    } else if(tbsU.valName.contains("电流")) {
-                        dataText += QString("%1").arg((int)tbsU.uintVal,0,10) + BAT_SEP;
+                    if(cell.valName.contains("HEX")) {
+                        dataText += QString("0x%1").arg(cell.uintVal,0,16) + BAT_SEP;
+                    } else if(cell.valName.contains("电流")) {
+                        dataText += QString("%1").arg((int)cell.uintVal,0,10) + BAT_SEP;
                     } else {
-                        dataText += QString("%1").arg(tbsU.uintVal,0,10) + BAT_SEP;
+                        dataText += QString("%1").arg(cell.uintVal,0,10) + BAT_SEP;
                     }
-                    // dataText += tbsStr.setNum(tbsU.uintVal, 10) + BAT_SEP;
+                    // dataText += tbsStr.setNum(cell.uintVal, 10) + BAT_SEP;
                 }
                 ui->listWidget->addItem(dataText);
             }
@@ -564,7 +564,7 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
 void textDcode::clearTableItem(QVector<QTableWidgetItem>* itemTableList)
 {
     uint32_t idx = 0;
-    foreach(tbs unit, tbsUnit) {
+    foreach(dataCell cell, tbsStru0->dataCellList) {
         (*itemTableList)[idx * 2 + 1].setText("");
         idx++;
     }
@@ -574,14 +574,14 @@ void textDcode::clearTableItem(QVector<QTableWidgetItem>* itemTableList)
 void textDcode::itemToTable(QVector<QTableWidgetItem>* itemTableList)
 {
     uint32_t idx = 0;
-    foreach(tbs unit, tbsUnit) {
-        (*itemTableList)[idx * 2].setText(unit.valName);
-         if(unit.valName.contains("HEX")) {
-             (*itemTableList)[idx * 2 + 1].setText(QString("0x%1").arg(unit.uintVal,0,16));
-         } else if(unit.valName.contains("电流")) {
-             (*itemTableList)[idx * 2 + 1].setText(QString("%1").arg((int)unit.uintVal,0,10));
+    foreach(dataCell cell, tbsStru0->dataCellList) {
+        (*itemTableList)[idx * 2].setText(cell.valName);
+         if(cell.valName.contains("HEX")) {
+             (*itemTableList)[idx * 2 + 1].setText(QString("0x%1").arg(cell.uintVal,0,16));
+         } else if(cell.valName.contains("电流")) {
+             (*itemTableList)[idx * 2 + 1].setText(QString("%1").arg((int)cell.uintVal,0,10));
          } else {
-             (*itemTableList)[idx * 2 + 1].setText(QString("%1").arg(unit.uintVal,0,10));
+             (*itemTableList)[idx * 2 + 1].setText(QString("%1").arg(cell.uintVal,0,10));
          }
 
         idx++;
@@ -617,7 +617,7 @@ QVector<tbs> textDcode::HexWriteTbs(QStringList dataList)
     }
     return tbsUnit;
 }
-QVector<tbs> textDcode::IntWriteTbs(QStringList dataList)
+void textDcode::IntWriteTbs(QStringList dataList)
 {
 
     bool ok;
@@ -625,24 +625,24 @@ QVector<tbs> textDcode::IntWriteTbs(QStringList dataList)
     uint32_t tbsUnitIdx = 0, uintVal = 0;
 
     foreach(QString hexStr, dataList) {
-        if(tbsUnit[tbsUnitIdx].valName.contains("HEX")) {
+        if(tbsStru0->dataCellList[tbsUnitIdx].valName.contains("HEX")) {
             uintVal = hexStr.toUInt(&ok, 16);
-            tbsUnit[tbsUnitIdx].uintVal = uintVal;
-        } else if(tbsUnit[tbsUnitIdx].valName.contains("电流")) {
+            tbsStru0->dataCellList[tbsUnitIdx].uintVal = uintVal;
+        } else if(tbsStru0->dataCellList[tbsUnitIdx].valName.contains("电流")) {
             uintVal = hexStr.toUInt(&ok, 10);
-            tbsUnit[tbsUnitIdx].uintVal = uintVal;
+            tbsStru0->dataCellList[tbsUnitIdx].uintVal = uintVal;
         } else {
             uintVal = hexStr.toUInt(&ok, 10);
-            tbsUnit[tbsUnitIdx].uintVal = uintVal;
+            tbsStru0->dataCellList[tbsUnitIdx].uintVal = uintVal;
         }
 
         tbsUnitIdx++;
-        if(tbsUnitIdx >= (uint32_t)tbsUnit.size()) {
-            qDebug() << "tbsUnit.size()" << tbsUnit.size();
+        if(tbsUnitIdx >= (uint32_t)tbsStru0->dataCellList.size()) {
+            qDebug() << "tbsUnit.size()" << tbsStru0->dataCellList.size();
             break;
         }
     }
-    return tbsUnit;
+    return;
 }
 
 // 将字符串str转换成真实的int值，再转换成str写入tverStruct
@@ -757,7 +757,7 @@ bool textDcode::ItemToTbs(QString text)
         qDebug() << dataList.size();
     }
     // 把数据写入tbsUnit
-    QVector<tbs> decodeList = this->IntWriteTbs(dataList); // 需要改成自适应
+    this->IntWriteTbs(dataList); // 需要改成自适应
     return true;
 }
 
@@ -765,10 +765,10 @@ bool textDcode::ItemToTbs(QString text)
 void textDcode::SetStatusToBox(Ui::Widget *ui)
 {
     this->SetStatusToGBox(ui->gridLayout_7);
-    this->SetStatusToLBox(ui->loseGridLayout,  loseStat,  loseLabel,  tbsUnit[30].uintVal);
-    this->SetStatusToLBox(ui->otherGridLayout, otherInfo, otherLabel, tbsUnit[27].uintVal);
-    this->SetStatusToLBox(ui->batGridLayout,   batStat,   batLabel,    tbsUnit[32].uintVal);
-    this->SetStatusToLBox(ui->balanceGridLayout,   balanceStat,   balanceLabel,    tbsUnit[31].uintVal);
+    this->SetStatusToLBox(ui->loseGridLayout,  loseStat,  loseLabel,  tbsStru0->dataCellList[30].uintVal);
+    this->SetStatusToLBox(ui->otherGridLayout, otherInfo, otherLabel, tbsStru0->dataCellList[27].uintVal);
+    this->SetStatusToLBox(ui->batGridLayout,   batStat,   batLabel,    tbsStru0->dataCellList[32].uintVal);
+    this->SetStatusToLBox(ui->balanceGridLayout,   balanceStat,   balanceLabel,    tbsStru0->dataCellList[31].uintVal);
 
 //    this->SetStatusToLBox(ui->batGridLayout,   batStat,   batlabel,    tbsUnit[33].uintVal);
 }
@@ -799,12 +799,12 @@ void textDcode::SetStatusToGBox(QGridLayout *gridLayout)
         }
 
         alarmLabel[iX3]->setText(statName);
-        if((tbsUnit[28].uintVal & 0x1 << bitNum) != 0) {
+        if((tbsStru0->dataCellList[28].uintVal & 0x1 << bitNum) != 0) {
             alarmLabel[iX3 + 1]->setStyleSheet("QLabel { background-color: red}");
         } else {
             alarmLabel[iX3 + 1]->setStyleSheet("QLabel { background-color: green}");
         }
-        if((tbsUnit[29].uintVal & 0x1 << bitNum) != 0) {
+        if((tbsStru0->dataCellList[29].uintVal & 0x1 << bitNum) != 0) {
             alarmLabel[iX3 + 2]->setStyleSheet("QLabel { background-color: red}");
         } else {
             alarmLabel[iX3 + 2]->setStyleSheet("QLabel { background-color: green}");

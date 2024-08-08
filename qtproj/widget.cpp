@@ -29,6 +29,7 @@ hexDecode hexFile;
 tverStruct *tverStru0;
 caliStruct *caliStru0;
 tbsStruct *tbsStru0;
+
 QStringList waitSendList;
 QStringList readySendList;
 QTimer *sendTim;
@@ -213,16 +214,16 @@ void Widget::SetTbsToTableAndChart(QListWidgetItem *item, int flag)
     QTime currentTim = QTime::currentTime();
     if(dcode0.ItemToTbs(item->text())) {
         if(flag == 1) {
-            chartV0->lineAddPoint("pack电压", currentTim,(*dcode0.tbsUnion)[0].uintVal);
-            chartV0->lineAddPoint("电芯总压",  currentTim,(*dcode0.tbsUnion)[1].uintVal);
+            chartV0->lineAddPoint("pack电压", currentTim,tbsStru0->dataCellList[0].uintVal);
+            chartV0->lineAddPoint("电芯总压",  currentTim,tbsStru0->dataCellList[1].uintVal);
 
-            chartV0->lineAddPoint("电芯1",    currentTim, (*dcode0.tbsUnion)[2].uintVal);
-            chartV0->lineAddPoint("电芯2",    currentTim, (*dcode0.tbsUnion)[3].uintVal);
-            chartV0->lineAddPoint("电芯3",    currentTim, (*dcode0.tbsUnion)[4].uintVal);
-            chartV0->lineAddPoint("电芯4",    currentTim, (*dcode0.tbsUnion)[5].uintVal);
+            chartV0->lineAddPoint("电芯1",    currentTim, tbsStru0->dataCellList[2].uintVal);
+            chartV0->lineAddPoint("电芯2",    currentTim, tbsStru0->dataCellList[3].uintVal);
+            chartV0->lineAddPoint("电芯3",    currentTim, tbsStru0->dataCellList[4].uintVal);
+            chartV0->lineAddPoint("电芯4",    currentTim, tbsStru0->dataCellList[5].uintVal);
 
-            chartV0->lineAddPoint("ntc1",    currentTim, (*dcode0.tbsUnion)[19].uintVal);
-            chartV0->lineAddPoint("RM",      currentTim, (*dcode0.tbsUnion)[24].uintVal);
+            chartV0->lineAddPoint("ntc1",    currentTim, tbsStru0->dataCellList[19].uintVal);
+            chartV0->lineAddPoint("RM",      currentTim, tbsStru0->dataCellList[24].uintVal);
         }
         dcode0.itemToTable(&itemTableList);
 
@@ -437,16 +438,16 @@ void Widget::on_pushButton_clicked()
             ui->listWidget->setCurrentRow(row - 1);
 
             // 添加从item中解析到的数据到tablewidget，label，listwidget中
-            chartV0->lineAddPoint("pack电压", QTime::fromString(TimStr, "HH:mm:ss:zzz"),(*dcode0.tbsUnion)[0].uintVal);
-            chartV0->lineAddPoint("电芯总压", QTime::fromString(TimStr, "HH:mm:ss:zzz"),(*dcode0.tbsUnion)[1].uintVal);
+            chartV0->lineAddPoint("pack电压", QTime::fromString(TimStr, "HH:mm:ss:zzz"),tbsStru0->dataCellList[0].uintVal);
+            chartV0->lineAddPoint("电芯总压", QTime::fromString(TimStr, "HH:mm:ss:zzz"),tbsStru0->dataCellList[1].uintVal);
 
-            chartV0->lineAddPoint("电芯1", QTime::fromString(TimStr, "HH:mm:ss:zzz"), (*dcode0.tbsUnion)[2].uintVal);
-            chartV0->lineAddPoint("电芯2", QTime::fromString(TimStr, "HH:mm:ss:zzz"), (*dcode0.tbsUnion)[3].uintVal);
-            chartV0->lineAddPoint("电芯3", QTime::fromString(TimStr, "HH:mm:ss:zzz"), (*dcode0.tbsUnion)[4].uintVal);
-            chartV0->lineAddPoint("电芯4", QTime::fromString(TimStr, "HH:mm:ss:zzz"), (*dcode0.tbsUnion)[5].uintVal);
+            chartV0->lineAddPoint("电芯1", QTime::fromString(TimStr, "HH:mm:ss:zzz"), tbsStru0->dataCellList[2].uintVal);
+            chartV0->lineAddPoint("电芯2", QTime::fromString(TimStr, "HH:mm:ss:zzz"), tbsStru0->dataCellList[3].uintVal);
+            chartV0->lineAddPoint("电芯3", QTime::fromString(TimStr, "HH:mm:ss:zzz"), tbsStru0->dataCellList[4].uintVal);
+            chartV0->lineAddPoint("电芯4", QTime::fromString(TimStr, "HH:mm:ss:zzz"), tbsStru0->dataCellList[5].uintVal);
 
-            chartV0->lineAddPoint("ntc1",  QTime::fromString(TimStr, "HH:mm:ss:zzz"), (*dcode0.tbsUnion)[19].uintVal);
-            chartV0->lineAddPoint("RM",    QTime::fromString(TimStr, "HH:mm:ss:zzz"), (*dcode0.tbsUnion)[24].uintVal);
+            chartV0->lineAddPoint("ntc1",  QTime::fromString(TimStr, "HH:mm:ss:zzz"), tbsStru0->dataCellList[19].uintVal);
+            chartV0->lineAddPoint("RM",    QTime::fromString(TimStr, "HH:mm:ss:zzz"), tbsStru0->dataCellList[24].uintVal);
 
             dcode0.clearTableItem(&itemTableList);
             dcode0.itemToTable(&itemTableList);
@@ -611,7 +612,7 @@ void Widget::on_pushButton_10_clicked()
 
 void Widget::on_pushButton_6_clicked()
 {
-    if((*dcode0.tbsUnion)[0].uintVal == 0) {
+    if(tbsStru0->dataCellList[0].uintVal == 0) {
         ui->portStatus->setText("没有读取电压！！！");
         return;
     }
@@ -620,7 +621,7 @@ void Widget::on_pushButton_6_clicked()
         return;
     }
     for(uint8_t i = 0; i < 18; i++) {
-        measureItem[i]->setText(QString::number((*dcode0.tbsUnion)[i].uintVal,10));
+        measureItem[i]->setText(QString::number(tbsStru0->dataCellList[i].uintVal,10));
     }
 }
 

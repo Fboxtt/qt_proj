@@ -157,7 +157,7 @@ public:
     void itemToTable(QVector<QTableWidgetItem>* itemTableList);
     void clearTableItem(QVector<QTableWidgetItem>* itemTableList);
     QVector<tbs> HexWriteTbs(QStringList dataList);
-    QVector<tbs> IntWriteTbs(QStringList dataList);
+    void IntWriteTbs(QStringList dataList);
     QString HexWriteTver(QStringList dataList, tverStruct* tver);
     QString HexWriteDataStruct(QStringList dataList, dataStruct* struObject);
 

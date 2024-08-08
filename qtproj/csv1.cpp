@@ -1,6 +1,8 @@
 #include <csv1.h>
 #include <QFile>
 #include <QTextCodec>
+
+extern tbsStruct *tbsStru0;
 csv::csv(void)
 {
 
@@ -35,8 +37,8 @@ void csv::tbsToCsv(Ui::Widget *ui, QString fileName, textDcode* dcode0)
 
         if(idx == 0) { // 写入标题
             strToCsv += "前缀,";
-            foreach(tbs tbsUnit, *dcode0->tbsUnion) {
-                strToCsv += tbsUnit.valName + BAT_SEP;
+            foreach(dataCell cell, tbsStru0->dataCellList) {
+                strToCsv += cell.valName + BAT_SEP;
             }
             strToCsv += "\n";
             strListToCsv.append(strToCsv);
