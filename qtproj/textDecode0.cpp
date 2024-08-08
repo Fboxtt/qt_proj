@@ -63,15 +63,24 @@ dataStruct::dataStruct()
     this->dataLenth = 0;
 }
 
-dataCell dataStruct::value(QString valName)
+dataCell* dataStruct::value(QString valName)
 {
-    return dataMap.value(valName);
+    uint32_t i = 0;
+    foreach(QString key, keyList) {
+        if(key == valName) {
+            return &dataCellList[i];
+        }
+        i++;
+    }
+    qDebug() << "没有这个key = " << valName;
+    return &dataCellList[0];
 }
 
 void dataStruct::insert(dataCell addCell)
 {
     keyList.append(addCell.valName);
     this->dataMap.insert(addCell.valName, addCell);
+    this->dataCellList.append(addCell);
     this->dataLenth += addCell.typeLenth;
 }
 // ***************************************cliStruct**************************************//
@@ -103,7 +112,7 @@ caliStruct::caliStruct()
         this->insert({"温度" + QString::number(i,10), datTypDic::USHORT});//
     }
 
-    qDebug() << this->value("usChgCurrK").valName << this->dataLenth;
+    qDebug() << this->value("usChgCurrK")->valName << this->dataLenth;
 }
 // ***************************************tbsStruct**************************************//
 // ***************************************tbsStruct**************************************//

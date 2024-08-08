@@ -32,7 +32,7 @@ caliStruct *caliStru0;
 QStringList waitSendList;
 QStringList readySendList;
 QTimer *sendTim;
-
+QTimer *readTim;
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
@@ -168,8 +168,13 @@ void Widget::on_listWidget_itemClicked(QListWidgetItem *item)
 // 串口读取函数的定时器链接的函数，保证接收数据的完整
 void Widget::ReadSerialTimeOut()
 {
-    se.TimeOut(ui, tim);
+    sendTim->stop();
+    readTim->stop();
+    qDebug() << "=====串口接收定时器时间到";
+    // 暂停tbs定时读取定时器防止报错
 
+    se.TimeOut(ui, readTim);
+    
     QString receiveDecode = dcode0.PlainTextDecode(ui);
     // 如果检测到某个结构体已经发生更新，则显示
     if(tverStru0->newDataStatus == true) {
@@ -181,14 +186,19 @@ void Widget::ReadSerialTimeOut()
         caliStru0->newDataStatus = false;
     }
     if(receiveDecode.contains("数据非法")) {
+        sendTim->start();
         return;
     }
     int row = ui->listWidget->count();
     if(row == 0) {
+        sendTim->start();
         return;
     }
     ui->listWidget->setCurrentRow(row - 1);
     this->SetTbsToTableAndChart(ui->listWidget->item(row - 1), 1);
+    qDebug() << "======串口接收定时器函数结束";
+    // 开启tbs定时读取定时器
+    sendTim->start();
 }
 
 // 解析listWidget内的数据，并写入到tableWidget中
@@ -230,9 +240,9 @@ void Widget::on_openBtn_clicked()
     connect(&se.SerialPort, &QSerialPort::readyRead, this, &Widget::SerialPortReadyRead_slot);
 
     // 创建延迟读取数据定时器
-    tim = new QTimer();
-    tim->setInterval(400);
-    connect(tim, SIGNAL(timeout()),this,SLOT(ReadSerialTimeOut()));
+    readTim = new QTimer();
+    readTim->setInterval(400);
+    connect(readTim, SIGNAL(timeout()),this,SLOT(ReadSerialTimeOut()));
 
     if(ui->portStatus->text() == "串口已连接") {
         this->on_sendRegisterBox_clicked();
@@ -249,7 +259,7 @@ void Widget::on_openBtn_clicked()
 void Widget::SerialPortReadyRead_slot()
 {
     qDebug() << "===============串口收到数据";
-    se.ReadyRead(tim);
+    se.ReadyRead(readTim);
 }
 
 void Widget::on_sendBox_clicked()
@@ -520,8 +530,8 @@ void Widget::GetKB()
             ui->tableWidget_2->setItem(idx, 3, measureItem[idx]);
             ui->tableWidget_2->setItem(idx, 4, exMeasureItem[idx]);
         }
-        cliNameItem[idx]->setText(caliStru0->value(key).valName);
-        valNameItem[idx]->setText(QString::number(caliStru0->value(key).uintVal));
+        cliNameItem[idx]->setText(caliStru0->value(key)->valName);
+        valNameItem[idx]->setText(QString::number(caliStru0->value(key)->uintVal));
         idx++;
     }
 }
@@ -570,9 +580,9 @@ void Widget::on_pushButton_10_clicked()
         QByteArray newCellArray;
         if(newKItem[idx]->text() != "") {
             uint16_t newKValue = newKItem[idx]->text().toUInt(&ok, 10);
-            dataArray += IntToByte(newKValue, caliStru0->value(key).typeLenth, caliStru0->value(key).endianType);
+            dataArray += IntToByte(newKValue, caliStru0->value(key)->typeLenth, caliStru0->value(key)->endianType);
         } else {
-            dataArray += caliStru0->value(key).byteArray;
+            dataArray += caliStru0->value(key)->byteArray;
         }
         idx++;
     }

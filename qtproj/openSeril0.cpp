@@ -149,7 +149,7 @@ void serial::ClickOpenSerPort(Ui::Widget *ui)
         ui->portStatus->setText("串口未连接");
     }
 }
-void serial::TimeOut(Ui::Widget *ui, QTimer *tim)
+void serial::TimeOut(Ui::Widget *ui, QTimer *readTim)
 {
     QString utf8Buffer;
     //从缓冲区中读取数据
@@ -197,14 +197,14 @@ void serial::TimeOut(Ui::Widget *ui, QTimer *tim)
         ui->receiveData->appendPlainText(receive);
 //        serial::batComSendStatus = serial::INCOMPLETE;
     }
-    tim->stop(); // 开启定时器，如果100ms后没有收到数据，则换行；
+    readTim->stop(); // 开启定时器，如果100ms后没有收到数据，则换行；
     buffer.clear();
 }
 
-void serial::ReadyRead(QTimer *tim)
+void serial::ReadyRead(QTimer *readTim)
 {
 //    serial::batComSendStatus = serial::COMPLETE;
-    tim->start();
+    readTim->start();
 }
 
 QString serial::SerialSend(Ui::Widget *ui, QString Data)

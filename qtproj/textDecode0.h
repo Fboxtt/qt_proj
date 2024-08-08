@@ -86,12 +86,13 @@ class dataStruct
 {
 public:
     dataStruct();
-    dataCell value(QString valName);
+    dataCell* value(QString valName);
     void insert(dataCell addCell);
     bool newDataStatus;
 
     QMap<QString, dataCell> dataMap;
     QList<QString> keyList;
+    QList<dataCell> dataCellList;
     uint32_t dataLenth;
 };
 
