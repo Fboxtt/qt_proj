@@ -28,7 +28,7 @@ hexDecode hexFile;
 
 tverStruct *tverStru0;
 caliStruct *caliStru0;
-
+tbsStruct *tbsStru0;
 QStringList waitSendList;
 QStringList readySendList;
 QTimer *sendTim;
@@ -100,7 +100,7 @@ Widget::Widget(QWidget *parent)
     // 数据结构体初始化函数
     tverStru0 = new tverStruct();
     caliStru0 = new caliStruct();
-
+    tbsStru0 = new tbsStruct();
     // 发送定时器初始化
     sendTim = new QTimer();
     sendTim->setInterval(1000);
