@@ -78,6 +78,8 @@ class dataCell
         uint32_t uintVal;
         QByteArray byteArray;
         QByteArray bigEndianBArray;
+
+        QMap<uint32_t, QString> stateMap;
 };
 
 class dataStruct
@@ -99,6 +101,7 @@ class caliStruct:public dataStruct
     public:
         caliStruct();
 };
+
 class tverStruct
 {
     public:
@@ -128,6 +131,12 @@ public:
     uint32_t typeLenth;
     uint32_t uintVal;
 //    void Init(QString* valName, uint32_t address, uint32_t cmdAddress);
+};
+class tbsStruct:public dataStruct
+{
+    using dataStruct::dataStruct;
+    public:
+        tbsStruct();
 };
 
 

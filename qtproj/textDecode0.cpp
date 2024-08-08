@@ -105,6 +105,53 @@ caliStruct::caliStruct()
 
     qDebug() << this->value("usChgCurrK").valName << this->dataLenth;
 }
+// ***************************************tbsStruct**************************************//
+// ***************************************tbsStruct**************************************//
+tbsStruct::tbsStruct()
+{
+    this->dataLenth = 0;
+    this->newDataStatus = false;
+
+//        {"PACK电压mV", datTypDic::ULONG}, \
+//        {"电池电压mV", datTypDic::ULONG}, \
+//        {"1电芯电压mV", datTypDic::USHORT}, \
+//        {"2电芯电压mV", datTypDic::USHORT}, \
+//        {"3电芯电压mV", datTypDic::USHORT}, \
+//        {"4电芯电压mV", datTypDic::USHORT}, \
+//        {"5电芯电压mV", datTypDic::USHORT}, \
+//        {"6电芯电压mV", datTypDic::USHORT}, \
+//        {"7电芯电压mV", datTypDic::USHORT}, \
+//        {"8电芯电压mV", datTypDic::USHORT}, \
+//        {"9电芯电压mV", datTypDic::USHORT}, \
+//        {"10电芯电压mV", datTypDic::USHORT}, \
+//        {"11电芯电压mV", datTypDic::USHORT}, \
+//        {"12电芯电压mV", datTypDic::USHORT}, \
+//        {"13电芯电压mV", datTypDic::USHORT}, \
+//        {"14电芯电压mV", datTypDic::USHORT}, \
+//        {"15电芯电压mV", datTypDic::USHORT}, \
+//        {"16电芯电压mV", datTypDic::USHORT}, \
+//        {"电流值mA", datTypDic::LONG}, \
+//        {"1温度值℃", datTypDic::SHORT}, \
+//        {"2温度值℃", datTypDic::SHORT}, \
+//        {"3温度值℃", datTypDic::SHORT}, \
+//        {"4温度值℃", datTypDic::SHORT}, \
+//        {"5温度值℃", datTypDic::SHORT}, \
+//        {"剩余容量AH", datTypDic::USHORT}, \
+//        {"满充容量AH", datTypDic::USHORT}, \
+//        {"显示和真实容量差", datTypDic::USHORT}, \
+//        {"其他信息HEX", datTypDic::ULONG}, \
+//        {"告警状态HEX", datTypDic::ULONG}, \
+//        {"保护状态HEX", datTypDic::ULONG}, \
+//        {"错误状态HEX", datTypDic::ULONG}, \
+//        {"均衡状态HEX", datTypDic::ULONG}, \
+
+//        {"电池状态HEX", datTypDic::USHORT}, \
+//        {"剩余容量%", datTypDic::USHORT}, \
+//        {"电池健康%", datTypDic::ULONG}, \
+//        {"放电次数", datTypDic::ULONG}, \
+//        {"总充电次数", datTypDic::ULONG}, \
+
+}
 // ***************************************tver**************************************//
 tver::tver(QString valName, datTypDic::DATA_TYPE dataType, uint32_t lenth)
 {
