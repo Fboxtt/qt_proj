@@ -55,6 +55,19 @@ dataCell::dataCell(QString valName, datTypDic::DATA_TYPE dataType)
         }
     }
 }
+uint32_t dataCell::findBitVal(QString bitName)
+{
+    uint32_t i = 0;
+    if(bitMap.size() > 0) {
+        foreach(QString name, bitMap.values()) {
+            if(name == bitName) {
+                return bitMap.keys()[i];
+            }
+            i++;
+        }
+    }
+        return 0;
+}
 // ***************************************dataStruct**************************************//
 // ***************************************dataStruct**************************************//
 dataStruct::dataStruct()
@@ -179,12 +192,12 @@ void tbsStruct::addStatusBits(void)
     this->value("告警状态HEX")->bitMap.insert(0x4000,"短路保护");
     this->value("告警状态HEX")->bitMap.insert(0x800000,"MOS高温保护");
 
-    this->value("保护状态HEX")->bitMap.insert(0x80,"电压传感器异常");
-    this->value("保护状态HEX")->bitMap.insert(0x80,"温度传感器异常");
-    this->value("保护状态HEX")->bitMap.insert(0x80,"充电控制异常");
-    this->value("保护状态HEX")->bitMap.insert(0x80,"放电控制异常");
-    this->value("保护状态HEX")->bitMap.insert(0x80,"电芯异常");
-    this->value("保护状态HEX")->bitMap.insert(0x80,"电芯寿命终止");
+    this->value("保护状态HEX")->bitMap.insert(0x01,"电压传感器异常");
+    this->value("保护状态HEX")->bitMap.insert(0x02,"温度传感器异常");
+    this->value("保护状态HEX")->bitMap.insert(0x04,"充电控制异常");
+    this->value("保护状态HEX")->bitMap.insert(0x08,"放电控制异常");
+    this->value("保护状态HEX")->bitMap.insert(0x10,"电芯异常");
+    this->value("保护状态HEX")->bitMap.insert(0x100,"电芯寿命终止");
 
     this->value("错误状态HEX")->bitMap.insert(0x00,"空闲");
     this->value("错误状态HEX")->bitMap.insert(0x01,"充电");

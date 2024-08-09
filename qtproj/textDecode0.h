@@ -80,6 +80,7 @@ class dataCell
         QByteArray bigEndianBArray;
 
         QMap<uint32_t, QString> bitMap;
+        uint32_t findBitVal(QString BitName);
 };
 
 class dataStruct

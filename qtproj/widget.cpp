@@ -110,6 +110,7 @@ Widget::Widget(QWidget *parent)
     sendTim->setInterval(1000);
     connect(sendTim, SIGNAL(timeout()), this, SLOT(sendCmdListFunc()));
     sendTim->start();
+    this->tbsRepayInit();
 }
 
 Widget::~Widget()
@@ -687,20 +688,64 @@ void Widget::on_pushButton_11_clicked()
 
 }
 
+QMap<QString, QCheckBox*> checkBMap;
 void Widget::on_pushButton_12_clicked()
 {
 
 }
 void Widget::tbsRepayInit()
 {
-
-
-//    ui->groupBox_11
+    testLCD->addStatusBits();
+    uint32_t x = 0,y = 0;
+    foreach(dataCell cell,testLCD->dataCellList) {
+        if (cell.valName.contains("HEX")) {
+            foreach(QString bitName, testLCD->value(cell.valName)->bitMap.values())
+            {
+                QCheckBox* checkbox = new QCheckBox();
+                checkbox->setText(bitName);
+                ui->gridLayout_21->addWidget(checkbox, x, y);
+                checkBMap.insert(bitName, checkbox);
+                x++;
+            }
+            x = 0;
+            y++;
+        }
+    }
 }
 
 
 void Widget::on_tbsReply_clicked()
 {
-    testLCD->addStatusBits();
-    qDebug() << "bitmap = " << testLCD->value("其他信息HEX")->bitMap.values();
+    if(checkBMap["空闲"]->checkState() == Qt::Checked) {
+        checkBMap["充电"]->setCheckState(Qt::Unchecked);
+        checkBMap["放电"]->setCheckState(Qt::Unchecked);
+        checkBMap["满充"]->setCheckState(Qt::Unchecked);
+    }
+    foreach(dataCell cell,testLCD->dataCellList) {
+        if (cell.valName.contains("HEX")) {
+            testLCD->value(cell.valName)->uintVal = 0;
+            foreach(QString bitName, testLCD->value(cell.valName)->bitMap.values())
+            {
+                if(checkBMap.value(bitName)->checkState() == Qt::Checked) {
+                    testLCD->value(cell.valName)->uintVal |= testLCD->value(cell.valName)->findBitVal(bitName);
+                }
+            }
+            qDebug() << "uintVal = 0x" << QString::number(testLCD->value(cell.valName)->uintVal,16);
+        }
+    }
+
+}
+
+void Widget::on_checkBox_2_stateChanged(int arg1)
+{
+    qDebug() << arg1 << "arg1";
+
+    foreach(QCheckBox* box, checkBMap) {
+        box->setCheckState((Qt::CheckState)arg1);
+    }
+}
+
+void Widget::on_pushButton_13_clicked()
+{
+
 }
