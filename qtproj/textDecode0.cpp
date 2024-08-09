@@ -237,46 +237,46 @@ tbs::tbs(QString valName,datTypDic::DATA_TYPE dataType)
     }
 }
 
-QVector<tbs> tbsUnit = {
-    {"PACK电压mV", datTypDic::ULONG}, \
-    {"电池电压mV", datTypDic::ULONG}, \
-    {"1电芯电压mV", datTypDic::USHORT}, \
-    {"2电芯电压mV", datTypDic::USHORT}, \
-    {"3电芯电压mV", datTypDic::USHORT}, \
-    {"4电芯电压mV", datTypDic::USHORT}, \
-    {"5电芯电压mV", datTypDic::USHORT}, \
-    {"6电芯电压mV", datTypDic::USHORT}, \
-    {"7电芯电压mV", datTypDic::USHORT}, \
-    {"8电芯电压mV", datTypDic::USHORT}, \
-    {"9电芯电压mV", datTypDic::USHORT}, \
-    {"10电芯电压mV", datTypDic::USHORT}, \
-    {"11电芯电压mV", datTypDic::USHORT}, \
-    {"12电芯电压mV", datTypDic::USHORT}, \
-    {"13电芯电压mV", datTypDic::USHORT}, \
-    {"14电芯电压mV", datTypDic::USHORT}, \
-    {"15电芯电压mV", datTypDic::USHORT}, \
-    {"16电芯电压mV", datTypDic::USHORT}, \
-    {"电流值mA", datTypDic::LONG}, \
-    {"1温度值℃", datTypDic::SHORT}, \
-    {"2温度值℃", datTypDic::SHORT}, \
-    {"3温度值℃", datTypDic::SHORT}, \
-    {"4温度值℃", datTypDic::SHORT}, \
-    {"5温度值℃", datTypDic::SHORT}, \
-    {"剩余容量AH", datTypDic::USHORT}, \
-    {"满充容量AH", datTypDic::USHORT}, \
-    {"显示和真实容量差", datTypDic::USHORT}, \
-    {"其他信息HEX", datTypDic::ULONG}, \
-    {"告警状态HEX", datTypDic::ULONG}, \
-    {"保护状态HEX", datTypDic::ULONG}, \
-    {"错误状态HEX", datTypDic::ULONG}, \
-    {"均衡状态HEX", datTypDic::ULONG}, \
+// QVector<tbs> tbsUnit = {
+//     {"PACK电压mV", datTypDic::ULONG}, \
+//     {"电池电压mV", datTypDic::ULONG}, \
+//     {"1电芯电压mV", datTypDic::USHORT}, \
+//     {"2电芯电压mV", datTypDic::USHORT}, \
+//     {"3电芯电压mV", datTypDic::USHORT}, \
+//     {"4电芯电压mV", datTypDic::USHORT}, \
+//     {"5电芯电压mV", datTypDic::USHORT}, \
+//     {"6电芯电压mV", datTypDic::USHORT}, \
+//     {"7电芯电压mV", datTypDic::USHORT}, \
+//     {"8电芯电压mV", datTypDic::USHORT}, \
+//     {"9电芯电压mV", datTypDic::USHORT}, \
+//     {"10电芯电压mV", datTypDic::USHORT}, \
+//     {"11电芯电压mV", datTypDic::USHORT}, \
+//     {"12电芯电压mV", datTypDic::USHORT}, \
+//     {"13电芯电压mV", datTypDic::USHORT}, \
+//     {"14电芯电压mV", datTypDic::USHORT}, \
+//     {"15电芯电压mV", datTypDic::USHORT}, \
+//     {"16电芯电压mV", datTypDic::USHORT}, \
+//     {"电流值mA", datTypDic::LONG}, \
+//     {"1温度值℃", datTypDic::SHORT}, \
+//     {"2温度值℃", datTypDic::SHORT}, \
+//     {"3温度值℃", datTypDic::SHORT}, \
+//     {"4温度值℃", datTypDic::SHORT}, \
+//     {"5温度值℃", datTypDic::SHORT}, \
+//     {"剩余容量AH", datTypDic::USHORT}, \
+//     {"满充容量AH", datTypDic::USHORT}, \
+//     {"显示和真实容量差", datTypDic::USHORT}, \
+//     {"其他信息HEX", datTypDic::ULONG}, \
+//     {"告警状态HEX", datTypDic::ULONG}, \
+//     {"保护状态HEX", datTypDic::ULONG}, \
+//     {"错误状态HEX", datTypDic::ULONG}, \
+//     {"均衡状态HEX", datTypDic::ULONG}, \
 
-    {"电池状态HEX", datTypDic::USHORT}, \
-    {"剩余容量%", datTypDic::USHORT}, \
-    {"电池健康%", datTypDic::ULONG}, \
-    {"放电次数", datTypDic::ULONG}, \
-    {"总充电次数", datTypDic::ULONG}, \
-};
+//     {"电池状态HEX", datTypDic::USHORT}, \
+//     {"剩余容量%", datTypDic::USHORT}, \
+//     {"电池健康%", datTypDic::ULONG}, \
+//     {"放电次数", datTypDic::ULONG}, \
+//     {"总充电次数", datTypDic::ULONG}, \
+// };
 
 textDcode::textDcode(void)
 {
@@ -299,7 +299,7 @@ textDcode::textDcode(void)
                 ,{0x05,"ACK握手错误"}\
                 ,{0x06,"ACK校验错误"}};
 
-    this->tbsUnion = &tbsUnit;
+//    this->tbsUnion = &tbsUnit;
 }
 
 QList<QLabel*> alarmLabel;
@@ -588,35 +588,35 @@ void textDcode::itemToTable(QVector<QTableWidgetItem>* itemTableList)
     }
 }
 
-// 将字符串str转换成真实的int值，再转换成str写入tbsUnit
-QVector<tbs> textDcode::HexWriteTbs(QStringList dataList)
-{
+// // 将字符串str转换成真实的int值，再转换成str写入tbsUnit
+// QVector<tbs> textDcode::HexWriteTbs(QStringList dataList)
+// {
 
-    bool ok;
-    QVector<uint8_t> hexVector;
-    uint8_t byteInData = 0;
-    uint32_t tbsUnitIdx = 0, uintVal = 0;
+//     bool ok;
+//     QVector<uint8_t> hexVector;
+//     uint8_t byteInData = 0;
+//     uint32_t tbsUnitIdx = 0, uintVal = 0;
 
-    foreach(QString hexStr, dataList) {
-        hexStr.toInt(&ok, 16);
-        if (ok == true) {
-            hexVector.append((uint8_t)hexStr.toInt(&ok, 16));
-        }
-    }
-    foreach(uint8_t hex, hexVector) {
-        if (byteInData == tbsUnit[tbsUnitIdx].typeLenth) {
-            tbsUnit[tbsUnitIdx].uintVal = uintVal;
-            // qDebug() << tbsUnit[tbsUnitIdx].valName <<"uintval%d = " << uintVal;
+//     foreach(QString hexStr, dataList) {
+//         hexStr.toInt(&ok, 16);
+//         if (ok == true) {
+//             hexVector.append((uint8_t)hexStr.toInt(&ok, 16));
+//         }
+//     }
+//     foreach(uint8_t hex, hexVector) {
+//         if (byteInData == tbsUnit[tbsUnitIdx].typeLenth) {
+//             tbsUnit[tbsUnitIdx].uintVal = uintVal;
+//             // qDebug() << tbsUnit[tbsUnitIdx].valName <<"uintval%d = " << uintVal;
 
-            tbsUnitIdx++;
-            uintVal = 0;
-            byteInData = 0;
-        }
-        uintVal += (((uint32_t)hex) <<  byteInData * 8);
-        byteInData++;
-    }
-    return tbsUnit;
-}
+//             tbsUnitIdx++;
+//             uintVal = 0;
+//             byteInData = 0;
+//         }
+//         uintVal += (((uint32_t)hex) <<  byteInData * 8);
+//         byteInData++;
+//     }
+//     return tbsUnit;
+// }
 void textDcode::IntWriteTbs(QStringList dataList)
 {
 
