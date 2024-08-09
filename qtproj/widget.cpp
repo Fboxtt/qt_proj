@@ -29,6 +29,7 @@ hexDecode hexFile;
 tverStruct *tverStru0;
 caliStruct *caliStru0;
 tbsStruct *tbsStru0;
+tbsStruct *testLCD;
 
 QStringList waitSendList;
 QStringList readySendList;
@@ -102,6 +103,8 @@ Widget::Widget(QWidget *parent)
     tverStru0 = new tverStruct();
     caliStru0 = new caliStruct();
     tbsStru0 = new tbsStruct();
+    testLCD = new tbsStruct();
+
     // 发送定时器初始化
     sendTim = new QTimer();
     sendTim->setInterval(1000);
@@ -691,6 +694,13 @@ void Widget::on_pushButton_12_clicked()
 void Widget::tbsRepayInit()
 {
 
+
 //    ui->groupBox_11
 }
 
+
+void Widget::on_tbsReply_clicked()
+{
+    testLCD->addStatusBits();
+    qDebug() << "bitmap = " << testLCD->value("其他信息HEX")->bitMap.values();
+}

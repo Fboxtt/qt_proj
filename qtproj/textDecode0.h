@@ -79,7 +79,7 @@ class dataCell
         QByteArray byteArray;
         QByteArray bigEndianBArray;
 
-        QMap<uint32_t, QString> stateMap;
+        QMap<uint32_t, QString> bitMap;
 };
 
 class dataStruct
@@ -137,6 +137,7 @@ class tbsStruct:public dataStruct
     using dataStruct::dataStruct;
     public:
         tbsStruct();
+        void addStatusBits(void);
 };
 
 
