@@ -716,14 +716,16 @@ void Widget::tbsRepayInit()
 
 void Widget::on_tbsReply_clicked()
 {
+    QByteArray dataArray, sendDataArray;
+
     if(checkBMap["空闲"]->checkState() == Qt::Checked) {
         checkBMap["充电"]->setCheckState(Qt::Unchecked);
         checkBMap["放电"]->setCheckState(Qt::Unchecked);
         checkBMap["满充"]->setCheckState(Qt::Unchecked);
     }
     foreach(dataCell cell,testLCD->dataCellList) {
+        testLCD->value(cell.valName)->uintVal = 0;
         if (cell.valName.contains("HEX")) {
-            testLCD->value(cell.valName)->uintVal = 0;
             foreach(QString bitName, testLCD->value(cell.valName)->bitMap.values())
             {
                 if(checkBMap.value(bitName)->checkState() == Qt::Checked) {
@@ -733,7 +735,33 @@ void Widget::on_tbsReply_clicked()
             qDebug() << "uintVal = 0x" << QString::number(testLCD->value(cell.valName)->uintVal,16);
         }
     }
+    char byte = 0;
+    QList<dataCell>::iterator itor;
+    for (itor = testLCD->dataCellList.begin(); itor != testLCD->dataCellList.end(); ++itor)
+    {
+        (*itor).byteArray.clear();
+        for(uint8_t i = 0; i < (*itor).typeLenth; i++) {
+            byte = (((*itor).uintVal) & (0xff << (i * 8))) >> (i * 8);
+//            qDebug() << QString::number(byte,16) << "byte";
+            (*itor).byteArray.append(byte);
+            byte = 0;
+        }
+        dataArray.append((*itor).byteArray);
+    }
+    sendDataArray.append(char(0x00));
+    sendDataArray.append(((5 + dataArray.size()) & 0xff00) >> 8);
+    sendDataArray.append(((5 + dataArray.size()) & 0xff));
+    sendDataArray.append(char(0x01)); // 单板类型
 
+    sendDataArray.append(char(0x55));
+    sendDataArray.append(char(0xAA));
+    sendDataArray.append(char(0x93)); //应答码
+    sendDataArray.append(dataArray);
+    char checkSum =(((5 + dataArray.size()) & 0xff00) >> 8) + ((5 + dataArray.size()) & 0xff) + 0x01 + 0x93 + 0x55 + 0xAA;
+    foreach(char byte, dataArray) {
+        checkSum += byte;
+    }
+    qDebug() << dataArray << dataArray.size();
 }
 
 void Widget::on_checkBox_2_stateChanged(int arg1)
