@@ -35,6 +35,9 @@ QStringList waitSendList;
 QStringList readySendList;
 QTimer *sendTim;
 QTimer *readTim;
+
+sysStruct *sysStru0;
+
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
@@ -104,6 +107,7 @@ Widget::Widget(QWidget *parent)
     caliStru0 = new caliStruct();
     tbsStru0 = new tbsStruct();
     testLCD = new tbsStruct();
+    sysStru0 = new sysStruct();
 
     // 发送定时器初始化
     sendTim = new QTimer();
@@ -689,6 +693,7 @@ void Widget::on_pushButton_11_clicked()
 }
 
 QMap<QString, QCheckBox*> checkBMap;
+QMap<QString, QCheckBox*> sysCheckBMap;
 void Widget::on_pushButton_12_clicked()
 {
 
@@ -705,6 +710,21 @@ void Widget::tbsRepayInit()
                 checkbox->setText(bitName);
                 ui->gridLayout_21->addWidget(checkbox, x, y);
                 checkBMap.insert(bitName, checkbox);
+                x++;
+            }
+            x = 0;
+            y++;
+        }
+    }
+
+    foreach(dataCell cell,sysStru0->dataCellList) {
+        if (cell.valName.contains("HEX")) {
+            foreach(QString bitName, testLCD->value(cell.valName)->bitMap.values())
+            {
+                QCheckBox* checkbox = new QCheckBox();
+                checkbox->setText(bitName);
+                ui->gridLayout_23->addWidget(checkbox, x, y);
+                sysCheckBMap.insert(bitName, checkbox);
                 x++;
             }
             x = 0;
@@ -754,7 +774,23 @@ void Widget::on_checkBox_2_stateChanged(int arg1)
 
 void Widget::on_pushButton_13_clicked()
 {
-    QString a;
-    qDebug() << a.setNum((char)0x55,16);
-    qDebug() << a.setNum((char)0x44, 16);
+    QByteArray dataArray, sendDataArray;
+
+    foreach(dataCell cell,sysStru0->dataCellList) {
+        sysStru0->value(cell.valName)->uintVal = 0;
+        if (cell.valName.contains("HEX")) {
+            // 遍历名字带有HEX的变量的bit
+            foreach(QString bitName, testLCD->value(cell.valName)->bitMap.values())
+            {
+                // 如果这个bit的checkBox打勾
+                if(sysCheckBMap.value(bitName)->checkState() == Qt::Checked) {
+                    sysStru0->value(cell.valName)->uintVal |= sysStru0->value(cell.valName)->findBitVal(bitName);
+                }
+            }
+            qDebug() << "uintVal = 0x" << QString::number(sysStru0->value(cell.valName)->uintVal,16);
+        }
+    }
+    sysStru0->value("系统电池数量")->uintVal = ui->comboBox->currentIndex() + 1;
+    sysStru0->value("系统SOC值")->uintVal = 50;
+    waitSendList.append(sysStru0->OutPutStru());
 }

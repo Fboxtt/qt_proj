@@ -20,8 +20,9 @@ QList<datTypDic> TypUnion = {
     {datTypDic::CHAR,     "CHAR", 1, datTypDic::LITTLE, datTypDic::SIGNED},
     {datTypDic::UCHAR,     "UCHAR", 1, datTypDic::LITTLE, datTypDic::SIGNED},
     {datTypDic::STRING,     "STRING", 1, datTypDic::LITTLE, datTypDic::UNSIGNED},
-    {datTypDic::WORD,     "STRING", 4, datTypDic::LITTLE, datTypDic::UNSIGNED},
-    {datTypDic::DWORD,     "STRING", 8, datTypDic::LITTLE, datTypDic::UNSIGNED},
+    {datTypDic::WORD,     "WORD", 2, datTypDic::LITTLE, datTypDic::UNSIGNED},
+    {datTypDic::DWORD,     "DWORD", 4, datTypDic::LITTLE, datTypDic::UNSIGNED},
+    {datTypDic::BYTE,     "BYTE", 1, datTypDic::LITTLE, datTypDic::UNSIGNED},
 };
 // ***************************************dataCell**************************************//
 // ***************************************dataCell**************************************//
@@ -233,7 +234,67 @@ sysStruct::sysStruct()
     this->dataLenth = 0;
     this->newDataStatus = false;
     this->cmdType = 0x30;
-    this->insert({"均衡状态HEX", datTypDic::CHAR});
+    this->insert({"预留1", datTypDic::BYTE});
+    this->insert({"预留2", datTypDic::BYTE});
+    this->insert({"单模块容量", datTypDic::WORD});
+    this->insert({"系统总容量", datTypDic::DWORD});
+
+    this->insert({"系统电池数量", datTypDic::DWORD});
+    this->insert({"通讯失败电池数量", datTypDic::WORD});
+    this->insert({"BMS失效电池数量", datTypDic::WORD});
+    this->insert({"电芯失效电池数量", datTypDic::WORD});
+    this->insert({"充电断开电池数量", datTypDic::WORD});
+    this->insert({"放电断开电池数量", datTypDic::WORD});
+
+    this->insert({"最高电芯温度", datTypDic::WORD});
+    this->insert({"最低电芯温度", datTypDic::WORD});
+    this->insert({"最高电芯电压", datTypDic::WORD});
+    this->insert({"最低单向电压", datTypDic::WORD});
+    this->insert({"最高电池电压", datTypDic::WORD});
+    this->insert({"最低电池电压", datTypDic::WORD});
+    this->insert({"最大电池电流", datTypDic::WORD});
+    this->insert({"最小电池电流", datTypDic::WORD});
+    this->insert({"最大 SOC 值", datTypDic::WORD});
+    this->insert({"最小 SOC 值", datTypDic::WORD});
+    this->insert({"最大 SOH 值", datTypDic::WORD});
+    this->insert({"最大 SOH 值", datTypDic::WORD});
+
+    this->insert({"预留3", datTypDic::USHORT});
+    this->insert({"预留4", datTypDic::USHORT});
+    this->insert({"预留5", datTypDic::DWORD});
+    this->insert({"预留6", datTypDic::DWORD});
+
+    this->insert({"系统温度", datTypDic::SHORT});
+    this->insert({"系统电压", datTypDic::USHORT});
+    this->insert({"系统电流", datTypDic::LONG});
+    this->insert({"系统SOC值", datTypDic::USHORT});
+    this->insert({"系统SOH值", datTypDic::USHORT});
+
+    this->insert({"保护状态HEX", datTypDic::ULONG});
+    this->insert({"错误状态HEX", datTypDic::ULONG});
+    this->insert({"系统循环数量", datTypDic::ULONG});
+    this->insert({"预留7", datTypDic::WORD});
+
+
+    this->value("保护状态HEX")->bitMap.insert(0x4,"单节过压保护");
+    this->value("保护状态HEX")->bitMap.insert(0x00040000,"低温单节过压保护");
+    this->value("保护状态HEX")->bitMap.insert(0x00000020,"单节低压保护");
+    this->value("保护状态HEX")->bitMap.insert(0x40,"充电过流保护");
+    this->value("保护状态HEX")->bitMap.insert(0x80,"放电过流保护");
+    this->value("保护状态HEX")->bitMap.insert(0x100,"充电高温保护");
+    this->value("保护状态HEX")->bitMap.insert(0x200,"放电高温保护");
+    this->value("保护状态HEX")->bitMap.insert(0x400,"充电低温保护");
+    this->value("保护状态HEX")->bitMap.insert(0x800,"放电低温保护");
+    this->value("保护状态HEX")->bitMap.insert(0x4000,"短路保护");
+    this->value("保护状态HEX")->bitMap.insert(0x800000,"MOS高温保护");
+
+    this->value("错误状态HEX")->bitMap.insert(0x01,"电压传感器异常");
+    this->value("错误状态HEX")->bitMap.insert(0x02,"温度传感器异常");
+    this->value("错误状态HEX")->bitMap.insert(0x04,"充电控制异常");
+    this->value("错误状态HEX")->bitMap.insert(0x08,"放电控制异常");
+    this->value("错误状态HEX")->bitMap.insert(0x10,"电芯异常");
+    this->value("错误状态HEX")->bitMap.insert(0x100,"电芯寿命终止");
+
 }
 // ***************************************tver**************************************//
 tver::tver(QString valName, datTypDic::DATA_TYPE dataType, uint32_t lenth)
@@ -964,7 +1025,7 @@ QString dataStruct::OutPutStru(void)
     sendDataArray.append(char(0xAA));
     sendDataArray.append(char(0x00)); //应答码
     sendDataArray.append(dataArray);
-    char checkSum =(((5 + dataArray.size()) / 256) >> 8) + ((5 + dataArray.size()) & 0xff) + 0x01 + 0x93 + 0x55 + 0xAA + 0x00;
+    char checkSum =(((5 + dataArray.size()) / 256) >> 8) + ((5 + dataArray.size()) & 0xff) + 0x01 + char(this->cmdType | 0x80) + 0x55 + 0xAA + 0x00;
     foreach(char byte, dataArray) {
         checkSum += byte;
     }

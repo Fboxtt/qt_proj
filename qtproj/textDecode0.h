@@ -23,7 +23,8 @@ public:
         UCHAR,
         STRING,
         WORD,
-        DWORD
+        DWORD,
+        BYTE,
     };
     enum ENDIAN_TYPE {
         LITTLE,
