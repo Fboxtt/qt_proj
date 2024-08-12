@@ -239,25 +239,26 @@ sysStruct::sysStruct()
     this->insert({"单模块容量", datTypDic::WORD});
     this->insert({"系统总容量", datTypDic::DWORD});
 
-    this->insert({"系统电池数量", datTypDic::DWORD});
+    this->insert({"系统电池数量", datTypDic::WORD});
     this->insert({"通讯失败电池数量", datTypDic::WORD});
     this->insert({"BMS失效电池数量", datTypDic::WORD});
     this->insert({"电芯失效电池数量", datTypDic::WORD});
     this->insert({"充电断开电池数量", datTypDic::WORD});
     this->insert({"放电断开电池数量", datTypDic::WORD});
 
-    this->insert({"最高电芯温度", datTypDic::WORD});
-    this->insert({"最低电芯温度", datTypDic::WORD});
-    this->insert({"最高电芯电压", datTypDic::WORD});
-    this->insert({"最低单向电压", datTypDic::WORD});
-    this->insert({"最高电池电压", datTypDic::WORD});
-    this->insert({"最低电池电压", datTypDic::WORD});
-    this->insert({"最大电池电流", datTypDic::WORD});
-    this->insert({"最小电池电流", datTypDic::WORD});
-    this->insert({"最大 SOC 值", datTypDic::WORD});
-    this->insert({"最小 SOC 值", datTypDic::WORD});
-    this->insert({"最大 SOH 值", datTypDic::WORD});
-    this->insert({"最大 SOH 值", datTypDic::WORD});
+    this->insert({"最高电芯温度", datTypDic::SHORT});
+    this->insert({"最低电芯温度", datTypDic::SHORT});
+    this->insert({"最高电芯电压", datTypDic::USHORT});
+    this->insert({"最低单向电压", datTypDic::USHORT});
+    this->insert({"最高电池电压", datTypDic::ULONG});
+    this->insert({"最低电池电压", datTypDic::ULONG});
+    this->insert({"最大电池电流", datTypDic::LONG});
+    this->insert({"最小电池电流", datTypDic::LONG});
+
+    this->insert({"最大 SOC 值", datTypDic::USHORT});
+    this->insert({"最小 SOC 值", datTypDic::USHORT});
+    this->insert({"最大 SOH 值", datTypDic::USHORT});
+    this->insert({"最大 SOH 值", datTypDic::USHORT});
 
     this->insert({"预留3", datTypDic::USHORT});
     this->insert({"预留4", datTypDic::USHORT});
@@ -273,9 +274,11 @@ sysStruct::sysStruct()
     this->insert({"保护状态HEX", datTypDic::ULONG});
     this->insert({"错误状态HEX", datTypDic::ULONG});
     this->insert({"系统循环数量", datTypDic::ULONG});
-    this->insert({"预留7", datTypDic::WORD});
+//    this->insert({"预留7", datTypDic::WORD});
 
-
+    for(uint8_t i = 0; i <= 9; i++) {
+        this->insert({"预留" + QString::number(i + 7) , datTypDic::WORD});
+    }
     this->value("保护状态HEX")->bitMap.insert(0x4,"单节过压保护");
     this->value("保护状态HEX")->bitMap.insert(0x00040000,"低温单节过压保护");
     this->value("保护状态HEX")->bitMap.insert(0x00000020,"单节低压保护");
