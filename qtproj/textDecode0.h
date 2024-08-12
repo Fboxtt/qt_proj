@@ -22,6 +22,8 @@ public:
         CHAR,
         UCHAR,
         STRING,
+        WORD,
+        DWORD
     };
     enum ENDIAN_TYPE {
         LITTLE,
@@ -89,11 +91,14 @@ public:
     dataStruct();
     dataCell* value(QString valName);
     void insert(dataCell addCell);
+    QString OutPutStru(void);
     bool newDataStatus;
 
     QList<QString> keyList;
     QList<dataCell> dataCellList;
     uint32_t dataLenth;
+
+    char cmdType;
 };
 
 class caliStruct:public dataStruct
@@ -101,6 +106,13 @@ class caliStruct:public dataStruct
     using dataStruct::dataStruct;
     public:
         caliStruct();
+};
+
+class sysStruct:public dataStruct
+{
+    using dataStruct::dataStruct;
+    public:
+        sysStruct();
 };
 
 class tverStruct

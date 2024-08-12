@@ -737,46 +737,10 @@ void Widget::on_tbsReply_clicked()
             qDebug() << "uintVal = 0x" << QString::number(testLCD->value(cell.valName)->uintVal,16);
         }
     }
-    char byte = 0;
-    QList<dataCell>::iterator itor;
-    for (itor = testLCD->dataCellList.begin(); itor != testLCD->dataCellList.end(); ++itor)
-    {
-        (*itor).byteArray.clear();
-        for(uint8_t i = 0; i < (*itor).typeLenth; i++) {
-            byte = (((*itor).uintVal) & (0xff << (i * 8))) >> (i * 8);
-//            qDebug() << QString::number(byte,16) << "byte";
-            (*itor).byteArray.append(byte);
-            byte = 0;
-        }
-        dataArray.append((*itor).byteArray);
-    }
-    sendDataArray.append(char(0x00));
-    sendDataArray.append(((5 + dataArray.size()) & 0xff00) >> 8);
-    sendDataArray.append(((5 + dataArray.size()) & 0xff));
-    sendDataArray.append(char(0x01)); // 单板类型
-    sendDataArray.append(char(0x93)); //功能码
-    sendDataArray.append(char(0x55));
-    sendDataArray.append(char(0xAA));
-    sendDataArray.append(char(0x00)); //应答码
-    sendDataArray.append(dataArray);
-    char checkSum =(((5 + dataArray.size()) / 256) >> 8) + ((5 + dataArray.size()) & 0xff) + 0x01 + 0x93 + 0x55 + 0xAA + 0x00;
-    foreach(char byte, dataArray) {
-        checkSum += byte;
-    }
-    sendDataArray.append(char(checkSum));
-//    qDebug() << dataArray << dataArray.size();
-    QString sendData = sendDataArray.toHex().data(),utf8Buffer;
-    int idx = 0;
-    qDebug() << "sendDataArray size = " << sendDataArray.size();
-    for(int i=0;i<sendDataArray.length();i++)
-    {
-           QString str_1 = sendData.mid (i * 2, 2);
-           utf8Buffer += str_1;
-           utf8Buffer += " ";
-    }
-    waitSendList.append(utf8Buffer);
-    qDebug() << "utf8Buffer size = " << utf8Buffer.size();
-//    qDebug() << "utf8Buffer()"  << utf8Buffer;
+    waitSendList.append(testLCD->OutPutStru());
+
+//    qDebug() << "utf8Buffer size = " << testLCD->OutPutStru().size();
+
 }
 
 void Widget::on_checkBox_2_stateChanged(int arg1)
@@ -790,5 +754,7 @@ void Widget::on_checkBox_2_stateChanged(int arg1)
 
 void Widget::on_pushButton_13_clicked()
 {
-
+    QString a;
+    qDebug() << a.setNum((char)0x55,16);
+    qDebug() << a.setNum((char)0x44, 16);
 }

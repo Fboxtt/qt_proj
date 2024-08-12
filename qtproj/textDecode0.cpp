@@ -20,6 +20,8 @@ QList<datTypDic> TypUnion = {
     {datTypDic::CHAR,     "CHAR", 1, datTypDic::LITTLE, datTypDic::SIGNED},
     {datTypDic::UCHAR,     "UCHAR", 1, datTypDic::LITTLE, datTypDic::SIGNED},
     {datTypDic::STRING,     "STRING", 1, datTypDic::LITTLE, datTypDic::UNSIGNED},
+    {datTypDic::WORD,     "STRING", 4, datTypDic::LITTLE, datTypDic::UNSIGNED},
+    {datTypDic::DWORD,     "STRING", 8, datTypDic::LITTLE, datTypDic::UNSIGNED},
 };
 // ***************************************dataCell**************************************//
 // ***************************************dataCell**************************************//
@@ -134,45 +136,47 @@ tbsStruct::tbsStruct()
     this->dataLenth = 0;
     this->newDataStatus = false;
 
-       this->insert({"PACK电压mV", datTypDic::ULONG});
-       this->insert({"电池电压mV", datTypDic::ULONG});
-       this->insert({"1电芯电压mV", datTypDic::USHORT});
-       this->insert({"2电芯电压mV", datTypDic::USHORT});
-       this->insert({"3电芯电压mV", datTypDic::USHORT});
-       this->insert({"4电芯电压mV", datTypDic::USHORT});
-       this->insert({"5电芯电压mV", datTypDic::USHORT});
-       this->insert({"6电芯电压mV", datTypDic::USHORT});
-       this->insert({"7电芯电压mV", datTypDic::USHORT});
-       this->insert({"8电芯电压mV", datTypDic::USHORT});
-       this->insert({"9电芯电压mV", datTypDic::USHORT});
-       this->insert({"10电芯电压mV", datTypDic::USHORT});
-       this->insert({"11电芯电压mV", datTypDic::USHORT});
-       this->insert({"12电芯电压mV", datTypDic::USHORT});
-       this->insert({"13电芯电压mV", datTypDic::USHORT});
-       this->insert({"14电芯电压mV", datTypDic::USHORT});
-       this->insert({"15电芯电压mV", datTypDic::USHORT});
-       this->insert({"16电芯电压mV", datTypDic::USHORT});
-       this->insert({"电流值mA", datTypDic::LONG});
-       this->insert({"1温度值℃", datTypDic::SHORT});
-       this->insert({"2温度值℃", datTypDic::SHORT});
-       this->insert({"3温度值℃", datTypDic::SHORT});
-       this->insert({"4温度值℃", datTypDic::SHORT});
-       this->insert({"5温度值℃", datTypDic::SHORT});
-       this->insert({"剩余容量AH", datTypDic::USHORT});
-       this->insert({"满充容量AH", datTypDic::USHORT});
-       this->insert({"显示和真实容量差", datTypDic::USHORT});
-       this->insert({"其他信息HEX", datTypDic::ULONG});
-       this->insert({"告警状态HEX", datTypDic::ULONG});
-       this->insert({"保护状态HEX", datTypDic::ULONG});
-       this->insert({"错误状态HEX", datTypDic::ULONG});
-       this->insert({"均衡状态HEX", datTypDic::ULONG});
+    this->insert({"PACK电压mV", datTypDic::ULONG});
+    this->insert({"电池电压mV", datTypDic::ULONG});
+    this->insert({"1电芯电压mV", datTypDic::USHORT});
+    this->insert({"2电芯电压mV", datTypDic::USHORT});
+    this->insert({"3电芯电压mV", datTypDic::USHORT});
+    this->insert({"4电芯电压mV", datTypDic::USHORT});
+    this->insert({"5电芯电压mV", datTypDic::USHORT});
+    this->insert({"6电芯电压mV", datTypDic::USHORT});
+    this->insert({"7电芯电压mV", datTypDic::USHORT});
+    this->insert({"8电芯电压mV", datTypDic::USHORT});
+    this->insert({"9电芯电压mV", datTypDic::USHORT});
+    this->insert({"10电芯电压mV", datTypDic::USHORT});
+    this->insert({"11电芯电压mV", datTypDic::USHORT});
+    this->insert({"12电芯电压mV", datTypDic::USHORT});
+    this->insert({"13电芯电压mV", datTypDic::USHORT});
+    this->insert({"14电芯电压mV", datTypDic::USHORT});
+    this->insert({"15电芯电压mV", datTypDic::USHORT});
+    this->insert({"16电芯电压mV", datTypDic::USHORT});
+    this->insert({"电流值mA", datTypDic::LONG});
+    this->insert({"1温度值℃", datTypDic::SHORT});
+    this->insert({"2温度值℃", datTypDic::SHORT});
+    this->insert({"3温度值℃", datTypDic::SHORT});
+    this->insert({"4温度值℃", datTypDic::SHORT});
+    this->insert({"5温度值℃", datTypDic::SHORT});
+    this->insert({"剩余容量AH", datTypDic::USHORT});
+    this->insert({"满充容量AH", datTypDic::USHORT});
+    this->insert({"显示和真实容量差", datTypDic::USHORT});
+    this->insert({"其他信息HEX", datTypDic::ULONG});
+    this->insert({"告警状态HEX", datTypDic::ULONG});
+    this->insert({"保护状态HEX", datTypDic::ULONG});
+    this->insert({"错误状态HEX", datTypDic::ULONG});
+    this->insert({"均衡状态HEX", datTypDic::ULONG});
 
-       this->insert({"电池状态HEX", datTypDic::USHORT});
+    this->insert({"电池状态HEX", datTypDic::USHORT});
 
-       this->insert({"剩余容量%", datTypDic::USHORT});
-       this->insert({"电池健康%", datTypDic::ULONG});
-       this->insert({"放电次数", datTypDic::ULONG});
-       this->insert({"总充电次数", datTypDic::ULONG});
+    this->insert({"剩余容量%", datTypDic::USHORT});
+    this->insert({"电池健康%", datTypDic::ULONG});
+    this->insert({"放电次数", datTypDic::ULONG});
+    this->insert({"总充电次数", datTypDic::ULONG});
+
+    this->cmdType = 0x13;
 }
 void tbsStruct::addStatusBits(void)
 {
@@ -220,6 +224,16 @@ void tbsStruct::addStatusBits(void)
     for(uint8_t i = 1; i <= 16; i++) {
         this->value("均衡状态HEX")->bitMap.insert(0x1 << (i - 1),"电芯" + QString::number(i));
     }
+}
+
+// ***************************************sysStruct**************************************//
+// ***************************************sysStruct**************************************//
+sysStruct::sysStruct()
+{
+    this->dataLenth = 0;
+    this->newDataStatus = false;
+    this->cmdType = 0x30;
+    this->insert({"均衡状态HEX", datTypDic::CHAR});
 }
 // ***************************************tver**************************************//
 tver::tver(QString valName, datTypDic::DATA_TYPE dataType, uint32_t lenth)
@@ -926,3 +940,44 @@ QString textDcode::GetTime(QString csvData)
     return csvData.mid(left, right - left + 1);
 }
 
+QString dataStruct::OutPutStru(void)
+{
+    char byte = 0;
+    QByteArray dataArray, sendDataArray;
+    QList<dataCell>::iterator itor;
+    for (itor = this->dataCellList.begin(); itor != this->dataCellList.end(); ++itor)
+    {
+        (*itor).byteArray.clear();
+        for(uint8_t i = 0; i < (*itor).typeLenth; i++) {
+            byte = (((*itor).uintVal) & (0xff << (i * 8))) >> (i * 8);
+            (*itor).byteArray.append(byte);
+            byte = 0;
+        }
+        dataArray.append((*itor).byteArray);
+    }
+    sendDataArray.append(char(0x00));
+    sendDataArray.append(((5 + dataArray.size()) & 0xff00) >> 8);
+    sendDataArray.append(((5 + dataArray.size()) & 0xff));
+    sendDataArray.append(char(0x01)); // 单板类型
+    sendDataArray.append(char(this->cmdType | 0x80)); //功能码
+    sendDataArray.append(char(0x55));
+    sendDataArray.append(char(0xAA));
+    sendDataArray.append(char(0x00)); //应答码
+    sendDataArray.append(dataArray);
+    char checkSum =(((5 + dataArray.size()) / 256) >> 8) + ((5 + dataArray.size()) & 0xff) + 0x01 + 0x93 + 0x55 + 0xAA + 0x00;
+    foreach(char byte, dataArray) {
+        checkSum += byte;
+    }
+    sendDataArray.append(char(checkSum));
+//    qDebug() << dataArray << dataArray.size();
+    QString sendData = sendDataArray.toHex().data(),utf8Buffer;
+//    qDebug() << "sendDataArray size = " << sendDataArray.size();
+    for(int i=0;i<sendDataArray.length();i++)
+    {
+           QString str_1 = sendData.mid (i * 2, 2);
+           utf8Buffer += str_1;
+           utf8Buffer += " ";
+    }
+    return utf8Buffer;
+    qDebug() << "utf8Buffer size = " << utf8Buffer.size();
+}
