@@ -168,6 +168,7 @@ tbsStruct::tbsStruct()
        this->insert({"均衡状态HEX", datTypDic::ULONG});
 
        this->insert({"电池状态HEX", datTypDic::USHORT});
+
        this->insert({"剩余容量%", datTypDic::USHORT});
        this->insert({"电池健康%", datTypDic::ULONG});
        this->insert({"放电次数", datTypDic::ULONG});
@@ -180,32 +181,44 @@ void tbsStruct::addStatusBits(void)
     this->value("其他信息HEX")->bitMap.insert(0x40,"充电mos断开");
     this->value("其他信息HEX")->bitMap.insert(0x80,"放电mos断开");
 
-    this->value("告警状态HEX")->bitMap.insert(0x4,"单节过压保护");
-    this->value("告警状态HEX")->bitMap.insert(0x00040000,"低温单节过压保护");
-    this->value("告警状态HEX")->bitMap.insert(0x00000020,"单节低压保护");
-    this->value("告警状态HEX")->bitMap.insert(0x40,"充电过流保护");
-    this->value("告警状态HEX")->bitMap.insert(0x80,"放电过流保护");
-    this->value("告警状态HEX")->bitMap.insert(0x100,"充电高温保护");
-    this->value("告警状态HEX")->bitMap.insert(0x200,"放电高温保护");
-    this->value("告警状态HEX")->bitMap.insert(0x400,"充电低温保护");
-    this->value("告警状态HEX")->bitMap.insert(0x800,"放电低温保护");
-    this->value("告警状态HEX")->bitMap.insert(0x4000,"短路保护");
-    this->value("告警状态HEX")->bitMap.insert(0x800000,"MOS高温保护");
+    this->value("告警状态HEX")->bitMap.insert(0x4,"单节过压警告");
+    this->value("告警状态HEX")->bitMap.insert(0x00040000,"低温单节过压警告");
+    this->value("告警状态HEX")->bitMap.insert(0x00000020,"单节低压警告");
+    this->value("告警状态HEX")->bitMap.insert(0x40,"充电过流警告");
+    this->value("告警状态HEX")->bitMap.insert(0x80,"放电过流警告");
+    this->value("告警状态HEX")->bitMap.insert(0x100,"充电高温警告");
+    this->value("告警状态HEX")->bitMap.insert(0x200,"放电高温警告护");
+    this->value("告警状态HEX")->bitMap.insert(0x400,"充电低温警告");
+    this->value("告警状态HEX")->bitMap.insert(0x800,"放电低温警告");
+    this->value("告警状态HEX")->bitMap.insert(0x4000,"短路警告");
+    this->value("告警状态HEX")->bitMap.insert(0x800000,"MOS高温警告");
 
-    this->value("保护状态HEX")->bitMap.insert(0x01,"电压传感器异常");
-    this->value("保护状态HEX")->bitMap.insert(0x02,"温度传感器异常");
-    this->value("保护状态HEX")->bitMap.insert(0x04,"充电控制异常");
-    this->value("保护状态HEX")->bitMap.insert(0x08,"放电控制异常");
-    this->value("保护状态HEX")->bitMap.insert(0x10,"电芯异常");
-    this->value("保护状态HEX")->bitMap.insert(0x100,"电芯寿命终止");
+    this->value("保护状态HEX")->bitMap.insert(0x4,"单节过压保护");
+    this->value("保护状态HEX")->bitMap.insert(0x00040000,"低温单节过压保护");
+    this->value("保护状态HEX")->bitMap.insert(0x00000020,"单节低压保护");
+    this->value("保护状态HEX")->bitMap.insert(0x40,"充电过流保护");
+    this->value("保护状态HEX")->bitMap.insert(0x80,"放电过流保护");
+    this->value("保护状态HEX")->bitMap.insert(0x100,"充电高温保护");
+    this->value("保护状态HEX")->bitMap.insert(0x200,"放电高温保护");
+    this->value("保护状态HEX")->bitMap.insert(0x400,"充电低温保护");
+    this->value("保护状态HEX")->bitMap.insert(0x800,"放电低温保护");
+    this->value("保护状态HEX")->bitMap.insert(0x4000,"短路保护");
+    this->value("保护状态HEX")->bitMap.insert(0x800000,"MOS高温保护");
 
-    this->value("错误状态HEX")->bitMap.insert(0x00,"空闲");
-    this->value("错误状态HEX")->bitMap.insert(0x01,"充电");
-    this->value("错误状态HEX")->bitMap.insert(0x02,"放电");
-    this->value("错误状态HEX")->bitMap.insert(0x04,"满充");
+    this->value("错误状态HEX")->bitMap.insert(0x01,"电压传感器异常");
+    this->value("错误状态HEX")->bitMap.insert(0x02,"温度传感器异常");
+    this->value("错误状态HEX")->bitMap.insert(0x04,"充电控制异常");
+    this->value("错误状态HEX")->bitMap.insert(0x08,"放电控制异常");
+    this->value("错误状态HEX")->bitMap.insert(0x10,"电芯异常");
+    this->value("错误状态HEX")->bitMap.insert(0x100,"电芯寿命终止");
+
+    this->value("电池状态HEX")->bitMap.insert(0x00,"空闲");
+    this->value("电池状态HEX")->bitMap.insert(0x01,"充电");
+    this->value("电池状态HEX")->bitMap.insert(0x02,"放电");
+    this->value("电池状态HEX")->bitMap.insert(0x04,"满充");
 
     for(uint8_t i = 1; i <= 16; i++) {
-        this->value("均衡状态HEX")->bitMap.insert(0x1 << i,"电芯" + QString::number(i));
+        this->value("均衡状态HEX")->bitMap.insert(0x1 << (i - 1),"电芯" + QString::number(i));
     }
 }
 // ***************************************tver**************************************//

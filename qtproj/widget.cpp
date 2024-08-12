@@ -726,8 +726,10 @@ void Widget::on_tbsReply_clicked()
     foreach(dataCell cell,testLCD->dataCellList) {
         testLCD->value(cell.valName)->uintVal = 0;
         if (cell.valName.contains("HEX")) {
+            // 遍历名字带有HEX的变量的bit
             foreach(QString bitName, testLCD->value(cell.valName)->bitMap.values())
             {
+                // 如果这个bit的checkBox打勾
                 if(checkBMap.value(bitName)->checkState() == Qt::Checked) {
                     testLCD->value(cell.valName)->uintVal |= testLCD->value(cell.valName)->findBitVal(bitName);
                 }
@@ -752,16 +754,29 @@ void Widget::on_tbsReply_clicked()
     sendDataArray.append(((5 + dataArray.size()) & 0xff00) >> 8);
     sendDataArray.append(((5 + dataArray.size()) & 0xff));
     sendDataArray.append(char(0x01)); // 单板类型
-
+    sendDataArray.append(char(0x93)); //功能码
     sendDataArray.append(char(0x55));
     sendDataArray.append(char(0xAA));
-    sendDataArray.append(char(0x93)); //应答码
+    sendDataArray.append(char(0x00)); //应答码
     sendDataArray.append(dataArray);
-    char checkSum =(((5 + dataArray.size()) & 0xff00) >> 8) + ((5 + dataArray.size()) & 0xff) + 0x01 + 0x93 + 0x55 + 0xAA;
+    char checkSum =(((5 + dataArray.size()) / 256) >> 8) + ((5 + dataArray.size()) & 0xff) + 0x01 + 0x93 + 0x55 + 0xAA + 0x00;
     foreach(char byte, dataArray) {
         checkSum += byte;
     }
-    qDebug() << dataArray << dataArray.size();
+    sendDataArray.append(char(checkSum));
+//    qDebug() << dataArray << dataArray.size();
+    QString sendData = sendDataArray.toHex().data(),utf8Buffer;
+    int idx = 0;
+    qDebug() << "sendDataArray size = " << sendDataArray.size();
+    for(int i=0;i<sendDataArray.length();i++)
+    {
+           QString str_1 = sendData.mid (i * 2, 2);
+           utf8Buffer += str_1;
+           utf8Buffer += " ";
+    }
+    waitSendList.append(utf8Buffer);
+    qDebug() << "utf8Buffer size = " << utf8Buffer.size();
+//    qDebug() << "utf8Buffer()"  << utf8Buffer;
 }
 
 void Widget::on_checkBox_2_stateChanged(int arg1)
