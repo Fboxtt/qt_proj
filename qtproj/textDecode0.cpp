@@ -669,8 +669,8 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
         dataText = SendCmdDocode(dataList, dataText)  + COMUT_SEP + timeAndDataList[0] + COMUT_BAT_SEP;
         bool ok;
         if(dataList.at(4) == "30") {
-            // waitSendList.append(sysStru0->OutPutStru());
-            SendAndDecode(sysStru0->OutPutStru());
+            // readySendList.append(sysStru0->OutPutStru());
+            readySendList.append(QString("00 00 71 01 B0 55 AA 00 00 64 64 00 64 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 18 00 18 00 C4 0C BB 0C 07 33 00 00 07 33 00 00 00 00 00 00 00 00 00 00 01 00 01 00 50 00 50 00 00 00 00 00 00 00 00 00 00 00 00 00 F0 00 77 00 00 00 00 00 01 00 50 00 AA AA AA 02 AA AA AA 02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 E3"));
         }
 
     } else if (dataList.size() > 8 && dataList.size() < 200) {

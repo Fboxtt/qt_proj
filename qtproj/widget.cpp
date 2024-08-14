@@ -177,6 +177,7 @@ void Widget::on_listWidget_itemClicked(QListWidgetItem *item)
 // 串口读取函数的定时器链接的函数，保证接收数据的完整
 void Widget::ReadSerialTimeOut()
 {
+qDebug()<<"++++++++++定时器结束时间:"<<QTime::currentTime();
     sendTim->stop();
     readTim->stop();
     qDebug() << "=====串口接收定时器时间到";
@@ -194,6 +195,11 @@ void Widget::ReadSerialTimeOut()
         this->GetKB();
         caliStru0->newDataStatus = false;
     }
+    if(readySendList.size() > 0) {
+        this->sendCmdListFunc();
+//        se.SerialSend(ui, readySendList[0]);
+    }
+     
     if(sysStru0->newDataStatus == true) {
         ui->label_12->setText(sysStru0->displayData());
         
@@ -254,7 +260,7 @@ void Widget::on_openBtn_clicked()
 
     // 创建延迟读取数据定时器
     readTim = new QTimer();
-    readTim->setInterval(400);
+    readTim->setInterval(50);
     connect(readTim, SIGNAL(timeout()),this,SLOT(ReadSerialTimeOut()));
 
     if(ui->portStatus->text() == "串口已连接") {
@@ -316,24 +322,29 @@ void Widget::on_sendRegisterBox_clicked()
 void Widget::sendCmdListFunc()
 {
     QString tbsSendData = "00 00 04 01 13 55 AA 17";
+    int waitCount = 0;
 
-    // 如果waitSendList有命令则发送最新入栈的cmd
-    if(waitSendList.size() > 0) {
-        readySendList.append(waitSendList.last());
-        waitSendList.removeLast();
-    } else {
-    // 如果没有命令则发送tbs读取命令
-
-        if (ui->pushButton_3->text() == "停止读取tbs") {
-            if(ui->openBtn->text() == "打开串口") {
-                this->on_pushButton_3_clicked();
-                ui->pushButton_3->setEnabled(false);
-            } else {
-                readySendList.append(tbsSendData);
-            }
-        }
-    }
-
+//    if(waitCount >= 20) {
+//        // 如果waitSendList有命令则发送最新入栈的cmd
+//        if(waitSendList.size() > 0) {
+//            readySendList.append(waitSendList.last());
+//            waitSendList.removeLast();
+//        } else {
+//        // 如果没有命令则发送tbs读取命令
+//            if (ui->pushButton_3->text() == "停止读取tbs") {
+//                if(ui->openBtn->text() == "打开串口") {
+//                    this->on_pushButton_3_clicked();
+//                    ui->pushButton_3->setEnabled(false);
+//                } else {
+//                    readySendList.append(tbsSendData);
+//                }
+//            }
+//        }
+//        waitCount = 0;
+//    } else {
+//        waitCount++;
+//    }
+    
     if(readySendList.size() > 0) {
         SendAndDecode(readySendList.last());
         readySendList.removeLast();

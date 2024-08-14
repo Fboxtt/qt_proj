@@ -203,7 +203,11 @@ void serial::TimeOut(Ui::Widget *ui, QTimer *readTim)
 
 void serial::ReadyRead(QTimer *readTim)
 {
+    qDebug()<<"++++++++++定时器开始时间:"<<QTime::currentTime();
 //    serial::batComSendStatus = serial::COMPLETE;
+qDebug()<<"waitForReadyRead:"<<QTime::currentTime();
+    this->SerialPort.waitForReadyRead(5);
+    qDebug()<<"waitForReadydone:"<<QTime::currentTime();
     readTim->start();
 }
 
@@ -228,6 +232,7 @@ QString serial::SerialSend(Ui::Widget *ui, QString Data)
     }
     // 写入发送缓存区
     qDebug() << Data_1 << "send data";
+    qDebug()<<"++++++++++数据发送时间:"<<QTime::currentTime();
     SerialPort.write(Data_1);
     return Data;
 }
