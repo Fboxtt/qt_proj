@@ -93,6 +93,8 @@ public:
     dataCell* value(QString valName);
     void insert(dataCell addCell);
     QString OutPutStru(void);
+    QString displayData(void);
+
     bool newDataStatus;
 
     QList<QString> keyList;

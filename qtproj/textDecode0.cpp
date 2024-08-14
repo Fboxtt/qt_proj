@@ -3,6 +3,9 @@
 extern tverStruct *tverStru0;
 extern caliStruct *caliStru0;
 extern tbsStruct *tbsStru0;
+extern QStringList waitSendList;
+extern QStringList readySendList;
+extern sysStruct* sysStru0;
 datTypDic::datTypDic(DATA_TYPE type, QString typeName, uint32_t typeLenth, ENDIAN_TYPE endianType, SIGNED_TYPE signedType)
 {
     this->type = type;
@@ -258,7 +261,7 @@ sysStruct::sysStruct()
     this->insert({"最大 SOC 值", datTypDic::USHORT});
     this->insert({"最小 SOC 值", datTypDic::USHORT});
     this->insert({"最大 SOH 值", datTypDic::USHORT});
-    this->insert({"最大 SOH 值", datTypDic::USHORT});
+    this->insert({"最小 SOH 值", datTypDic::USHORT});
 
     this->insert({"预留3", datTypDic::USHORT});
     this->insert({"预留4", datTypDic::USHORT});
@@ -570,6 +573,8 @@ QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
         HexWriteTver(hexStrLis.mid(8, 80), tverStru0);
     } else if (hexStrLis.size() > 8 && (hexStrLis[4] == "87")) {
         HexWriteDataStruct(hexStrLis.mid(8, caliStru0->dataLenth), caliStru0);
+    } else if (hexStrLis.size() > 8 && (hexStrLis[4].toInt(&ok, 16))) {
+        HexWriteDataStruct(hexStrLis.mid(8, sysStru0->dataLenth), sysStru0);
     } else {
         qDebug() << "dataList <= 8 or datalist[4] != 93";
     }
@@ -662,6 +667,11 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
 
     if (dataList.size() == 8) {
         dataText = SendCmdDocode(dataList, dataText)  + COMUT_SEP + timeAndDataList[0] + COMUT_BAT_SEP;
+        bool ok;
+        if(dataList.at(4) == "30") {
+            // waitSendList.append(sysStru0->OutPutStru());
+            SendAndDecode(sysStru0->OutPutStru());
+        }
 
     } else if (dataList.size() > 8 && dataList.size() < 200) {
         dataText = readDataDocode(dataList, dataText) + COMUT_SEP + timeAndDataList[0] + COMUT_BAT_SEP;
@@ -1044,4 +1054,32 @@ QString dataStruct::OutPutStru(void)
     }
     return utf8Buffer;
     qDebug() << "utf8Buffer size = " << utf8Buffer.size();
+}
+
+QString dataStruct::displayData(void)
+{
+    QString displayDat;
+    int allLenth = 0;
+    foreach(dataCell cell, dataCellList) {
+        allLenth += cell.typeLenth;
+        displayDat += "l = " + QString::number(cell.typeLenth, 10) + "all l = " + QString::number(allLenth, 10);
+        displayDat += cell.valName + " = ";
+        if(cell.signedType == datTypDic::SIGNED) {
+            if(cell.typeLenth == 4) {
+                displayDat += QString::number((long)cell.uintVal, 10) + "\n";
+            } else if(cell.typeLenth == 2) {
+                 displayDat += QString::number((short)cell.uintVal, 10) + "\n";
+            } else {
+                displayDat += QString::number((char)cell.uintVal, 10) + "\n";
+            }
+        } else {
+            if(cell.valName.contains("HEX")) {
+                displayDat += "0x" + QString::number(cell.uintVal, 16) + "\n";
+            } else {
+                displayDat += QString::number(cell.uintVal, 10) + "\n";
+            }
+        }
+
+    }
+    return displayDat;
 }

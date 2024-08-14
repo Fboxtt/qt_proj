@@ -194,6 +194,10 @@ void Widget::ReadSerialTimeOut()
         this->GetKB();
         caliStru0->newDataStatus = false;
     }
+    if(sysStru0->newDataStatus == true) {
+        ui->label_12->setText(sysStru0->displayData());
+        
+    }
     if(receiveDecode.contains("数据非法")) {
         sendTim->start();
         return;
