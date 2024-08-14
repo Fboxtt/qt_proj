@@ -260,7 +260,7 @@ void Widget::on_openBtn_clicked()
 
     // 创建延迟读取数据定时器
     readTim = new QTimer();
-    readTim->setInterval(50);
+    readTim->setInterval(20);
     connect(readTim, SIGNAL(timeout()),this,SLOT(ReadSerialTimeOut()));
 
     if(ui->portStatus->text() == "串口已连接") {

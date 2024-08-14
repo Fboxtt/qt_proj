@@ -203,7 +203,9 @@ void serial::TimeOut(Ui::Widget *ui, QTimer *readTim)
 
 void serial::ReadyRead(QTimer *readTim)
 {
-    qDebug()<<"++++++++++定时器开始时间:"<<QTime::currentTime();
+    static int i = 0;
+    i++;
+    qDebug()<<QString::number(i,10) + QString("++++++++++定时器开始时间:")<<QTime::currentTime();
 //    serial::batComSendStatus = serial::COMPLETE;
 qDebug()<<"waitForReadyRead:"<<QTime::currentTime();
     this->SerialPort.waitForReadyRead(5);
