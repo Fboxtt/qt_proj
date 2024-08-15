@@ -33,6 +33,7 @@ tbsStruct *testLCD;
 
 QStringList waitSendList;
 QStringList readySendList;
+QStringList hexSendList;
 QTimer *sendTim;
 QTimer *readTim;
 
@@ -340,6 +341,26 @@ void Widget::sendCmdListFunc()
     }
 }
 
+void Widget::sendHexListFunc()
+{
+//    QStringList
+//    QByteArray sendArray = hexFile.n00dataArray.mid(hexFile.packetNum * hexFile.packetSize, hexFile.packetSize);
+
+    if (ui->pushButton_3->text() == "停止读取tbs") {
+        if(ui->openBtn->text() == "打开串口") {
+            this->on_pushButton_3_clicked();
+            ui->pushButton_3->setEnabled(false);
+        }
+    }
+
+    if(hexSendList.size() > 0) {
+
+    } else {
+
+    }
+
+    SendAndDecode(readySendList.last());
+}
 void Widget::on_pushButton_3_clicked()
 {
     if(ui->pushButton_3->text() == "开始读取tbs") {
@@ -677,16 +698,21 @@ void Widget::on_closeDisFet_clicked()
 }
 void Widget::on_pushButton_4_clicked()
 {
-//    if(hexFile.exist == true && ui->openBtn->text() == "关闭串口") {
-
-//        se.SerialSend(ui,hexFile.n00dataArray);
-//    } else {
-//        qDebug() << "hex文件err，或者串口未打开";
-//    }
-    // 开始烧录
     QString sendData = "00 00 04 01 53 55 AA 57";
     waitSendList.append(sendData);
 
+//    if(hexFile.beginDownloadState == 0) {
+//        hexFile.beginDownloadState = 1;
+//    }
+//    if(hexFile.shakeSuccessTime < 3) {
+//        hexFile.packetToSendString(hexDecode::ENTER_BOOTMODE);
+//        return;
+//    }
+//    if(hexFile.writeSuccessTime < (hexFile.lenth / hexFile.packetSize)) {
+//        QString writeStr = hexFile.packetToSendString(hexDecode::WRITE_FLASH);
+//        hexSendList.append(writeStr);
+//        return;
+//    }
 }
 void Widget::on_pushButton_11_clicked()
 {

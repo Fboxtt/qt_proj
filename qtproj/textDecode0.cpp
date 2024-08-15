@@ -670,7 +670,7 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
         bool ok;
         if(dataList.at(4) == "30") {
             // waitSendList.append(sysStru0->OutPutStru());
-            SendAndDecode(sysStru0->OutPutStru());
+//            SendAndDecode(sysStru0->OutPutStru());
         }
 
     } else if (dataList.size() > 8 && dataList.size() < 200) {

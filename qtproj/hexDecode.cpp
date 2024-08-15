@@ -2,7 +2,7 @@
 
 hexDecode::hexDecode(void)
 {
-
+    this->writeFlashCmd = 0x55;
 }
 uint32_t hexDecode::toUInt(QByteArray inputArray)
 {
@@ -145,4 +145,38 @@ void hexDecode::Clear(void)
     n03startArray.clear();
     n04extendLinearArray.clear();
     n05startLinearArray.clear();
+}
+
+
+QString hexDecode::packetToSendString(bmsCmdType cmdType, uint32_t packetNumber)
+{
+    QByteArray sendDataArray;
+    QByteArray dataArray = {};
+    if(cmdType == this->WRITE_FLASH) {
+        dataArray = this->n00dataArray.mid(packetNumber * this->packetSize, this->packetSize);
+    }
+    sendDataArray.append(char(0x00));
+    sendDataArray.append(((5 + dataArray.size()) & 0xff00) >> 8);
+    sendDataArray.append(((5 + dataArray.size()) & 0xff));
+    sendDataArray.append(char(0x01)); // 单板类型
+    sendDataArray.append(char(cmdType)); //功能码
+    sendDataArray.append(char(0x55));
+    sendDataArray.append(char(0xAA));
+    sendDataArray.append(char(0x00)); //应答码
+    sendDataArray.append(dataArray);
+    char checkSum =(((5 + dataArray.size()) / 256) >> 8) + ((5 + dataArray.size()) & 0xff) + 0x01 + char(this->writeFlashCmd | 0x80) + 0x55 + 0xAA + 0x00;
+    foreach(char byte, dataArray) {
+        checkSum += byte;
+    }
+    sendDataArray.append(char(checkSum));
+    //    qDebug() << dataArray << dataArray.size();
+    QString sendData = sendDataArray.toHex().data(),utf8Buffer;
+    //    qDebug() << "sendDataArray size = " << sendDataArray.size();
+    for(int i=0;i<sendDataArray.length();i++)
+    {
+           QString str_1 = sendData.mid (i * 2, 2);
+           utf8Buffer += str_1;
+           utf8Buffer += " ";
+    }
+    return utf8Buffer;
 }

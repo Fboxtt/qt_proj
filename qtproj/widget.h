@@ -101,6 +101,9 @@ public slots:
     void GetKB();
     void SetKb();
     void tbsRepayInit();
+
+
+    void sendHexListFunc();
 };
 
 
