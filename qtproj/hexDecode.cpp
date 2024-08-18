@@ -180,3 +180,17 @@ QString hexDecode::packetToSendString(bmsCmdType cmdType, uint32_t packetNumber)
     }
     return utf8Buffer;
 }
+
+bool hexDecode::isDownLoadCmd(char cmd)
+{
+    if(cmd == hexDecode::READ_BOOT_CODE_INF || \
+            cmd == hexDecode::READ_IC_INF || \
+            cmd == hexDecode::HEX_INFO || \
+            cmd == hexDecode::ENTER_BOOTMODE || \
+            cmd == hexDecode::WRITE_FLASH || \
+            cmd == hexDecode::READ_FLASH) {
+        return true;
+    } else {
+        return false;
+    }
+}

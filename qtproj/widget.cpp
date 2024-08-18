@@ -39,6 +39,8 @@ QTimer *readTim;
 
 sysStruct *sysStru0;
 
+#define SEND_INTERVAL 100
+#define SEND_TBS_COUNT (1000/SEND_INTERVAL)
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
@@ -112,7 +114,7 @@ Widget::Widget(QWidget *parent)
 
     // 发送定时器初始化
     sendTim = new QTimer();
-    sendTim->setInterval(1000);
+    sendTim->setInterval(SEND_INTERVAL);
     connect(sendTim, SIGNAL(timeout()), this, SLOT(sendCmdListFunc()));
     sendTim->start();
     this->tbsRepayInit();
@@ -317,28 +319,38 @@ void Widget::on_sendRegisterBox_clicked()
 void Widget::sendCmdListFunc()
 {
     QString tbsSendData = "00 00 04 01 13 55 AA 17";
+//    SEND_TBS_COUNT
+    static int tbsSendCount = 0;
 
-    // 如果waitSendList有命令则发送最新入栈的cmd
-    if(waitSendList.size() > 0) {
-        readySendList.append(waitSendList.last());
-        waitSendList.removeLast();
-    } else {
-    // 如果没有命令则发送tbs读取命令
-
-        if (ui->pushButton_3->text() == "停止读取tbs") {
-            if(ui->openBtn->text() == "打开串口") {
-                this->on_pushButton_3_clicked();
-                ui->pushButton_3->setEnabled(false);
-            } else {
-                readySendList.append(tbsSendData);
+    if(hexSendList.size() <= 0) {
+        tbsSendCount++;
+        // 如果waitSendList有命令则发送最新入栈的cmd
+        if(waitSendList.size() > 0) {
+            readySendList.append(waitSendList.last());
+            waitSendList.removeLast();
+        } else {
+        // 如果没有命令则发送tbs读取命令
+            if (ui->pushButton_3->text() == "停止读取tbs") {
+                if(ui->openBtn->text() == "打开串口") {
+                    this->on_pushButton_3_clicked();
+                    ui->pushButton_3->setEnabled(false);
+                } else {
+                    if(tbsSendCount >= SEND_TBS_COUNT) {
+                        readySendList.append(tbsSendData);
+                        tbsSendCount = 0;
+                    }
+                }
             }
         }
+        if(readySendList.size() > 0) {
+            SendAndDecode(readySendList.last());
+            readySendList.removeLast();
+        }
+    } else {
+        SendAndDecode(hexSendList.first());
+        hexSendList.removeFirst();
     }
 
-    if(readySendList.size() > 0) {
-        SendAndDecode(readySendList.last());
-        readySendList.removeLast();
-    }
 }
 
 void Widget::sendHexListFunc()
@@ -698,21 +710,21 @@ void Widget::on_closeDisFet_clicked()
 }
 void Widget::on_pushButton_4_clicked()
 {
-    QString sendData = "00 00 04 01 53 55 AA 57";
-    waitSendList.append(sendData);
+//    QString sendData = "00 00 04 01 53 55 AA 57";
+//    waitSendList.append(sendData);
 
-//    if(hexFile.beginDownloadState == 0) {
-//        hexFile.beginDownloadState = 1;
-//    }
-//    if(hexFile.shakeSuccessTime < 3) {
-//        hexFile.packetToSendString(hexDecode::ENTER_BOOTMODE);
-//        return;
-//    }
-//    if(hexFile.writeSuccessTime < (hexFile.lenth / hexFile.packetSize)) {
-//        QString writeStr = hexFile.packetToSendString(hexDecode::WRITE_FLASH);
-//        hexSendList.append(writeStr);
-//        return;
-//    }
+    if(hexFile.beginDownloadState == 0) {
+        hexFile.beginDownloadState = 1;
+    }
+    if(hexFile.shakeSuccessTime < 3) {
+        hexFile.packetToSendString(hexDecode::ENTER_BOOTMODE);
+        return;
+    }
+    if(hexFile.writeSuccessTime < (hexFile.lenth / hexFile.packetSize)) {
+        QString writeStr = hexFile.packetToSendString(hexDecode::WRITE_FLASH);
+        hexSendList.append(writeStr);
+        return;
+    }
 }
 void Widget::on_pushButton_11_clicked()
 {

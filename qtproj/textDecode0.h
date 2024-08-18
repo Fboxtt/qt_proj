@@ -156,7 +156,34 @@ class tbsStruct:public dataStruct
         void addStatusBits(void);
 };
 
+class textStruct
+{
+public:
+    enum sendState {
+        SEND,
+        RECEIVE,
+    };
+    enum dataErr {
+        NO_ERR = 0,
+        LENTH_ERR,
+    };
+    textStruct(){
+        byteLenth = 0;
+    }
+    textStruct(QString text);
+    QString tim;
+    QString text;
+    sendState sendOrReceive;
+    dataErr Err;
+    char ACK;
+    char cmd;
+    bool cmdOk;
+    bool checkSumOk;
+    bool lenthOk;
+    int byteLenth;
+    QByteArray dataArray;
 
+};
 
 
 class textDcode

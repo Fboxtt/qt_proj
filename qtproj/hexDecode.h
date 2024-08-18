@@ -59,6 +59,7 @@ public:
     QString ReadHexFile(QFile *file);
     void Clear(void);
     QString packetToSendString(bmsCmdType cmdType, uint32_t packetNumber = 0);
+    static bool isDownLoadCmd(char cmd);
 
 private:
     uint32_t toUInt(QByteArray str);

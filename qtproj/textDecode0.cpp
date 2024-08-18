@@ -1,11 +1,12 @@
 #include <textDecode0.h>
-
+#include <hexDecode.h>
 extern tverStruct *tverStru0;
 extern caliStruct *caliStru0;
 extern tbsStruct *tbsStru0;
 extern QStringList waitSendList;
 extern QStringList readySendList;
 extern sysStruct* sysStru0;
+extern hexDecode hexFile;
 datTypDic::datTypDic(DATA_TYPE type, QString typeName, uint32_t typeLenth, ENDIAN_TYPE endianType, SIGNED_TYPE signedType)
 {
     this->type = type;
@@ -420,6 +421,82 @@ tbs::tbs(QString valName,datTypDic::DATA_TYPE dataType)
 //     {"总充电次数", datTypDic::ULONG}, \
 // };
 
+textStruct::textStruct(QString text)
+{
+    QStringList beSplitList = text.split(COMUT_BAT_SEP);
+    QStringList dataList;
+    bool ok;
+    QVector<uint8_t> dataArray;
+
+    this->cmdOk = true;
+    this->checkSumOk = true;
+    this->lenthOk = true;
+    if (text.contains(COMUT_BAT_SEP, Qt::CaseSensitive)) {
+        beSplitList = text.split(COMUT_BAT_SEP); // 和时间戳分开
+        this->tim = beSplitList[0];
+        this->text = beSplitList[1];
+    } else {
+//        return QString("数据非法,无;,") + text;
+        this->Err = (dataErr)1;
+    }
+    // 判断发送还是接收
+    if(this->tim.contains("TX")) {
+        this->sendOrReceive = textStruct::SEND;
+    } else {
+        this->sendOrReceive = textStruct::RECEIVE;
+    }
+    dataList = this->text.simplified().split(' ');
+    byteLenth = dataList.size();
+    // 转换成char类型
+    foreach(QString hexStr, dataList) {
+        hexStr.toInt(&ok, 16);
+        if (ok == true) {
+            dataArray.append((uint8_t)hexStr.toInt(&ok, 16));
+        }
+    }
+    if(this->sendOrReceive == textStruct::SEND) {
+        if((this->cmd & 0x80) > 0) {
+            this->cmdOk = false;
+        }
+    } else {
+        if((this->cmd & 0x80) == 0) {
+            this->cmdOk = false;
+        }
+    }
+
+    if (text.contains(QRegExp("^[0-9a-fA-F]{1,}$")) == true) {
+        this->Err = (dataErr)1;
+    }
+
+
+
+
+    if(dataArray.size() < 8) {
+        this->lenthOk = false;
+    } else if (dataArray.size() == 8) {
+        if(dataArray.size() != (dataArray[1] * 0x100 + dataArray[2] + 4)) {
+            this->lenthOk = false;
+        }
+    } else {
+        if(dataArray.size() != (dataArray[1] * 0x100 + dataArray[2] + 4)) {
+            this->lenthOk = false;
+        }
+    }
+    uint8_t checkSum = 0;
+    for(int i = 1; i < dataArray.size() - 1; i++) {
+        checkSum += dataArray[i];
+    }
+    if(checkSum != dataArray.last()) {
+        this->checkSumOk = false;
+    }
+    this->cmd = (char)dataList.at(4).toInt(&ok, 16);
+    this->ACK = (char)dataList.at(4).toInt(&ok, 16);
+    qDebug() << dataList << "class dataList out<<" << dataList.size()<<" list size" ;
+    qDebug() << "checkSumok = " << this->checkSumOk << "lenthok = " << this->lenthOk << "cmdok = " << this->cmdOk;
+
+    // 通过长度判断是send还是receive
+}
+
 textDcode::textDcode(void)
 {
     funcCode =  {{0x01,"产品注册"} \
@@ -616,6 +693,7 @@ QString textDcode::AddTimeStamp(Ui::Widget *ui, QString decodeStr)
     return outToPlainText;
 }
 
+
 // 将plaintext 最后一个block内的可解析数据替换
 QString textDcode::PlainTextDecode(Ui::Widget *ui)
 {
@@ -640,16 +718,19 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
     textBlock = doc->findBlockByNumber(blockCount - 1); // 获得末尾的text
     qDebug() << "doc" << doc;
     dataText = textBlock.text();
+    textStruct destinyText = textStruct(dataText);
     timeText = "";
     qDebug() << "dataText" << dataText;
     // if (!dataText.contains(COMUT_BAT_SEP, Qt::CaseSensitive)) {
     //     // timeAndDataList = dataText.split(";"); // 和时间戳分开
-        
     // }
     if (dataText.contains(COMUT_BAT_SEP, Qt::CaseSensitive)) {
         timeAndDataList = dataText.split(COMUT_BAT_SEP); // 和时间戳分开
         timeText = timeAndDataList[0];
         dataText = timeAndDataList[1];
+
+        destinyText.tim = timeAndDataList[0];
+        destinyText.text = timeAndDataList[1];
     } else {
         return QString("数据非法,无;,") + dataText;
     }
@@ -667,10 +748,14 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
 
     if (dataList.size() == 8) {
         dataText = SendCmdDocode(dataList, dataText)  + COMUT_SEP + timeAndDataList[0] + COMUT_BAT_SEP;
-        bool ok;
-        if(dataList.at(4) == "30") {
+        bool ok = false;
+        int reviewCmdType = dataList.at(4).toInt(&ok, 16);
+        if(reviewCmdType == 0x30) {
             // waitSendList.append(sysStru0->OutPutStru());
 //            SendAndDecode(sysStru0->OutPutStru());
+        }
+        if(hexDecode::isDownLoadCmd(destinyText.cmd)) {
+//            hexFile.DownloadProcess(destinyText);
         }
 
     } else if (dataList.size() > 8 && dataList.size() < 200) {
