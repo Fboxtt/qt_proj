@@ -28,6 +28,7 @@ SOURCES += \
 
 HEADERS += \
     csv1.h \
+    currency.h \
     hexDecode.h \
     serial0.h \
     textDecode0.h \

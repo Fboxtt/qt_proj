@@ -10,10 +10,13 @@
 #include <QTime>
 #include <QVector>
 #include <QList>
+#include "currency.h"
 
 #define HEXDECODE_H
 
 #endif // HEXDECODE_H
+
+#define SHAKE_TIME_LIMIT 3
 
 class hexDecode {
 
@@ -29,7 +32,7 @@ public:
 
     bool beginDownloadState;
     uint32_t packetNum;
-    uint32_t packetSize;
+    uint32_t packetSize = 64;
     uint32_t shakeSuccessTime;
 
     uint32_t writeSuccessTime;
@@ -41,6 +44,7 @@ public:
         READ_IC_INF = 0x51,
         HEX_INFO,
         ENTER_BOOTMODE,
+        EARSE_ALL,
         WRITE_FLASH,
         READ_FLASH,
     };
@@ -60,6 +64,7 @@ public:
     void Clear(void);
     QString packetToSendString(bmsCmdType cmdType, uint32_t packetNumber = 0);
     static bool isDownLoadCmd(char cmd);
+    bool DownLoadProcess(textStruct text, QString* outPutStr);
 
 private:
     uint32_t toUInt(QByteArray str);

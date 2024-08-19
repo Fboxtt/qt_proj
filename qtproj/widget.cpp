@@ -34,6 +34,7 @@ tbsStruct *testLCD;
 QStringList waitSendList;
 QStringList readySendList;
 QStringList hexSendList;
+QVector<QByteArray> byteSendList;
 QTimer *sendTim;
 QTimer *readTim;
 
@@ -296,6 +297,7 @@ void Widget::on_clearReceiveDataButton_clicked()
 {
     ui->receiveData->clear();
 }
+
 void Widget::SendAndDecode(QString sendData)
 {
     sendData = se.SerialSend(ui, sendData);
@@ -304,6 +306,16 @@ void Widget::SendAndDecode(QString sendData)
     QString dcodeData = dcode0.AddTimeStamp(ui, sendData);
     dcode0.PlainTextDecode(ui);
 }
+
+void Widget::SendAndDecode(QByteArray sendArray)
+{
+    QString sendData = se.SerialSend(ui, sendArray);
+    qDebug() << "==================发送数据函数sendata = " << sendData;
+    // se.batComSendStatus = serial::COMPLETE;
+    QString dcodeData = dcode0.AddTimeStamp(ui, sendData);
+    dcode0.PlainTextDecode(ui);
+}
+
 void Widget::on_sendTbs_clicked()
 {
     QString sendData = "00 00 04 01 13 55 AA 17";
@@ -322,7 +334,7 @@ void Widget::sendCmdListFunc()
 //    SEND_TBS_COUNT
     static int tbsSendCount = 0;
 
-    if(hexSendList.size() <= 0) {
+    if(hexSendList.size() <= 0 && byteSendList.size() <= 0) {
         tbsSendCount++;
         // 如果waitSendList有命令则发送最新入栈的cmd
         if(waitSendList.size() > 0) {
@@ -347,10 +359,14 @@ void Widget::sendCmdListFunc()
             readySendList.removeLast();
         }
     } else {
-        SendAndDecode(hexSendList.first());
-        hexSendList.removeFirst();
+        if(hexSendList.size() > 0) {
+            SendAndDecode(hexSendList.first());
+            hexSendList.removeFirst();
+        } else {
+            SendAndDecode(byteSendList.first());
+            byteSendList.removeFirst();
+        }
     }
-
 }
 
 void Widget::sendHexListFunc()
@@ -717,14 +733,15 @@ void Widget::on_pushButton_4_clicked()
         hexFile.beginDownloadState = 1;
     }
     if(hexFile.shakeSuccessTime < 3) {
-        hexFile.packetToSendString(hexDecode::ENTER_BOOTMODE);
-        return;
-    }
-    if(hexFile.writeSuccessTime < (hexFile.lenth / hexFile.packetSize)) {
-        QString writeStr = hexFile.packetToSendString(hexDecode::WRITE_FLASH);
+        QString writeStr = hexFile.packetToSendString(hexDecode::ENTER_BOOTMODE);
         hexSendList.append(writeStr);
         return;
     }
+    // if(hexFile.writeSuccessTime < (hexFile.lenth / hexFile.packetSize)) {
+    //     QString writeStr = hexFile.packetToSendString(hexDecode::WRITE_FLASH);
+    //     hexSendList.append(writeStr);
+    //     return;
+    // }
 }
 void Widget::on_pushButton_11_clicked()
 {

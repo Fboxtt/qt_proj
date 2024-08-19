@@ -36,8 +36,6 @@ private slots:
 
     void on_sendTbs_clicked();
 
-    void SendAndDecode(QString sendData);
-
     void on_sendRegisterBox_clicked();
 
     void on_pushButton_3_clicked();
@@ -102,6 +100,8 @@ public slots:
     void SetKb();
     void tbsRepayInit();
 
+    void SendAndDecode(QByteArray sendArray);
+    void SendAndDecode(QString sendData);
 
     void sendHexListFunc();
 };

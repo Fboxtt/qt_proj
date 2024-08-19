@@ -1,3 +1,4 @@
+#include "currency.h"
 #include <textDecode0.h>
 #include <hexDecode.h>
 extern tverStruct *tverStru0;
@@ -5,6 +6,7 @@ extern caliStruct *caliStru0;
 extern tbsStruct *tbsStru0;
 extern QStringList waitSendList;
 extern QStringList readySendList;
+extern QStringList hexSendList;
 extern sysStruct* sysStru0;
 extern hexDecode hexFile;
 datTypDic::datTypDic(DATA_TYPE type, QString typeName, uint32_t typeLenth, ENDIAN_TYPE endianType, SIGNED_TYPE signedType)
@@ -468,9 +470,6 @@ textStruct::textStruct(QString text)
         this->Err = (dataErr)1;
     }
 
-
-
-
     if(dataArray.size() < 8) {
         this->lenthOk = false;
     } else if (dataArray.size() == 8) {
@@ -490,7 +489,7 @@ textStruct::textStruct(QString text)
         this->checkSumOk = false;
     }
     this->cmd = (char)dataList.at(4).toInt(&ok, 16);
-    this->ACK = (char)dataList.at(4).toInt(&ok, 16);
+    this->ACK = (char)dataList.at(7).toInt(&ok, 16);
     qDebug() << dataList << "class dataList out<<" << dataList.size()<<" list size" ;
     qDebug() << "checkSumok = " << this->checkSumOk << "lenthok = " << this->lenthOk << "cmdok = " << this->cmdOk;
 
@@ -728,9 +727,6 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
         timeAndDataList = dataText.split(COMUT_BAT_SEP); // 和时间戳分开
         timeText = timeAndDataList[0];
         dataText = timeAndDataList[1];
-
-        destinyText.tim = timeAndDataList[0];
-        destinyText.text = timeAndDataList[1];
     } else {
         return QString("数据非法,无;,") + dataText;
     }
@@ -754,11 +750,20 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
             // waitSendList.append(sysStru0->OutPutStru());
 //            SendAndDecode(sysStru0->OutPutStru());
         }
-        if(hexDecode::isDownLoadCmd(destinyText.cmd)) {
-//            hexFile.DownloadProcess(destinyText);
-        }
+
 
     } else if (dataList.size() > 8 && dataList.size() < 200) {
+        if(hexDecode::isDownLoadCmd(destinyText.cmd)) {
+            QString outPutStr;
+
+            if(hexFile.DownLoadProcess(destinyText, &outPutStr) == true) {
+                hexSendList.append(outPutStr);
+            }
+//            if(hexFile.shakeSuccessTime >= 3) {
+
+//                hexFile.DownLoadProcess(destinyText, &outPutStr) == true;
+//            }
+        }
         dataText = readDataDocode(dataList, dataText) + COMUT_SEP + timeAndDataList[0] + COMUT_BAT_SEP;
         if(dataText.contains("产品注册")) {
             if(dataText.contains("校验正确")) {
