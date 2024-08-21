@@ -25,11 +25,11 @@ public:
 //    ~hexDecode();
     bool exist = false;
 
-    uint32_t lenth;
+    uint32_t hexLenth;
     uint32_t address;
     uint32_t extendLinearAddress;
     uint32_t dataType;
-
+    bool eraseFlag;
     bool beginDownloadState;
     uint32_t packetNum;
     uint32_t packetSize = 64;
@@ -65,7 +65,9 @@ public:
     QString packetToSendString(bmsCmdType cmdType, uint32_t packetNumber = 0);
     static bool isDownLoadCmd(char cmd);
     bool DownLoadProcess(textStruct text, QString* outPutStr);
-
+    uint32_t litBytetoUInt(QByteArray inputArray);
+    void DownloadClear(void);
+    void AllClear(void);
 private:
     uint32_t toUInt(QByteArray str);
 };

@@ -141,14 +141,14 @@ void Widget::on_selectFileButton_clicked()
     else {
         ui->lineEdit->setText(fileName);
         if(hexFile.OpenHexFile(&file, fileName)) {
-            hexFile.Clear();
+            hexFile.AllClear();
             QString errLog = hexFile.ReadHexFile(&file);
             QString HexStatus = QString("\
 大小         = %1字节\n\
 扩展线性地址 = 0x%2\n\
 起始地址     = 0x%3\n\
 解析HEX结果:\n%4")\
-.arg(hexFile.lenth)\
+.arg(hexFile.hexLenth)\
 .arg(hexFile.extendLinearAddress, 4, 16, QChar('0'))\
 .arg(hexFile.address, 4, 16, QChar('0'))\
 .arg(errLog);
@@ -728,6 +728,7 @@ void Widget::on_pushButton_4_clicked()
 {
 //    QString sendData = "00 00 04 01 53 55 AA 57";
 //    waitSendList.append(sendData);
+    hexFile.DownloadClear();
 
     if(hexFile.beginDownloadState == 0) {
         hexFile.beginDownloadState = 1;

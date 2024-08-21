@@ -428,7 +428,7 @@ textStruct::textStruct(QString text)
     QStringList beSplitList = text.split(COMUT_BAT_SEP);
     QStringList dataList;
     bool ok;
-    QVector<uint8_t> dataArray;
+    QByteArray comArray;
 
     this->cmdOk = true;
     this->checkSumOk = true;
@@ -453,7 +453,7 @@ textStruct::textStruct(QString text)
     foreach(QString hexStr, dataList) {
         hexStr.toInt(&ok, 16);
         if (ok == true) {
-            dataArray.append((uint8_t)hexStr.toInt(&ok, 16));
+            comArray.append((uint8_t)hexStr.toInt(&ok, 16));
         }
     }
     if(this->sendOrReceive == textStruct::SEND) {
@@ -470,24 +470,27 @@ textStruct::textStruct(QString text)
         this->Err = (dataErr)1;
     }
 
-    if(dataArray.size() < 8) {
+    if(comArray.size() < 8) {
         this->lenthOk = false;
-    } else if (dataArray.size() == 8) {
-        if(dataArray.size() != (dataArray[1] * 0x100 + dataArray[2] + 4)) {
+    } else if (comArray.size() == 8) {
+        if(comArray.size() != (comArray[1] * 0x100 + comArray[2] + 4)) {
             this->lenthOk = false;
         }
     } else {
-        if(dataArray.size() != (dataArray[1] * 0x100 + dataArray[2] + 4)) {
+        if(comArray.size() != (comArray[1] * 0x100 + comArray[2] + 4)) {
             this->lenthOk = false;
+        } else {
+            dataArray.append(comArray.mid(8,comArray[1] * 0x100 + comArray[2] - 5));
         }
     }
     uint8_t checkSum = 0;
-    for(int i = 1; i < dataArray.size() - 1; i++) {
-        checkSum += dataArray[i];
+    for(int i = 1; i < comArray.size() - 1; i++) {
+        checkSum += comArray[i];
     }
-    if(checkSum != dataArray.last()) {
+    if(checkSum != (uint8_t)comArray.back()) {
         this->checkSumOk = false;
     }
+
     this->cmd = (char)dataList.at(4).toInt(&ok, 16);
     this->ACK = (char)dataList.at(7).toInt(&ok, 16);
     qDebug() << dataList << "class dataList out<<" << dataList.size()<<" list size" ;
@@ -759,10 +762,9 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
             if(hexFile.DownLoadProcess(destinyText, &outPutStr) == true) {
                 hexSendList.append(outPutStr);
             }
-//            if(hexFile.shakeSuccessTime >= 3) {
-
-//                hexFile.DownLoadProcess(destinyText, &outPutStr) == true;
-//            }
+            if(hexFile.packetNum >= hexFile.hexLenth) {
+                ui->downLoadLabel->setText("烧录结束");
+            }
         }
         dataText = readDataDocode(dataList, dataText) + COMUT_SEP + timeAndDataList[0] + COMUT_BAT_SEP;
         if(dataText.contains("产品注册")) {

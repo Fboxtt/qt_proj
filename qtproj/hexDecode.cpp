@@ -12,6 +12,14 @@ uint32_t hexDecode::toUInt(QByteArray inputArray)
 //    qDebug() << QString::fromLocal8Bit(inputArray);
     return QString::fromLocal8Bit(inputArray).toUInt(&ok, 16);
 }
+uint32_t hexDecode::litBytetoUInt(QByteArray inputArray)
+{
+    uint32_t outPutInt = 0;
+    for(int i = 0; i < inputArray.size(); i++) {
+        outPutInt += inputArray[i] << (8 * i);
+    }
+    return outPutInt;
+}
 bool hexDecode::OpenHexFile(QFile *pfile, QString fileUrl)
 {
     pfile->setFileName(fileUrl);
@@ -100,7 +108,7 @@ QString hexDecode::ReadHexFile(QFile *file)
             switch(dataType) {
             case 0:
                 this->n00dataArray.append(byteNum);
-                this->lenth++;
+                this->hexLenth++;
                 break;
             case 1:
                 this->n01endArray.append(byteNum);
@@ -135,18 +143,30 @@ QString hexDecode::ReadHexFile(QFile *file)
     }
     return decodeLog;
 }
-void hexDecode::Clear(void)
+void hexDecode::DownloadClear(void)
 {
-    lenth = 0;
     address = 0;
     extendLinearAddress = 0;
     dataType = 0;
+    eraseFlag = 0;
+    beginDownloadState = 0;
+    packetNum = 0;
+    shakeSuccessTime = 0;
+    writeSuccessTime = 0;
+    hexPacketoK.clear();
+}
+void hexDecode::AllClear(void)
+{
+    this->DownloadClear();
+    this->hexLenth = 0;
     n00dataArray.clear();
     n01endArray.clear();
     n02extendArray.clear();
     n03startArray.clear();
     n04extendLinearArray.clear();
     n05startLinearArray.clear();
+
+    hexArray.clear();
 }
 
 #define NO_DATA_TYPE_LENTH 4
@@ -157,7 +177,7 @@ QString hexDecode::packetToSendString(bmsCmdType cmdType, uint32_t packetNumber)
     if(cmdType == this->WRITE_FLASH) {
         dataArray.append((uint8_t)packetNumber);
         dataArray.append((uint8_t)(packetNumber >> 8));
-        dataArray = this->n00dataArray.mid(packetNumber * this->packetSize, this->packetSize);
+        dataArray.append(this->n00dataArray.mid(packetNumber * this->packetSize, this->packetSize));
     }
     uint16_t dataArrayLenth = (NO_DATA_TYPE_LENTH + dataArray.size());
     sendDataArray.append(char(0x00));
@@ -173,9 +193,9 @@ QString hexDecode::packetToSendString(bmsCmdType cmdType, uint32_t packetNumber)
     checkSum += (uint16_t)(dataArrayLenth >> 8);
     checkSum += (uint16_t)(dataArrayLenth);
     checkSum += 0x01;
-            checkSum += uint16_t(cmdType);
-            checkSum += 0x55;
-            checkSum +=  0xAA;
+    checkSum += uint16_t(cmdType);
+    checkSum += 0x55;
+    checkSum +=  0xAA;
 //    (((NO_DATA_TYPE_LENTH + dataArray.size()) & 0xff00) >> 8) + ((NO_DATA_TYPE_LENTH + dataArray.size()) & 0xff) + 0x01 + char(this->writeFlashCmd) + 0x55 + 0xAA + 0x00;
     foreach(uint8_t byte, dataArray) {
         checkSum += byte;
@@ -199,6 +219,7 @@ bool hexDecode::isDownLoadCmd(char cmd)
     if(cmd == hexDecode::READ_BOOT_CODE_INF || \
             cmd == hexDecode::READ_IC_INF || \
             cmd == hexDecode::HEX_INFO || \
+            cmd == hexDecode::EARSE_ALL || \
             cmd == hexDecode::ENTER_BOOTMODE || \
             cmd == hexDecode::WRITE_FLASH || \
             cmd == hexDecode::READ_FLASH) {
@@ -211,33 +232,55 @@ bool hexDecode::isDownLoadCmd(char cmd)
 bool hexDecode::DownLoadProcess(textStruct text, QString* outPutStr)
 {
     QByteArray outPutArray;
+    bool enterWriteFlash = false;
     if((text.cmd & 0x80) == 0) {
         return false;
     }
     if(this->beginDownloadState != true) {
         return false;
     }
-    if((text.cmd & hexDecode::ENTER_BOOTMODE) > 0) {
+    if(text.cmd == (hexDecode::ENTER_BOOTMODE | 0x80)) {
         if(text.ACK == textStruct::ACK_OK) {
             this->shakeSuccessTime++;
         }
     }
+
     if(shakeSuccessTime < SHAKE_TIME_LIMIT) {
         *outPutStr = this->packetToSendString(this->ENTER_BOOTMODE, this->packetNum);
         return true;
     }
-    if(text.cmd == (hexDecode::WRITE_FLASH | 0x80)) {
+    if(text.cmd == (hexDecode::EARSE_ALL | 0x80)) {
         if(text.ACK == textStruct::ACK_OK) {
-            if(this->toUInt(text.dataArray) == this->packetNum) {
-                *outPutStr = this->packetToSendString(this->WRITE_FLASH, this->packetNum);
-                this->packetNum++;
-                writeSuccessTime++;
-                hexPacketoK.append(true);
-//                outPutArray = this->n00dataArray.mid(this->packetNum * this->packetSize, this->packetSize);
-//                byteSendList.append(outPutArray);
-                return true;
+            eraseFlag = 1;
+        }
+    }
+    if(eraseFlag == 0) {
+        *outPutStr = this->packetToSendString(this->EARSE_ALL, this->packetNum);
+        return true;
+    }
+
+    if((text.cmd == (hexDecode::EARSE_ALL| 0x80)) && eraseFlag == 1) {
+        enterWriteFlash = true;
+    } else if (text.cmd == (hexDecode::WRITE_FLASH | 0x80)) {
+        if(text.ACK == textStruct::ACK_OK) {
+            if(text.dataArray.size() == 2) {
+                if(this->litBytetoUInt(text.dataArray) == (this->packetNum)) {
+                    writeSuccessTime++;
+                    this->packetNum++;
+                    enterWriteFlash = true;
+                    hexPacketoK.append(true);
+                }
+                if(this->packetNum > this->hexLenth) {
+                    return false;
+                }
             }
         }
+        enterWriteFlash = true;
+    }
+
+    if(enterWriteFlash == true) {
+        *outPutStr = this->packetToSendString(this->WRITE_FLASH, this->packetNum);
+        return true;
     }
     *outPutStr = "";
     return false;
