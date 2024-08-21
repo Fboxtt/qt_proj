@@ -1,7 +1,7 @@
 #include <csv1.h>
 #include <QFile>
 #include <QTextCodec>
-
+#include <QTime>
 extern tbsStruct *tbsStru0;
 csv::csv(void)
 {
@@ -52,7 +52,45 @@ void csv::tbsToCsv(Ui::Widget *ui, QString fileName, textDcode* dcode0)
     qDebug() << "strListToCsv" << strListToCsv;
     csv::saveCsv(fileName, strListToCsv);
 }
+void csv::dataToCsv(QString fileName, dataStruct* dataStru)
+{
+    QFile file;
+    qDebug() << "in saveCsv func";
+    if(csv::createDir(fileName) == false) {
+        return;
+    }
 
+
+    file.setFileName(fileName);
+    if(!file.open(QIODevice::ReadWrite))
+    {
+        qDebug()<<"文件打开失败";
+        file.close();
+        return;
+    }
+
+    QByteArray lineData = file.readLine();
+    QString writeDataLine;
+    // 选择性写入名称或时间戳
+    if(lineData == nullptr) {
+        writeDataLine = QString("时间戳和前缀") + COMUT_BAT_SEP +  dataStru->csvName() + "\n";
+    } else {
+        file.close();
+        if(!file.open(QIODevice::Append))
+        {
+            qDebug()<<"文件打开失败";
+            file.close();
+            return;
+        }
+        writeDataLine = dataStru->accurTime.toString("HH:mm:ss:zzz") + COMUT_BAT_SEP + dataStru->csvData() + "\n";
+    }
+    // 按照utf8格式解析字符串，防止乱码
+    QTextCodec* codec = QTextCodec::codecForName("UTF-8");
+    QByteArray encodedLine = codec->fromUnicode(writeDataLine);
+    file.write(encodedLine);
+    file.close();
+    return;
+}
 
 void csv::saveCsv(QString fileName, QStringList strListToCsv)
 {

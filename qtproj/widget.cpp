@@ -42,7 +42,7 @@ sysStruct *sysStru0;
 
 #define SEND_INTERVAL 20
 #define SEND_TBS_COUNT (1000/SEND_INTERVAL)
-#define DELAY_READ_TIME 20
+#define DELAY_READ_TIME 50
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
@@ -202,7 +202,12 @@ void Widget::ReadSerialTimeOut()
     }
     if(sysStru0->newDataStatus == true) {
         ui->label_12->setText(sysStru0->displayData());
-        
+        if(ui->checkBox_3->checkState() == Qt::Checked) {
+            QString fileName = ui->lineEdit_2->text();
+            if(fileName != "") {
+                csv::dataToCsv(fileName, sysStru0);
+            }
+        }
     }
     if(receiveDecode.contains("数据非法")) {
         sendTim->start();

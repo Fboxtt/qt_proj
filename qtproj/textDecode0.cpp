@@ -652,7 +652,9 @@ QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
         HexWriteTver(hexStrLis.mid(8, 80), tverStru0);
     } else if (hexStrLis.size() > 8 && (hexStrLis[4] == "87")) {
         HexWriteDataStruct(hexStrLis.mid(8, caliStru0->dataLenth), caliStru0);
-    } else if (hexStrLis.size() > 8 && (hexStrLis[4].toInt(&ok, 16))) {
+    } else if (hexStrLis.size() > 8 && (hexStrLis[4].toInt(&ok, 16)) == 0x30) {
+        HexWriteDataStruct(hexStrLis.mid(16, sysStru0->dataLenth), sysStru0);
+    } else if (hexStrLis.size() > 8 && (hexStrLis[4].toInt(&ok, 16)) == 0xb0) {
         HexWriteDataStruct(hexStrLis.mid(8, sysStru0->dataLenth), sysStru0);
     } else {
         qDebug() << "dataList <= 8 or datalist[4] != 93";
@@ -756,21 +758,23 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
 
 
     } else if (dataList.size() > 8 && dataList.size() < 200) {
+        // 解析烧录数据
         if(hexDecode::isDownLoadCmd(destinyText.cmd)) {
             QString outPutStr;
             uint8_t downState = hexFile.DownLoadProcess(destinyText, &outPutStr);
             if(downState == true) {
                 hexSendList.append(outPutStr);
-            } else if(downState == hexDecode::DOWNLOAD_DONE){
+            } else if(downState == hexDecode::DOWNLOAD_DONE) {
                 ui->downLoadLabel->setText("烧录结束");
-            }else if(downState == hexDecode::PACKET_NUM_LENTH_ERR){
+            } else if(downState == hexDecode::PACKET_NUM_LENTH_ERR) {
                 ui->downLoadLabel->setText("包号长度错误");
-            }else if(downState == hexDecode::BMS_NACK){
+            } else if(downState == hexDecode::BMS_NACK) {
                 ui->downLoadLabel->setText("从机回复nack");
-            }else if(downState == hexDecode::CMD_TYPE_ERR){
+            } else if(downState == hexDecode::CMD_TYPE_ERR) {
                 ui->downLoadLabel->setText("从机类型错误");
             }
         }
+        // 解析tbs数据，sys数据，版本号数据
         dataText = readDataDocode(dataList, dataText) + COMUT_SEP + timeAndDataList[0] + COMUT_BAT_SEP;
         if(dataText.contains("产品注册")) {
             if(dataText.contains("校验正确")) {
@@ -980,6 +984,7 @@ QString textDcode::HexWriteDataStruct(QStringList dataList, dataStruct* struObje
         }
         qDebug() << cell0->valName << cell0->uintVal << cell0->byteArray;
     }
+    struObject->accurTime = QTime::currentTime();
     struObject->newDataStatus = true;
     return "tver解析正确";
 }
@@ -1179,4 +1184,36 @@ QString dataStruct::displayData(void)
 
     }
     return displayDat;
+}
+QString dataStruct::csvName(void)
+{
+    QString csvNameLine;
+
+//        csvNameLine += "前缀,";
+        foreach(dataCell cell, this->dataCellList) {
+            csvNameLine += cell.valName + BAT_SEP;
+        }
+    return csvNameLine;
+}
+QString dataStruct::csvData(void)
+{
+    QString csvDataLine;
+    foreach(dataCell cell, dataCellList) {
+        if(cell.signedType == datTypDic::SIGNED) {
+            if(cell.typeLenth == 4) {
+                csvDataLine += QString::number((long)cell.uintVal, 10) + BAT_SEP;
+            } else if(cell.typeLenth == 2) {
+                 csvDataLine += QString::number((short)cell.uintVal, 10) + BAT_SEP;
+            } else {
+                csvDataLine += QString::number((char)cell.uintVal, 10) + BAT_SEP;
+            }
+        } else {
+            if(cell.valName.contains("HEX")) {
+                csvDataLine += "0x" + QString::number(cell.uintVal, 16) + BAT_SEP;
+            } else {
+                csvDataLine += QString::number(cell.uintVal, 10) + BAT_SEP;
+            }
+        }
+    }
+    return csvDataLine;
 }

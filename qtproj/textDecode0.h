@@ -94,13 +94,14 @@ public:
     void insert(dataCell addCell);
     QString OutPutStru(void);
     QString displayData(void);
-
+    QString csvName(void);
+    QString csvData(void);
     bool newDataStatus;
 
     QList<QString> keyList;
     QList<dataCell> dataCellList;
     uint32_t dataLenth;
-
+    QTime accurTime;
     char cmdType;
 };
 

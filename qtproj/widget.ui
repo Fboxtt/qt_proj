@@ -121,6 +121,13 @@
       <string>数据保存</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
+      <item row="1" column="0">
+       <widget class="QPushButton" name="pushButton_8">
+        <property name="text">
+         <string>保存地址</string>
+        </property>
+       </widget>
+      </item>
       <item row="1" column="1">
        <widget class="QPushButton" name="pushButton_7">
         <property name="text">
@@ -131,10 +138,10 @@
       <item row="0" column="0" colspan="2">
        <widget class="QLineEdit" name="lineEdit_2"/>
       </item>
-      <item row="1" column="0">
-       <widget class="QPushButton" name="pushButton_8">
+      <item row="2" column="0" colspan="2">
+       <widget class="QCheckBox" name="checkBox_3">
         <property name="text">
-         <string>保存地址</string>
+         <string>收到一个数据就保存一个数据</string>
         </property>
        </widget>
       </item>
