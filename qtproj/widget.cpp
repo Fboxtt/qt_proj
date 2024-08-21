@@ -40,8 +40,9 @@ QTimer *readTim;
 
 sysStruct *sysStru0;
 
-#define SEND_INTERVAL 100
+#define SEND_INTERVAL 20
 #define SEND_TBS_COUNT (1000/SEND_INTERVAL)
+#define DELAY_READ_TIME 20
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
@@ -181,7 +182,8 @@ void Widget::on_listWidget_itemClicked(QListWidgetItem *item)
 // 串口读取函数的定时器链接的函数，保证接收数据的完整
 void Widget::ReadSerialTimeOut()
 {
-    sendTim->stop();
+   sendTim->stop();
+//    qDebug() << "in ++++ timeout     time"<< QTime::currentTime();
     readTim->stop();
     qDebug() << "=====串口接收定时器时间到";
     // 暂停tbs定时读取定时器防止报错
@@ -214,8 +216,9 @@ void Widget::ReadSerialTimeOut()
     ui->listWidget->setCurrentRow(row - 1);
     this->SetTbsToTableAndChart(ui->listWidget->item(row - 1), 1);
     qDebug() << "======串口接收定时器函数结束";
+//    qDebug() << "ou ++++ timeout     time"<< QTime::currentTime();
     // 开启tbs定时读取定时器
-    sendTim->start();
+   sendTim->start();
 }
 
 // 解析listWidget内的数据，并写入到tableWidget中
@@ -258,7 +261,7 @@ void Widget::on_openBtn_clicked()
 
     // 创建延迟读取数据定时器
     readTim = new QTimer();
-    readTim->setInterval(400);
+    readTim->setInterval(DELAY_READ_TIME);
     connect(readTim, SIGNAL(timeout()),this,SLOT(ReadSerialTimeOut()));
 
     if(ui->portStatus->text() == "串口已连接") {
@@ -333,7 +336,7 @@ void Widget::sendCmdListFunc()
     QString tbsSendData = "00 00 04 01 13 55 AA 17";
 //    SEND_TBS_COUNT
     static int tbsSendCount = 0;
-
+    // qDebug()  << "in send cmdlistfunc time"<< QTime::currentTime() << "+++++++++tbsSendCount = " << tbsSendCount;
     if(hexSendList.size() <= 0 && byteSendList.size() <= 0) {
         tbsSendCount++;
         // 如果waitSendList有命令则发送最新入栈的cmd
@@ -360,13 +363,12 @@ void Widget::sendCmdListFunc()
         }
     } else {
         if(hexSendList.size() > 0) {
+            // qDebug() << "hexsendlist send        "<< QTime::currentTime();
             SendAndDecode(hexSendList.first());
             hexSendList.removeFirst();
-        } else {
-            SendAndDecode(byteSendList.first());
-            byteSendList.removeFirst();
         }
     }
+    // qDebug() << "ou send cmdlistfunc time"<< QTime::currentTime();
 }
 
 void Widget::sendHexListFunc()

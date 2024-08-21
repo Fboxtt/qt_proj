@@ -16,7 +16,7 @@ uint32_t hexDecode::litBytetoUInt(QByteArray inputArray)
 {
     uint32_t outPutInt = 0;
     for(int i = 0; i < inputArray.size(); i++) {
-        outPutInt += inputArray[i] << (8 * i);
+        outPutInt += ((uint8_t)(inputArray[i]) << (8 * i));
     }
     return outPutInt;
 }
@@ -177,7 +177,12 @@ QString hexDecode::packetToSendString(bmsCmdType cmdType, uint32_t packetNumber)
     if(cmdType == this->WRITE_FLASH) {
         dataArray.append((uint8_t)packetNumber);
         dataArray.append((uint8_t)(packetNumber >> 8));
-        dataArray.append(this->n00dataArray.mid(packetNumber * this->packetSize, this->packetSize));
+        if((packetNumber + 1) * this->packetSize < this->hexLenth) {
+            dataArray.append(this->n00dataArray.mid(packetNumber * this->packetSize, this->packetSize));
+        } else {
+            dataArray.append(this->n00dataArray.mid(packetNumber * this->packetSize));
+        }
+
     }
     uint16_t dataArrayLenth = (NO_DATA_TYPE_LENTH + dataArray.size());
     sendDataArray.append(char(0x00));
@@ -229,12 +234,12 @@ bool hexDecode::isDownLoadCmd(char cmd)
     }
 }
 
-bool hexDecode::DownLoadProcess(textStruct text, QString* outPutStr)
+uint8_t hexDecode::DownLoadProcess(textStruct text, QString* outPutStr)
 {
     QByteArray outPutArray;
     bool enterWriteFlash = false;
     if((text.cmd & 0x80) == 0) {
-        return false;
+        return CMD_TYPE_ERR;
     }
     if(this->beginDownloadState != true) {
         return false;
@@ -261,6 +266,7 @@ bool hexDecode::DownLoadProcess(textStruct text, QString* outPutStr)
 
     if((text.cmd == (hexDecode::EARSE_ALL| 0x80)) && eraseFlag == 1) {
         enterWriteFlash = true;
+        *outPutStr = this->packetToSendString(this->WRITE_FLASH, this->packetNum);
     } else if (text.cmd == (hexDecode::WRITE_FLASH | 0x80)) {
         if(text.ACK == textStruct::ACK_OK) {
             if(text.dataArray.size() == 2) {
@@ -270,10 +276,14 @@ bool hexDecode::DownLoadProcess(textStruct text, QString* outPutStr)
                     enterWriteFlash = true;
                     hexPacketoK.append(true);
                 }
-                if(this->packetNum > this->hexLenth) {
-                    return false;
+                if(this->packetNum >= (this->hexLenth / this->packetSize + 1)) {
+                    return DOWNLOAD_DONE;
                 }
+            } else {
+                return PACKET_NUM_LENTH_ERR;
             }
+        } else {
+            return BMS_NACK;
         }
         enterWriteFlash = true;
     }

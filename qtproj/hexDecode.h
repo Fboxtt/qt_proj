@@ -48,7 +48,14 @@ public:
         WRITE_FLASH,
         READ_FLASH,
     };
+    enum Download_ERR {
+        DOWNLOAD_OK = true,
+        PACKET_NUM_LENTH_ERR,
+        DOWNLOAD_DONE,
+        BMS_NACK,
+        CMD_TYPE_ERR,
 
+    };
 
     QByteArray n00dataArray;
     QByteArray n01endArray;
@@ -64,7 +71,7 @@ public:
     void Clear(void);
     QString packetToSendString(bmsCmdType cmdType, uint32_t packetNumber = 0);
     static bool isDownLoadCmd(char cmd);
-    bool DownLoadProcess(textStruct text, QString* outPutStr);
+    uint8_t DownLoadProcess(textStruct text, QString* outPutStr);
     uint32_t litBytetoUInt(QByteArray inputArray);
     void DownloadClear(void);
     void AllClear(void);

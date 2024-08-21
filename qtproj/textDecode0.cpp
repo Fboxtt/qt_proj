@@ -604,7 +604,7 @@ QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
     }
     qDebug() << "size hexStrLis = " << hexStrLis.size() << "decodeStr.lenth = " << decodeStr.length();
     for (uint32_t i = 0, limit = Command.size(); i < limit; i++) {
-        qDebug() << i << "datid=" << datId << "codeList = " << hexStrLis[datId] << codeList;
+        // qDebug() << i << "datid=" << datId << "codeList = " << hexStrLis[datId] << codeList;
         if (Command[i] == "地址") {
             // codeList.append(hexStrLis[datId]);
         } else if (Command[i] == "高字节") {
@@ -758,12 +758,17 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
     } else if (dataList.size() > 8 && dataList.size() < 200) {
         if(hexDecode::isDownLoadCmd(destinyText.cmd)) {
             QString outPutStr;
-
-            if(hexFile.DownLoadProcess(destinyText, &outPutStr) == true) {
+            uint8_t downState = hexFile.DownLoadProcess(destinyText, &outPutStr);
+            if(downState == true) {
                 hexSendList.append(outPutStr);
-            }
-            if(hexFile.packetNum >= hexFile.hexLenth) {
+            } else if(downState == hexDecode::DOWNLOAD_DONE){
                 ui->downLoadLabel->setText("烧录结束");
+            }else if(downState == hexDecode::PACKET_NUM_LENTH_ERR){
+                ui->downLoadLabel->setText("包号长度错误");
+            }else if(downState == hexDecode::BMS_NACK){
+                ui->downLoadLabel->setText("从机回复nack");
+            }else if(downState == hexDecode::CMD_TYPE_ERR){
+                ui->downLoadLabel->setText("从机类型错误");
             }
         }
         dataText = readDataDocode(dataList, dataText) + COMUT_SEP + timeAndDataList[0] + COMUT_BAT_SEP;
