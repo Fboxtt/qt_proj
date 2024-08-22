@@ -185,7 +185,7 @@ void Widget::ReadSerialTimeOut()
    sendTim->stop();
 //    qDebug() << "in ++++ timeout     time"<< QTime::currentTime();
     readTim->stop();
-    qDebug() << "=====串口接收定时器时间到";
+    qDebug() << "2=====串口接收定时器时间到" << QTime::currentTime();
     // 暂停tbs定时读取定时器防止报错
 
     se.TimeOut(ui, readTim);
@@ -216,11 +216,12 @@ void Widget::ReadSerialTimeOut()
     int row = ui->listWidget->count();
     if(row == 0) {
         sendTim->start();
+        qDebug() << "3======串口接收定时器函数结束" << QTime::currentTime();
         return;
     }
     ui->listWidget->setCurrentRow(row - 1);
     this->SetTbsToTableAndChart(ui->listWidget->item(row - 1), 1);
-    qDebug() << "======串口接收定时器函数结束";
+    
 //    qDebug() << "ou ++++ timeout     time"<< QTime::currentTime();
     // 开启tbs定时读取定时器
    sendTim->start();
@@ -283,7 +284,7 @@ void Widget::on_openBtn_clicked()
 
 void Widget::SerialPortReadyRead_slot()
 {
-    qDebug() << "===============串口收到数据";
+    qDebug() << "1===============串口收到数据" << QTime::currentTime();
     se.ReadyRead(readTim);
 }
 
@@ -292,13 +293,14 @@ void Widget::on_sendBox_clicked()
     QString sendData = ui->sendData->toPlainText();
     sendData = se.SerialSend(ui, sendData);
 
-    qDebug() << "================点击串口数据发送，sendata = " << sendData;
+    
 
     se.batComSendStatus = serial::COMPLETE;
 
     QString dcodeData = dcode0.AddTimeStamp(ui, sendData);
 
     ui->listWidget->addItem(dcodeData);
+    qDebug() << "6================点击串口数据发送函数结束，sendata = " << sendData;
 }
 
 void Widget::on_clearReceiveDataButton_clicked()

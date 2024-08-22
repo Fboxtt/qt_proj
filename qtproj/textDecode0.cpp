@@ -493,8 +493,8 @@ textStruct::textStruct(QString text)
 
     this->cmd = (char)dataList.at(4).toInt(&ok, 16);
     this->ACK = (char)dataList.at(7).toInt(&ok, 16);
-    qDebug() << dataList << "class dataList out<<" << dataList.size()<<" list size" ;
-    qDebug() << "checkSumok = " << this->checkSumOk << "lenthok = " << this->lenthOk << "cmdok = " << this->cmdOk;
+    // qDebug() << dataList << "class dataList out<<" << dataList.size()<<" list size" ;
+    // qDebug() << "checkSumok = " << this->checkSumOk << "lenthok = " << this->lenthOk << "cmdok = " << this->cmdOk;
 
     // 通过长度判断是send还是receive
 }
@@ -602,7 +602,7 @@ QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
     foreach(QString hexStr, hexStrLis) {
         hexVector.append((uint8_t)hexStr.toInt(&ok, 16));
     }
-    qDebug() << "size hexStrLis = " << hexStrLis.size() << "decodeStr.lenth = " << decodeStr.length();
+    // qDebug() << "size hexStrLis = " << hexStrLis.size() << "decodeStr.lenth = " << decodeStr.length();
     for (uint32_t i = 0, limit = Command.size(); i < limit; i++) {
         // qDebug() << i << "datid=" << datId << "codeList = " << hexStrLis[datId] << codeList;
         if (Command[i] == "地址") {
@@ -625,7 +625,7 @@ QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
             codeList.append(this->ByteDecode(this->ackCode, hexVector[datId]));
             dataSum += hexVector[datId];
         } else if (Command[i] == "data") {
-            qDebug() << "datId" << datId << "dataNum" << dataNum << "hexstrlis size = " << hexStrLis.size();
+            // qDebug() << "datId" << datId << "dataNum" << dataNum << "hexstrlis size = " << hexStrLis.size();
             if (dataNum == 5) {
             } else if (dataNum > 5) {
                 dataSum += this->CalCheckSum(hexVector.mid(i,dataNum - 5));
@@ -633,7 +633,7 @@ QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
             }
             continue;
         } else if (Command[i] == "check") {
-            qDebug() << "dataSum = " << dataSum << "& 0xff = " << (dataSum & 0xff);
+            // qDebug() << "dataSum = " << dataSum << "& 0xff = " << (dataSum & 0xff);
             if ((dataSum & 0xff) == hexVector[datId]) {
                 codeList.append("校验正确");
             } else {
@@ -657,10 +657,10 @@ QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
     } else if (hexStrLis.size() > 8 && (hexStrLis[4].toInt(&ok, 16)) == 0xb0) {
         HexWriteDataStruct(hexStrLis.mid(8, sysStru0->dataLenth), sysStru0);
     } else {
-        qDebug() << "dataList <= 8 or datalist[4] != 93";
+        // qDebug() << "dataList <= 8 or datalist[4] != 93";
     }
 
-    qDebug() << "codelist.join = " << codeList.join(COMUT_SEP);
+    // qDebug() << "codelist.join = " << codeList.join(COMUT_SEP);
     return codeList.join(COMUT_SEP);
 }
 
@@ -688,7 +688,7 @@ QString textDcode::AddTimeStamp(Ui::Widget *ui, QString decodeStr)
 {
     QString outToPlainText;
 //    Data += '\r';//插入换行
-    qDebug() << ui->TimeCheckBox->isChecked() << "time checkbox";
+    // qDebug() << ui->TimeCheckBox->isChecked() << "time checkbox";
     if (ui->TimeCheckBox->isChecked()) {
         outToPlainText = QString("[%1]:TX&->").arg(QTime::currentTime().toString("HH:mm:ss:zzz")) + COMUT_BAT_SEP + decodeStr;
     }
@@ -713,18 +713,18 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
 //    ui->receiveData->setPlainText("00 00 05 01 81 55 AA 00");
 //    ui->receiveData->setPlainText("00 00 04 01 01 55 AA 06");
 //    ui->HexEncodeText->appendPlainText(ui->receiveData->);
-    qDebug() << ui->receiveData->blockCount() << "block count";
+    // qDebug() << ui->receiveData->blockCount() << "block count";
 
     doc = ui->receiveData->document();
 
     blockCount = ui->receiveData->blockCount();
 
     textBlock = doc->findBlockByNumber(blockCount - 1); // 获得末尾的text
-    qDebug() << "doc" << doc;
+    // qDebug() << "doc" << doc;
     dataText = textBlock.text();
     textStruct destinyText = textStruct(dataText);
     timeText = "";
-    qDebug() << "dataText" << dataText;
+    // qDebug() << "dataText" << dataText;
     // if (!dataText.contains(COMUT_BAT_SEP, Qt::CaseSensitive)) {
     //     // timeAndDataList = dataText.split(";"); // 和时间戳分开
     // }
@@ -739,12 +739,12 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
     if (dataText.contains(QRegExp("^[0-9a-fA-F]{1,}$")) == true) {
         return QString("数据非法,包含非法字符") + COMUT_SEP + timeAndDataList[0] + COMUT_BAT_SEP + timeAndDataList[1];
     }
-    qDebug()  << "text block" << textBlock.text();
+    // qDebug()  << "text block" << textBlock.text();
 
     // 去除掉HEX字符串的空格，把HEX转换成UTF8字符串
     dataList = dataText.simplified().split(' ');
 
-    qDebug() << dataList << "dataList out<<" << dataList.size()<<" list size" ;
+    // qDebug() << dataList << "dataList out<<" << dataList.size()<<" list size" ;
     // 通过长度判断是send还是receive
 
     if (dataList.size() == 8) {
@@ -804,7 +804,7 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
         } else if(dataText.contains("TBS数据")) {
             if(dataText.contains("校验正确")) {
                 foreach(dataCell cell, tbsStru0->dataCellList) {
-                    QString tbsStr;         
+                    QString tbsStr;
                     if(cell.valName.contains("HEX")) {
                         dataText += QString("0x%1").arg(cell.uintVal,0,16) + BAT_SEP;
                     } else if(cell.valName.contains("电流")) {
@@ -821,7 +821,7 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
         qDebug() << "数据非法长度错误";
         dataText = QString("数据非法长度错误") + dataText;
     }
-    qDebug() << "split = " << timeText << dataText;
+    // qDebug() << "split = " << timeText << dataText;
 
     //单独解码
     // Widget.SetTbsToTableAndChart(dataText, 1);

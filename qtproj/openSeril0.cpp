@@ -1,4 +1,7 @@
 #include <serial0.h>
+#include <QTimer>
+#include <QTime>
+#include <QDateTime>
 
 serial::serial(void)
 {
@@ -220,6 +223,7 @@ QString serial::SerialSend(Ui::Widget *ui, QString Data)
     return this->SerialSend(ui, Data_1);
 }
 
+
 QString serial::SerialSend(Ui::Widget *ui, QByteArray sendArray)
 {
 
@@ -232,7 +236,9 @@ QString serial::SerialSend(Ui::Widget *ui, QByteArray sendArray)
             ui->portStatus->setText("发送校验错误，正确是0x" + QString::number(checkSum, 16));
         }
     }
+    qDebug() << "4===========数据发送开始" << QTime::currentTime();
     SerialPort.write(sendArray);
+    qDebug() << "5===========数据发送结束" << QTime::currentTime();
     QString noSpaceData = sendArray.toHex().toUpper().data(), SpaceData;
     for(int i = 0, limit = sendArray.size(); i < limit; i++) {
         if(i < limit - 1) {
