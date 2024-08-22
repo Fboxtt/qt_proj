@@ -31,12 +31,17 @@ public:
     uint32_t dataType;
     bool eraseFlag;
     bool beginDownloadState;
-    uint32_t packetNum;
+    uint32_t packetId;
     uint32_t packetSize = 64;
+    uint32_t packetNum;
     uint32_t shakeSuccessTime;
 
     uint32_t writeSuccessTime;
     QList<bool> hexPacketoK;
+
+    int packetNumLErr = 0;
+    int bmsNack = 0;
+    int cmdTypeErr = 0;
 
     char writeFlashCmd;
     enum bmsCmdType {
@@ -75,6 +80,8 @@ public:
     uint32_t litBytetoUInt(QByteArray inputArray);
     void DownloadClear(void);
     void AllClear(void);
+    bool isErrExceeding(void);
+    QString DownLoadLog(void);
 private:
     uint32_t toUInt(QByteArray str);
 };

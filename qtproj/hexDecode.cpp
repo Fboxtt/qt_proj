@@ -140,6 +140,11 @@ QString hexDecode::ReadHexFile(QFile *file)
     if(decodeLog == "") {
         decodeLog += ": 正确---------------------错误行号 = 无\n";
         this->exist = true;
+        if(this->hexLenth % this->packetSize > 0) {
+            this->packetNum =  this->hexLenth / this->packetSize + 1;
+        } else {
+            this->packetNum = this->hexLenth / this->packetSize;
+        }
     }
     return decodeLog;
 }
@@ -150,15 +155,20 @@ void hexDecode::DownloadClear(void)
     dataType = 0;
     eraseFlag = 0;
     beginDownloadState = 0;
-    packetNum = 0;
+    packetId = 0;
     shakeSuccessTime = 0;
     writeSuccessTime = 0;
+
+    packetNumLErr = 0;
+    bmsNack = 0;
+    cmdTypeErr = 0;
     hexPacketoK.clear();
 }
 void hexDecode::AllClear(void)
 {
     this->DownloadClear();
     this->hexLenth = 0;
+    this->packetNum = 0;
     n00dataArray.clear();
     n01endArray.clear();
     n02extendArray.clear();
@@ -177,10 +187,14 @@ QString hexDecode::packetToSendString(bmsCmdType cmdType, uint32_t packetNumber)
     if(cmdType == this->WRITE_FLASH) {
         dataArray.append((uint8_t)packetNumber);
         dataArray.append((uint8_t)(packetNumber >> 8));
-        if((packetNumber + 1) * this->packetSize < this->hexLenth) {
+        if(packetNumber < this->packetNum - 1) {
             dataArray.append(this->n00dataArray.mid(packetNumber * this->packetSize, this->packetSize));
         } else {
             dataArray.append(this->n00dataArray.mid(packetNumber * this->packetSize));
+            for(int i = this->packetSize - this->hexLenth % this->packetSize; i > 0; i--)
+            {
+                dataArray.append(char(0xff));
+            }
         }
 
     }
@@ -251,7 +265,7 @@ uint8_t hexDecode::DownLoadProcess(textStruct text, QString* outPutStr)
     }
 
     if(shakeSuccessTime < SHAKE_TIME_LIMIT) {
-        *outPutStr = this->packetToSendString(this->ENTER_BOOTMODE, this->packetNum);
+        *outPutStr = this->packetToSendString(this->ENTER_BOOTMODE, this->packetId);
         return true;
     }
     if(text.cmd == (hexDecode::EARSE_ALL | 0x80)) {
@@ -260,38 +274,58 @@ uint8_t hexDecode::DownLoadProcess(textStruct text, QString* outPutStr)
         }
     }
     if(eraseFlag == 0) {
-        *outPutStr = this->packetToSendString(this->EARSE_ALL, this->packetNum);
+        *outPutStr = this->packetToSendString(this->EARSE_ALL, this->packetId);
         return true;
     }
 
     if((text.cmd == (hexDecode::EARSE_ALL| 0x80)) && eraseFlag == 1) {
-        enterWriteFlash = true;
-        *outPutStr = this->packetToSendString(this->WRITE_FLASH, this->packetNum);
+        if(this->hexLenth == 0) {
+            return DOWNLOAD_DONE;
+        }
+        *outPutStr = this->packetToSendString(this->WRITE_FLASH, this->packetId);
+        return true;
     } else if (text.cmd == (hexDecode::WRITE_FLASH | 0x80)) {
         if(text.ACK == textStruct::ACK_OK) {
             if(text.dataArray.size() == 2) {
-                if(this->litBytetoUInt(text.dataArray) == (this->packetNum)) {
+                if(this->litBytetoUInt(text.dataArray) == (this->packetId)) {
                     writeSuccessTime++;
-                    this->packetNum++;
-                    enterWriteFlash = true;
+                    this->packetId++;
                     hexPacketoK.append(true);
                 }
-                if(this->packetNum >= (this->hexLenth / this->packetSize + 1)) {
+                if(this->packetId >= this->packetNum) {
                     return DOWNLOAD_DONE;
                 }
+                *outPutStr = this->packetToSendString(this->WRITE_FLASH, this->packetId);
+                return true;
             } else {
+                *outPutStr = this->packetToSendString(this->WRITE_FLASH, this->packetId);
                 return PACKET_NUM_LENTH_ERR;
             }
         } else {
+            *outPutStr = this->packetToSendString(this->WRITE_FLASH, this->packetId);
             return BMS_NACK;
         }
-        enterWriteFlash = true;
     }
 
-    if(enterWriteFlash == true) {
-        *outPutStr = this->packetToSendString(this->WRITE_FLASH, this->packetNum);
-        return true;
-    }
     *outPutStr = "";
     return false;
+}
+
+bool hexDecode::isErrExceeding(void)
+{
+    if(this->packetNumLErr >= 5 \
+    || this->bmsNack >= 5 \
+    || this->cmdTypeErr >= 5) {
+        return true;
+    }
+    return false;
+}
+
+QString hexDecode::DownLoadLog(void)
+{
+    QString log;
+    log += QString("包号长度错误 = %1").arg(this->packetNumLErr,3, 10) + '\n';
+    log += QString("bmsNack次数 = %1").arg(this->bmsNack,      3, 10) + '\n';
+    log += QString("包号长度错误 = %1").arg(this->cmdTypeErr,   3, 10) + '\n';
+    return log;
 }

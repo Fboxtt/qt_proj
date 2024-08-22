@@ -762,17 +762,36 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
         if(hexDecode::isDownLoadCmd(destinyText.cmd)) {
             QString outPutStr;
             uint8_t downState = hexFile.DownLoadProcess(destinyText, &outPutStr);
-            if(downState == true) {
-                hexSendList.append(outPutStr);
-            } else if(downState == hexDecode::DOWNLOAD_DONE) {
-                ui->downLoadLabel->setText("烧录结束");
-            } else if(downState == hexDecode::PACKET_NUM_LENTH_ERR) {
-                ui->downLoadLabel->setText("包号长度错误");
-            } else if(downState == hexDecode::BMS_NACK) {
-                ui->downLoadLabel->setText("从机回复nack");
-            } else if(downState == hexDecode::CMD_TYPE_ERR) {
-                ui->downLoadLabel->setText("从机类型错误");
+            QString downloadInfo = QString("packetSendingNum / packetSize = %1 / %2").arg(hexFile.packetId).arg(hexFile.packetNum);
+            if(hexFile.isErrExceeding()) {
+                downState = hexDecode::DOWNLOAD_DONE;
             }
+            switch (downState) {
+            case true:
+                ui->downLoadLabel->setText(downloadInfo);
+                hexSendList.append(outPutStr);
+                break;
+            case hexDecode::PACKET_NUM_LENTH_ERR:
+                ui->downLoadLabel->setText("包号长度错误");
+                hexFile.packetNumLErr++;
+                hexSendList.append(outPutStr);
+                break;
+            case hexDecode::BMS_NACK:
+                ui->downLoadLabel->setText("从机回复nack");
+                hexFile.bmsNack++;
+                hexSendList.append(outPutStr);
+                break;
+//            case hexDecode::CMD_TYPE_ERR:
+//                hexFile.cmdTypeErr++;
+//                ui->downLoadLabel->setText("从机类型错误");
+//                hexSendList.append(outPutStr);
+//                break;
+            case hexDecode::DOWNLOAD_DONE:
+            ui->downLoadLabel->setText(downloadInfo);
+                ui->downLoadLabel->setText(ui->downLoadLabel->text() + "\n" + "烧录结束" + hexFile.DownLoadLog());
+                break;
+            }
+
         }
         // 解析tbs数据，sys数据，版本号数据
         dataText = readDataDocode(dataList, dataText) + COMUT_SEP + timeAndDataList[0] + COMUT_BAT_SEP;
