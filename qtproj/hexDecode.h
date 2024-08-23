@@ -44,6 +44,8 @@ public:
     int cmdTypeErr = 0;
 
     char writeFlashCmd;
+
+    QTime downloadStartTim;
     enum bmsCmdType {
         READ_BOOT_CODE_INF = 0x10,
         READ_IC_INF = 0x51,

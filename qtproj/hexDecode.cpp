@@ -327,5 +327,7 @@ QString hexDecode::DownLoadLog(void)
     log += QString("包号长度错误 = %1").arg(this->packetNumLErr,3, 10) + '\n';
     log += QString("bmsNack次数 = %1").arg(this->bmsNack,      3, 10) + '\n';
     log += QString("包号长度错误 = %1").arg(this->cmdTypeErr,   3, 10) + '\n';
+
+    log += "下载耗时ms" + QString::number(downloadStartTim.msecsTo(QTime::currentTime()), 10);
     return log;
 }

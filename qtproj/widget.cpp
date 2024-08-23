@@ -191,15 +191,23 @@ void Widget::ReadSerialTimeOut()
     se.TimeOut(ui, readTim);
     
     QString receiveDecode = dcode0.PlainTextDecode(ui);
+    if(hexSendList.size() > 0) {
+        this->sendCmdListFunc();
+        qDebug() << "7.1======";
+    }
+    qDebug() << "7.2======";
+    qDebug() << "7.3======";
     // 如果检测到某个结构体已经发生更新，则显示
     if(tverStru0->newDataStatus == true) {
         this->SetVersionLable();
         tverStru0->newDataStatus = false;
     }
+    qDebug() << "7.3======";
     if(caliStru0->newDataStatus == true) {
         this->GetKB();
         caliStru0->newDataStatus = false;
     }
+    qDebug() << "7.4======";
     if(sysStru0->newDataStatus == true) {
         ui->label_12->setText(sysStru0->displayData());
         if(ui->checkBox_3->checkState() == Qt::Checked) {
@@ -209,14 +217,17 @@ void Widget::ReadSerialTimeOut()
             }
         }
     }
+
     if(receiveDecode.contains("数据非法")) {
         sendTim->start();
+        qDebug() << "7.5======串口接收定时器函数结束" << QTime::currentTime();
         return;
+
     }
     int row = ui->listWidget->count();
     if(row == 0) {
         sendTim->start();
-        qDebug() << "3======串口接收定时器函数结束" << QTime::currentTime();
+        qDebug() << "7.6======串口接收定时器函数结束" << QTime::currentTime();
         return;
     }
     ui->listWidget->setCurrentRow(row - 1);
@@ -225,6 +236,7 @@ void Widget::ReadSerialTimeOut()
 //    qDebug() << "ou ++++ timeout     time"<< QTime::currentTime();
     // 开启tbs定时读取定时器
    sendTim->start();
+   qDebug() << "7.7======串口接收定时器函数结束" << QTime::currentTime();
 }
 
 // 解析listWidget内的数据，并写入到tableWidget中
@@ -311,7 +323,7 @@ void Widget::on_clearReceiveDataButton_clicked()
 void Widget::SendAndDecode(QString sendData)
 {
     sendData = se.SerialSend(ui, sendData);
-    qDebug() << "==================发送数据函数sendata = " << sendData;
+    qDebug() << "6==================发送数据函数sendata = " << sendData;
     // se.batComSendStatus = serial::COMPLETE;
     QString dcodeData = dcode0.AddTimeStamp(ui, sendData);
     dcode0.PlainTextDecode(ui);
@@ -320,7 +332,7 @@ void Widget::SendAndDecode(QString sendData)
 void Widget::SendAndDecode(QByteArray sendArray)
 {
     QString sendData = se.SerialSend(ui, sendArray);
-    qDebug() << "==================发送数据函数sendata = " << sendData;
+    qDebug() << "6==================发送数据函数sendata = " << sendData;
     // se.batComSendStatus = serial::COMPLETE;
     QString dcodeData = dcode0.AddTimeStamp(ui, sendData);
     dcode0.PlainTextDecode(ui);
@@ -369,9 +381,6 @@ void Widget::sendCmdListFunc()
             readySendList.removeLast();
         }
     } else {
-
-
-
         if(hexSendList.size() > 0) {
             // qDebug() << "hexsendlist send        "<< QTime::currentTime();
             SendAndDecode(hexSendList.first());
@@ -743,18 +752,15 @@ void Widget::on_pushButton_4_clicked()
     hexFile.DownloadClear();
 
     if(hexFile.beginDownloadState == 0) {
+        hexFile.downloadStartTim = QTime::currentTime();
         hexFile.beginDownloadState = 1;
     }
     if(hexFile.shakeSuccessTime < 3) {
         QString writeStr = hexFile.packetToSendString(hexDecode::ENTER_BOOTMODE);
         hexSendList.append(writeStr);
+        this->sendCmdListFunc();
         return;
     }
-    // if(hexFile.writeSuccessTime < (hexFile.lenth / hexFile.packetSize)) {
-    //     QString writeStr = hexFile.packetToSendString(hexDecode::WRITE_FLASH);
-    //     hexSendList.append(writeStr);
-    //     return;
-    // }
 }
 void Widget::on_pushButton_11_clicked()
 {
