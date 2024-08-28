@@ -180,17 +180,19 @@ void hexDecode::AllClear(void)
 }
 
 #define NO_DATA_TYPE_LENTH 4
-QString hexDecode::packetToSendString(bmsCmdType cmdType, uint32_t packetNumber)
+QString hexDecode::packetToSendString(bmsCmdType cmdType, uint32_t packetId)
 {
     QByteArray sendDataArray;
     QByteArray dataArray = {};
     if(cmdType == this->WRITE_FLASH) {
-        dataArray.append((uint8_t)packetNumber);
-        dataArray.append((uint8_t)(packetNumber >> 8));
-        if(packetNumber < this->packetNum - 1) {
-            dataArray.append(this->n00dataArray.mid(packetNumber * this->packetSize, this->packetSize));
+        dataArray.append((uint8_t)packetId);
+        dataArray.append((uint8_t)(packetId >> 8));
+        dataArray.append((uint8_t)this->packetNum);
+        dataArray.append((uint8_t)(this->packetNum >> 8));
+        if(packetId < this->packetNum - 1) {
+            dataArray.append(this->n00dataArray.mid(packetId * this->packetSize, this->packetSize));
         } else {
-            dataArray.append(this->n00dataArray.mid(packetNumber * this->packetSize));
+            dataArray.append(this->n00dataArray.mid(packetId * this->packetSize));
             for(int i = this->packetSize - this->hexLenth % this->packetSize; i > 0; i--)
             {
                 dataArray.append(char(0xff));
@@ -251,7 +253,7 @@ bool hexDecode::isDownLoadCmd(char cmd)
 uint8_t hexDecode::DownLoadProcess(textStruct text, QString* outPutStr)
 {
     QByteArray outPutArray;
-    bool enterWriteFlash = false;
+//    bool enterWriteFlash = false;
     if((text.cmd & 0x80) == 0) {
         return CMD_TYPE_ERR;
     }

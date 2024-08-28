@@ -229,7 +229,7 @@ QString serial::SerialSend(Ui::Widget *ui, QByteArray sendArray)
 
     uint8_t checkSum = 0;
     if(sendArray.size() >= 8) {
-        for(uint8_t i = 1; i <= sendArray.size() - 2; i++) {
+        for(int i = 1, limit = sendArray.size() - 2; i <= limit; i++) {
             checkSum += sendArray[i];
         }
         if((uint8_t)sendArray[sendArray.size() - 1] != checkSum) {

@@ -32,7 +32,7 @@ public:
     bool eraseFlag;
     bool beginDownloadState;
     uint32_t packetId;
-    uint32_t packetSize = 64;
+    uint32_t packetSize = 512;
     uint32_t packetNum;
     uint32_t shakeSuccessTime;
 
