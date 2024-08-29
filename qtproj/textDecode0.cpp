@@ -3,9 +3,11 @@
 extern tverStruct *tverStru0;
 extern caliStruct *caliStru0;
 extern tbsStruct *tbsStru0;
+extern tbsStruct *testLCD;
 extern QStringList waitSendList;
 extern QStringList readySendList;
 extern sysStruct* sysStru0;
+
 datTypDic::datTypDic(DATA_TYPE type, QString typeName, uint32_t typeLenth, ENDIAN_TYPE endianType, SIGNED_TYPE signedType)
 {
     this->type = type;
@@ -78,8 +80,10 @@ uint32_t dataCell::findBitVal(QString bitName)
 // ***************************************dataStruct**************************************//
 dataStruct::dataStruct()
 {
-    this->newDataStatus = false;
+    this->decodeOK = false;
+    this->beingReading = false;
     this->dataLenth = 0;
+    this->deviceAddr = 0;
 }
 
 dataCell* dataStruct::value(QString valName)
@@ -138,7 +142,7 @@ caliStruct::caliStruct()
 tbsStruct::tbsStruct()
 {
     this->dataLenth = 0;
-    this->newDataStatus = false;
+    this->decodeOK = false;
 
     this->insert({"PACK电压mV", datTypDic::ULONG});
     this->insert({"电池电压mV", datTypDic::ULONG});
@@ -235,7 +239,7 @@ void tbsStruct::addStatusBits(void)
 sysStruct::sysStruct()
 {
     this->dataLenth = 0;
-    this->newDataStatus = false;
+    this->decodeOK = false;
     this->cmdType = 0x30;
     this->insert({"预留1", datTypDic::BYTE});
     this->insert({"预留2", datTypDic::BYTE});
@@ -339,7 +343,7 @@ tver::tver(QString valName, datTypDic::DATA_TYPE dataType)
 tverStruct::tverStruct()
 {
     this->dataLenth = 0;
-    this->newDataStatus = false;
+    this->decodeOK = false;
     this->insert({"主版本号", datTypDic::USHORT});
     this->insert({"次版本号", datTypDic::USHORT});
     this->insert({"修订版本", datTypDic::USHORT});
@@ -573,7 +577,7 @@ QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
         HexWriteTver(hexStrLis.mid(8, 80), tverStru0);
     } else if (hexStrLis.size() > 8 && (hexStrLis[4] == "87")) {
         HexWriteDataStruct(hexStrLis.mid(8, caliStru0->dataLenth), caliStru0);
-    } else if (hexStrLis.size() > 8 && (hexStrLis[4].toInt(&ok, 16))) {
+    } else if (hexStrLis.size() > 8 && (hexStrLis[4].toInt(&ok, 16) == 0xb0)) {
         HexWriteDataStruct(hexStrLis.mid(8, sysStru0->dataLenth), sysStru0);
     } else {
         qDebug() << "dataList <= 8 or datalist[4] != 93";
@@ -667,10 +671,11 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
 
     if (dataList.size() == 8) {
         dataText = SendCmdDocode(dataList, dataText)  + COMUT_SEP + timeAndDataList[0] + COMUT_BAT_SEP;
-        bool ok;
         if(dataList.at(4) == "30") {
-            // readySendList.append(sysStru0->OutPutStru());
-            readySendList.append(QString("00 00 71 01 B0 55 AA 00 00 64 64 00 64 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 18 00 18 00 C4 0C BB 0C 07 33 00 00 07 33 00 00 00 00 00 00 00 00 00 00 01 00 01 00 50 00 50 00 00 00 00 00 00 00 00 00 00 00 00 00 F0 00 77 00 00 00 00 00 01 00 50 00 AA AA AA 02 AA AA AA 02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 E3"));
+            sysStru0->beingReading = true;
+        }
+        if(dataList.at(4) == "13"){
+            testLCD->beingReading = true;
         }
 
     } else if (dataList.size() > 8 && dataList.size() < 200) {
@@ -835,7 +840,7 @@ QString textDcode::HexWriteTver(QStringList dataList, tverStruct* tverStuObject)
             tver0 = tverStuObject->tverMap.value(*it);
         }
     }
-    tverStuObject->newDataStatus = true;
+    tverStuObject->decodeOK = true;
     return "tver解析正确";
 }
 //// 将字符串str转换成真实的int值，再转换成str写入dataStruct
@@ -883,7 +888,7 @@ QString textDcode::HexWriteDataStruct(QStringList dataList, dataStruct* struObje
         }
         qDebug() << cell0->valName << cell0->uintVal << cell0->byteArray;
     }
-    struObject->newDataStatus = true;
+    struObject->decodeOK = true;
     return "tver解析正确";
 }
 // 从输入的item判断数据是否是tbs数据，如果是则解析再写入到tbsUnit
@@ -1029,7 +1034,7 @@ QString dataStruct::OutPutStru(void)
         }
         dataArray.append((*itor).byteArray);
     }
-    sendDataArray.append(char(0x00));
+    sendDataArray.append(char(this->deviceAddr));
     sendDataArray.append(((5 + dataArray.size()) & 0xff00) >> 8);
     sendDataArray.append(((5 + dataArray.size()) & 0xff));
     sendDataArray.append(char(0x01)); // 单板类型
@@ -1053,7 +1058,7 @@ QString dataStruct::OutPutStru(void)
            utf8Buffer += " ";
     }
     return utf8Buffer;
-    qDebug() << "utf8Buffer size = " << utf8Buffer.size();
+//    qDebug() << "utf8Buffer size = " << utf8Buffer.size();
 }
 
 QString dataStruct::displayData(void)

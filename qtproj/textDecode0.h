@@ -95,8 +95,9 @@ public:
     QString OutPutStru(void);
     QString displayData(void);
 
-    bool newDataStatus;
-
+    uint32_t deviceAddr;
+    bool decodeOK;
+    bool beingReading;
     QList<QString> keyList;
     QList<dataCell> dataCellList;
     uint32_t dataLenth;
@@ -124,7 +125,7 @@ class tverStruct
         tverStruct();
         tver value(QString valName);
         void insert(tver addTver);
-        bool newDataStatus;
+        bool decodeOK;
 
         QMap<QString, tver> tverMap;
         QList<QString> keyList;

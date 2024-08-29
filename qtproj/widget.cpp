@@ -187,22 +187,31 @@ qDebug()<<"++++++++++定时器结束时间:"<<QTime::currentTime();
     
     QString receiveDecode = dcode0.PlainTextDecode(ui);
     // 如果检测到某个结构体已经发生更新，则显示
-    if(tverStru0->newDataStatus == true) {
+    if(tverStru0->decodeOK == true) {
         this->SetVersionLable();
-        tverStru0->newDataStatus = false;
+        tverStru0->decodeOK = false;
     }
-    if(caliStru0->newDataStatus == true) {
+    if(caliStru0->decodeOK == true) {
         this->GetKB();
-        caliStru0->newDataStatus = false;
+        caliStru0->decodeOK = false;
+    }
+    if(sysStru0->beingReading == true) {
+        this->on_pushButton_13_clicked();
+        sysStru0->beingReading = false;
+        readySendList.append(sysStru0->OutPutStru());
+    }
+    if(testLCD->beingReading == true) {
+        this->on_tbsReply_clicked();
+        testLCD->beingReading = false;
+        readySendList.append(testLCD->OutPutStru());
     }
     if(readySendList.size() > 0) {
         this->sendCmdListFunc();
 //        se.SerialSend(ui, readySendList[0]);
     }
      
-    if(sysStru0->newDataStatus == true) {
+    if(sysStru0->decodeOK == true) {
         ui->label_12->setText(sysStru0->displayData());
-        
     }
     if(receiveDecode.contains("数据非法")) {
         sendTim->start();
@@ -709,6 +718,9 @@ void Widget::on_pushButton_11_clicked()
 
 QMap<QString, QCheckBox*> checkBMap;
 QMap<QString, QCheckBox*> sysCheckBMap;
+
+QMap<QString, QLineEdit*> SysLineMap;
+QMap<QString, QLabel*> LineNameMap;
 void Widget::on_pushButton_12_clicked()
 {
 
@@ -732,6 +744,29 @@ void Widget::tbsRepayInit()
         }
     }
 
+
+    y = 0;
+    x = 0;
+    foreach(dataCell cell,sysStru0->dataCellList) {
+//        y++;
+        if(cell.valName.contains("预留") || cell.valName.contains("HEX")) {
+            continue;
+        }
+        QLineEdit* lineEdit = new QLineEdit();
+        QLabel* label = new QLabel();
+        lineEdit->setText("0");
+        label->setText(cell.valName);
+        ui->gridLayout_23->addWidget(lineEdit, x % 11, y);
+        ui->gridLayout_23->addWidget(label, x % 11, y + 1);
+        SysLineMap.insert(cell.valName, lineEdit);
+        LineNameMap.insert(cell.valName, label);
+        x++;
+
+        y = (x / 11) * 2;
+
+    }
+    y +=2;
+    x = 0;
     foreach(dataCell cell,sysStru0->dataCellList) {
         if (cell.valName.contains("HEX")) {
             foreach(QString bitName, testLCD->value(cell.valName)->bitMap.values())
@@ -758,6 +793,9 @@ void Widget::on_tbsReply_clicked()
         checkBMap["放电"]->setCheckState(Qt::Unchecked);
         checkBMap["满充"]->setCheckState(Qt::Unchecked);
     }
+
+    testLCD->deviceAddr = ui->comboBox_2->currentIndex();
+
     foreach(dataCell cell,testLCD->dataCellList) {
         testLCD->value(cell.valName)->uintVal = 0;
         if (cell.valName.contains("HEX")) {
@@ -785,12 +823,15 @@ void Widget::on_checkBox_2_stateChanged(int arg1)
     foreach(QCheckBox* box, checkBMap) {
         box->setCheckState((Qt::CheckState)arg1);
     }
+    foreach(QCheckBox* box, sysCheckBMap) {
+        box->setCheckState((Qt::CheckState)arg1);
+    }
 }
 
 void Widget::on_pushButton_13_clicked()
 {
     QByteArray dataArray, sendDataArray;
-
+    bool ok;
     foreach(dataCell cell,sysStru0->dataCellList) {
         sysStru0->value(cell.valName)->uintVal = 0;
         if (cell.valName.contains("HEX")) {
@@ -803,9 +844,14 @@ void Widget::on_pushButton_13_clicked()
                 }
             }
             qDebug() << "uintVal = 0x" << QString::number(sysStru0->value(cell.valName)->uintVal,16);
+        } else {
+            if(!cell.valName.contains("预留")) {
+
+                sysStru0->value(cell.valName)->uintVal = SysLineMap[cell.valName]->text().toInt(&ok, 10);
+            }
         }
     }
-    sysStru0->value("系统电池数量")->uintVal = ui->comboBox->currentIndex() + 1;
-    sysStru0->value("系统SOC值")->uintVal = 50;
+//    sysStru0->value("系统电池数量")->uintVal = ui->comboBox->currentIndex() + 1;
+//    sysStru0->value("系统SOC值")->uintVal = 50;
     waitSendList.append(sysStru0->OutPutStru());
 }
