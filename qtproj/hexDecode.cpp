@@ -52,6 +52,7 @@ QString hexDecode::ReadHexFile(QFile *file)
     while(true) {
         lineNumber++;
         lineData = file->readLine();
+        qDebug() << "lineNumber" << lineData;
         if(lineData == "") {
             break;
         }
@@ -185,8 +186,8 @@ QString hexDecode::packetToSendString(bmsCmdType cmdType, uint32_t packetId)
     QByteArray sendDataArray;
     QByteArray dataArray = {};
     if(cmdType == this->WRITE_FLASH) {
-        dataArray.append((uint8_t)packetId);
-        dataArray.append((uint8_t)(packetId >> 8));
+        dataArray.append((uint8_t)(packetId + 1));
+        dataArray.append((uint8_t)(packetId + 1) >> 8);
         dataArray.append((uint8_t)this->packetNum);
         dataArray.append((uint8_t)(this->packetNum >> 8));
         if(packetId < this->packetNum - 1) {
@@ -289,7 +290,7 @@ uint8_t hexDecode::DownLoadProcess(textStruct text, QString* outPutStr)
     } else if (text.cmd == (hexDecode::WRITE_FLASH | 0x80)) {
         if(text.ACK == textStruct::ACK_OK) {
             if(text.dataArray.size() == 2) {
-                if(this->litBytetoUInt(text.dataArray) == (this->packetId)) {
+                if(this->litBytetoUInt(text.dataArray) == (this->packetId + 1)) {
                     writeSuccessTime++;
                     this->packetId++;
                     hexPacketoK.append(true);
