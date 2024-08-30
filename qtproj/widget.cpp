@@ -864,3 +864,6 @@ void Widget::on_pushButton_13_clicked()
 //    sysStru0->value("系统SOC值")->uintVal = 50;
     waitSendList.append(sysStru0->OutPutStru());
 }
+
+
+// test commit
