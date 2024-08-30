@@ -1,4 +1,4 @@
-#include "widget.h"
+﻿#include "widget.h"
 #include "ui_widget.h"
 #include "textDecode0.h"
 
@@ -196,10 +196,12 @@ qDebug()<<"++++++++++定时器结束时间:"<<QTime::currentTime();
         this->GetKB();
         caliStru0->decodeOK = false;
     }
+    // 收到串口发送读取sys数据命令
     if(sysStru0->beingReading == true) {
-        this->on_pushButton_13_clicked();
+
+        this->on_pushButton_13_clicked(); // 读取上位机内Editline的数据
         sysStru0->beingReading = false;
-        readySendList.append(sysStru0->OutPutStru());
+        readySendList.append(sysStru0->OutPutStru()); // 发送列表加上待发送数据
     }
     if(testLCD->beingReading == true) {
         this->on_tbsReply_clicked();
@@ -729,16 +731,32 @@ QMap<QString, QCheckBox*> sysCheckBMap;
 
 QMap<QString, QLineEdit*> SysLineMap;
 QMap<QString, QLabel*> LineNameMap;
+QList<QList<int>> listOfLists;
 
 void Widget::on_pushButton_12_clicked()
 {
+
     QString saveFileUrl = QFileDialog::getOpenFileName(this, tr("Open csv"), "/home/", tr("(*.csv)"));
-    QFile csvFile;
+    
     if (saveFileUrl.isEmpty()) {
         ui->lineEdit_4->setText("未选择文件");
-    } else {
+    } 
+    else 
+    {
         ui->lineEdit_4->setText(saveFileUrl);
+        QFile csvFile(saveFileUrl);
         csv::ReadCsv(&csvFile, ui->lineEdit_4->text());
+        listOfLists = csv::ReadCsvFile(&csvFile);
+        foreach (const QList<int>& row, listOfLists) 
+        {
+            foreach (int value, row) 
+            {
+                qDebug() << value;
+            }
+            qDebug() << "-------------------------------------------";
+        }
+        ui->lineEdit_4->setText("");
+        
     }
 }
 void Widget::tbsRepayInit()
@@ -870,6 +888,7 @@ void Widget::on_pushButton_13_clicked()
 {
     QByteArray dataArray, sendDataArray;
     bool ok;
+    //String str = "";
     foreach(dataCell cell,sysStru0->dataCellList) {
         sysStru0->value(cell.valName)->uintVal = 0;
         if (cell.valName.contains("HEX")) {
@@ -884,7 +903,17 @@ void Widget::on_pushButton_13_clicked()
             qDebug() << "uintVal = 0x" << QString::number(sysStru0->value(cell.valName)->uintVal,16);
         } else {
             if(!cell.valName.contains("预留")) {
-
+                if(cell.valName.contains("系统电流")) {
+                    if(listOfLists.size() > 0) {
+                        QList<int> secondRow = listOfLists[1];
+                        foreach (int value, secondRow)
+                        {
+                            //QString::number(value);
+                            SysLineMap[cell.valName]->setText(QString::number(value));
+                            qDebug() << QString::number(value);
+                        }
+                    }
+                }
                 sysStru0->value(cell.valName)->uintVal = SysLineMap[cell.valName]->text().toInt(&ok, 10);
             }
         }
@@ -893,3 +922,6 @@ void Widget::on_pushButton_13_clicked()
 //    sysStru0->value("系统SOC值")->uintVal = 50;
     waitSendList.append(sysStru0->OutPutStru());
 }
+
+
+// test commit

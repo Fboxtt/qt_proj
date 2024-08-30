@@ -84,7 +84,7 @@ void csv::saveCsv(QString fileName, QStringList strListToCsv)
 }
 
 bool csv::ReadCsv(QFile *file, QString fileName)
-{
+{ 
 
     file->setFileName(fileName);
     if(!file->open(QIODevice::ReadOnly))
@@ -96,3 +96,38 @@ bool csv::ReadCsv(QFile *file, QString fileName)
 //    QTextCodec* codec = QTextCodec::codecForName("UTF-8");
     return true;
 }
+
+QList<QList<int>> csv::ReadCsvFile(QFile *file)
+{   
+    QList<QList<int>> twoDimensionalList;
+    if(!file->open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        qDebug()<<"文件打开失败";
+        file->close();
+        return twoDimensionalList;
+    }
+
+    QTextStream in(file);
+
+    while (!in.atEnd()) {
+        QString line = in.readLine();        
+        QStringList fields = line.split(",");
+        QList<int> list;
+        for (const QString& field : fields) 
+        {        
+            list.append(field.toFloat() * 10);
+        }
+        twoDimensionalList.append(list);
+        // for (int value : list) {
+        //    // qDebug() << value;
+        // }
+        
+       // qDebug()<<"---------------------------------";
+    }
+    file->close();   
+    return twoDimensionalList;
+
+}
+
+
+
