@@ -19,7 +19,7 @@ public:
     static bool createDir(QString fileName);
     static void tbsToCsv(Ui::Widget *ui, QString fileName, textDcode* dcode0);
     static bool ReadCsv(QFile *file, QString fileName);
-    static QList<QList<int>> csv::ReadCsvFile(QFile *file);
+    static bool ReadCsvFile(QFile *file, QStringList* strList);
     
 
 private:

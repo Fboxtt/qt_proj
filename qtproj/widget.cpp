@@ -731,7 +731,9 @@ QMap<QString, QCheckBox*> sysCheckBMap;
 
 QMap<QString, QLineEdit*> SysLineMap;
 QMap<QString, QLabel*> LineNameMap;
-QList<QList<int>> listOfLists;
+QStringList CarDownData;
+int CarDownDataIdx;
+
 
 void Widget::on_pushButton_12_clicked()
 {
@@ -745,18 +747,16 @@ void Widget::on_pushButton_12_clicked()
     {
         ui->lineEdit_4->setText(saveFileUrl);
         QFile csvFile(saveFileUrl);
-        csv::ReadCsv(&csvFile, ui->lineEdit_4->text());
-        listOfLists = csv::ReadCsvFile(&csvFile);
-        foreach (const QList<int>& row, listOfLists) 
-        {
-            foreach (int value, row) 
+        if(csv::ReadCsvFile(&csvFile, &CarDownData)) {
+            CarDownDataIdx = 0;
+
+            foreach (const QString str, CarDownData)
             {
-                qDebug() << value;
+                qDebug() << str;
+                qDebug() << "-------------------------------------------";
             }
-            qDebug() << "-------------------------------------------";
+            ui->lineEdit_4->setText("");
         }
-        ui->lineEdit_4->setText("");
-        
     }
 }
 void Widget::tbsRepayInit()
@@ -904,13 +904,14 @@ void Widget::on_pushButton_13_clicked()
         } else {
             if(!cell.valName.contains("预留")) {
                 if(cell.valName.contains("系统电流")) {
-                    if(listOfLists.size() > 0) {
-                        QList<int> secondRow = listOfLists[1];
-                        foreach (int value, secondRow)
-                        {
-                            //QString::number(value);
-                            SysLineMap[cell.valName]->setText(QString::number(value));
-                            qDebug() << QString::number(value);
+                    if (CarDownData.size() > 0) {
+                        if(CarDownDataIdx < CarDownData.size()){
+                            SysLineMap[cell.valName]->setText(CarDownData[CarDownDataIdx]);
+                            CarDownDataIdx++;
+//                            qDebug() << CarDownData[CarDownDataIdx];
+                        } else {
+                            CarDownData.clear();
+                            CarDownDataIdx = 0;
                         }
                     }
                 }

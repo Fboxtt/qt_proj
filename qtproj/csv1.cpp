@@ -97,36 +97,32 @@ bool csv::ReadCsv(QFile *file, QString fileName)
     return true;
 }
 
-QList<QList<int>> csv::ReadCsvFile(QFile *file)
+bool csv::ReadCsvFile(QFile *file, QStringList* strList)
 {   
-    QList<QList<int>> twoDimensionalList;
     if(!file->open(QIODevice::ReadOnly | QIODevice::Text))
     {
         qDebug()<<"文件打开失败";
         file->close();
-        return twoDimensionalList;
+        return false;
     }
-
+    strList->clear();
     QTextStream in(file);
 
     while (!in.atEnd()) {
         QString line = in.readLine();        
+        if(line == "") {
+            break;
+        }
         QStringList fields = line.split(",");
         QList<int> list;
         for (const QString& field : fields) 
         {        
-            list.append(field.toFloat() * 10);
+            QString str = QString("%1").arg(field.toDouble() * 10);
+            strList->append(str);
         }
-        twoDimensionalList.append(list);
-        // for (int value : list) {
-        //    // qDebug() << value;
-        // }
-        
-       // qDebug()<<"---------------------------------";
     }
     file->close();   
-    return twoDimensionalList;
-
+    return true;
 }
 
 
