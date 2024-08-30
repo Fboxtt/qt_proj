@@ -458,3 +458,6 @@ void Widget::on_getVersionButton_clicked()
     QString sendData = "00 00 04 01 16 55 AA 1A";
     this->SendAndDecode(sendData);
 }
+
+
+//
