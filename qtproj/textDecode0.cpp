@@ -670,12 +670,15 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
     // 通过长度判断是send还是receive
 
     if (dataList.size() == 8) {
+        bool ok;
         dataText = SendCmdDocode(dataList, dataText)  + COMUT_SEP + timeAndDataList[0] + COMUT_BAT_SEP;
         if(dataList.at(4) == "30") {
             sysStru0->beingReading = true;
+            sysStru0->deviceAddr = dataList.at(0).toInt(&ok, 16);
         }
         if(dataList.at(4) == "13"){
             testLCD->beingReading = true;
+            testLCD->deviceAddr = dataList.at(0).toInt(&ok, 16);
         }
 
     } else if (dataList.size() > 8 && dataList.size() < 200) {

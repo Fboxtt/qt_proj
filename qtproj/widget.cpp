@@ -204,7 +204,9 @@ qDebug()<<"++++++++++定时器结束时间:"<<QTime::currentTime();
     if(testLCD->beingReading == true) {
         this->on_tbsReply_clicked();
         testLCD->beingReading = false;
-        readySendList.append(testLCD->OutPutStru());
+        if(testLCD->deviceAddr == (uint32_t)ui->comboBox_2->currentIndex()) {
+            readySendList.append(testLCD->OutPutStru());
+        }
     }
     if(readySendList.size() > 0) {
         this->sendCmdListFunc();
@@ -718,6 +720,11 @@ void Widget::on_pushButton_11_clicked()
 }
 
 QMap<QString, QCheckBox*> checkBMap;
+QMap<QString, QLineEdit*> TbsLineMap;
+QMap<QString, QLabel*> TbsLineNameMap;
+
+
+
 QMap<QString, QCheckBox*> sysCheckBMap;
 
 QMap<QString, QLineEdit*> SysLineMap;
@@ -740,6 +747,24 @@ void Widget::tbsRepayInit()
     uint32_t x = 0,y = 0;
     foreach(dataCell cell,testLCD->dataCellList) {
         if (cell.valName.contains("HEX")) {
+            continue;
+        }
+        QLineEdit* lineEdit = new QLineEdit();
+        QLabel* label = new QLabel();
+        lineEdit->setText("0");
+        label->setText(cell.valName);
+        ui->gridLayout_21->addWidget(lineEdit, x % 11, y);
+        ui->gridLayout_21->addWidget(label, x % 11, y + 1);
+        TbsLineMap.insert(cell.valName, lineEdit);
+        TbsLineNameMap.insert(cell.valName, label);
+        x++;
+
+        y = (x / 11) * 2;
+    }
+    y +=2;
+    x = 0;
+    foreach(dataCell cell,testLCD->dataCellList) {
+        if (cell.valName.contains("HEX")) {
             foreach(QString bitName, testLCD->value(cell.valName)->bitMap.values())
             {
                 QCheckBox* checkbox = new QCheckBox();
@@ -754,10 +779,10 @@ void Widget::tbsRepayInit()
     }
 
 
+
     y = 0;
     x = 0;
     foreach(dataCell cell,sysStru0->dataCellList) {
-//        y++;
         if(cell.valName.contains("预留") || cell.valName.contains("HEX")) {
             continue;
         }
@@ -803,7 +828,8 @@ void Widget::on_tbsReply_clicked()
         checkBMap["满充"]->setCheckState(Qt::Unchecked);
     }
 
-    testLCD->deviceAddr = ui->comboBox_2->currentIndex();
+
+//    testLCD->deviceAddr = ui->comboBox_2->currentIndex();
 
     foreach(dataCell cell,testLCD->dataCellList) {
         testLCD->value(cell.valName)->uintVal = 0;
@@ -817,6 +843,9 @@ void Widget::on_tbsReply_clicked()
                 }
             }
             qDebug() << "uintVal = 0x" << QString::number(testLCD->value(cell.valName)->uintVal,16);
+        } else {
+            bool ok;
+            testLCD->value(cell.valName)->uintVal = TbsLineMap[cell.valName]->text().toInt(&ok, 10);
         }
     }
     waitSendList.append(testLCD->OutPutStru());
