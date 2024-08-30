@@ -157,7 +157,8 @@ void Widget::on_selectFileButton_clicked()
 
 void Widget::on_conectSerialButton_clicked()
 {
-
+    QString saveFileUrl = QFileDialog::getOpenFileName(this, tr("Open csv"), "/home/", tr("(*.csv)"));
+    QFile csvFile;
 }
 
 void Widget::on_searchBtn_clicked()
@@ -721,9 +722,17 @@ QMap<QString, QCheckBox*> sysCheckBMap;
 
 QMap<QString, QLineEdit*> SysLineMap;
 QMap<QString, QLabel*> LineNameMap;
+
 void Widget::on_pushButton_12_clicked()
 {
-
+    QString saveFileUrl = QFileDialog::getOpenFileName(this, tr("Open csv"), "/home/", tr("(*.csv)"));
+    QFile csvFile;
+    if (saveFileUrl.isEmpty()) {
+        ui->lineEdit_4->setText("未选择文件");
+    } else {
+        ui->lineEdit_4->setText(saveFileUrl);
+        csv::ReadCsv(&csvFile, ui->lineEdit_4->text());
+    }
 }
 void Widget::tbsRepayInit()
 {
