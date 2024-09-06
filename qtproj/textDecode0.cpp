@@ -490,9 +490,11 @@ textStruct::textStruct(QString text)
     if(checkSum != (uint8_t)comArray.back()) {
         this->checkSumOk = false;
     }
+    if(comArray.size() >= 8) {
 
-    this->cmd = (char)dataList.at(4).toInt(&ok, 16);
-    this->ACK = (char)dataList.at(7).toInt(&ok, 16);
+        this->cmd = (char)dataList.at(4).toInt(&ok, 16);
+        this->ACK = (char)dataList.at(7).toInt(&ok, 16);
+    }
     // qDebug() << dataList << "class dataList out<<" << dataList.size()<<" list size" ;
     // qDebug() << "checkSumok = " << this->checkSumOk << "lenthok = " << this->lenthOk << "cmdok = " << this->cmdOk;
 
@@ -722,6 +724,7 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
     textBlock = doc->findBlockByNumber(blockCount - 1); // 获得末尾的text
     // qDebug() << "doc" << doc;
     dataText = textBlock.text();
+    qDebug() << dataText;
     textStruct destinyText = textStruct(dataText);
     timeText = "";
     // qDebug() << "dataText" << dataText;

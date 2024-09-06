@@ -42,7 +42,7 @@ sysStruct *sysStru0;
 
 #define SEND_INTERVAL 20
 #define SEND_TBS_COUNT (1000/SEND_INTERVAL)
-#define DELAY_READ_TIME 10
+#define DELAY_READ_TIME 20
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
