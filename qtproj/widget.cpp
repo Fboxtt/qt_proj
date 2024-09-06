@@ -37,7 +37,7 @@ QTimer *sendTim;
 QTimer *readTim;
 
 sysStruct *sysStru0;
-
+bool sendCloseFetStatus = 0;
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
@@ -197,6 +197,10 @@ qDebug()<<"++++++++++定时器结束时间:"<<QTime::currentTime();
         caliStru0->decodeOK = false;
     }
     // 收到串口发送读取sys数据命令
+    if ( sendCloseFetStatus == true) {
+        sendCloseFetStatus = false;
+        readySendList.append("00 00 05 01 8C 55 AA 00 91"); // 发送列表加上待发送数据
+    }
     if(sysStru0->beingReading == true) {
 
         this->on_pushButton_13_clicked(); // 读取上位机内Editline的数据
@@ -206,8 +210,12 @@ qDebug()<<"++++++++++定时器结束时间:"<<QTime::currentTime();
     if(testLCD->beingReading == true) {
         this->on_tbsReply_clicked();
         testLCD->beingReading = false;
-        if(testLCD->deviceAddr == (uint32_t)ui->comboBox_2->currentIndex()) {
+        if(ui->checkBox_3->checkState() == Qt::Checked) {
             readySendList.append(testLCD->OutPutStru());
+        } else {
+            if(testLCD->deviceAddr == (uint32_t)ui->comboBox_2->currentIndex()) {
+                readySendList.append(testLCD->OutPutStru());
+            }
         }
     }
     if(readySendList.size() > 0) {
@@ -847,7 +855,7 @@ void Widget::on_tbsReply_clicked()
     }
 
 
-//    testLCD->deviceAddr = ui->comboBox_2->currentIndex();
+   testLCD->deviceAddr = ui->comboBox_2->currentIndex();
 
     foreach(dataCell cell,testLCD->dataCellList) {
         testLCD->value(cell.valName)->uintVal = 0;

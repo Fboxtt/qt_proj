@@ -7,7 +7,7 @@ extern tbsStruct *testLCD;
 extern QStringList waitSendList;
 extern QStringList readySendList;
 extern sysStruct* sysStru0;
-
+extern bool sendCloseFetStatus;
 datTypDic::datTypDic(DATA_TYPE type, QString typeName, uint32_t typeLenth, ENDIAN_TYPE endianType, SIGNED_TYPE signedType)
 {
     this->type = type;
@@ -679,6 +679,9 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
         if(dataList.at(4) == "13"){
             testLCD->beingReading = true;
             testLCD->deviceAddr = dataList.at(0).toInt(&ok, 16);
+        }
+        if(dataList.at(4) == "0C"){
+            sendCloseFetStatus = true;
         }
 
     } else if (dataList.size() > 8 && dataList.size() < 200) {

@@ -862,6 +862,13 @@
           </item>
           <item row="1" column="0">
            <layout class="QGridLayout" name="gridLayout_26">
+            <item row="0" column="1">
+             <widget class="QLabel" name="label_13">
+              <property name="text">
+               <string>电芯序号</string>
+              </property>
+             </widget>
+            </item>
             <item row="0" column="0">
              <widget class="QComboBox" name="comboBox_2">
               <item>
@@ -911,10 +918,10 @@
               </item>
              </widget>
             </item>
-            <item row="0" column="1">
-             <widget class="QLabel" name="label_13">
+            <item row="0" column="2">
+             <widget class="QCheckBox" name="checkBox_3">
               <property name="text">
-               <string>电芯序号</string>
+               <string>强制回复</string>
               </property>
              </widget>
             </item>
