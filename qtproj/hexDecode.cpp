@@ -255,53 +255,53 @@ uint8_t hexDecode::DownLoadProcess(textStruct text, QString* outPutStr)
 {
     QByteArray outPutArray;
 //    bool enterWriteFlash = false;
-    if((text.cmd & 0x80) == 0) {
+    if((text.cmd & 0x80) == 0) { // 判断cmd正误
         return CMD_TYPE_ERR;
     }
-    if(this->beginDownloadState != true) {
+    if(this->beginDownloadState != true) { // 判断是否开始烧录
         return false;
     }
-    if(text.cmd == (hexDecode::ENTER_BOOTMODE | 0x80)) {
+    if(text.cmd == (hexDecode::ENTER_BOOTMODE | 0x80)) {  // 判断握手次数
         if(text.ACK == textStruct::ACK_OK) {
             this->shakeSuccessTime++;
         }
     }
 
-    if(shakeSuccessTime < SHAKE_TIME_LIMIT) {
+    if(shakeSuccessTime < SHAKE_TIME_LIMIT) { // 握手次数不够，则继续握手
         *outPutStr = this->packetToSendString(this->ENTER_BOOTMODE, this->packetId);
         return true;
     }
-    if(text.cmd == (hexDecode::EARSE_ALL | 0x80)) {
+    if(text.cmd == (hexDecode::EARSE_ALL | 0x80)) { // 判断擦除flash成功返回
         if(text.ACK == textStruct::ACK_OK) {
             eraseFlag = 1;
         }
     }
-    if(eraseFlag == 0) {
+    if(eraseFlag == 0) { // 进入擦除模式
         *outPutStr = this->packetToSendString(this->EARSE_ALL, this->packetId);
         return true;
     }
 
-    if((text.cmd == (hexDecode::EARSE_ALL| 0x80)) && eraseFlag == 1) {
+    if((text.cmd == (hexDecode::EARSE_ALL| 0x80)) && eraseFlag == 1) { // 判断擦除是否成功
         if(this->hexLenth == 0) {
             return DOWNLOAD_DONE;
         }
-        *outPutStr = this->packetToSendString(this->WRITE_FLASH, this->packetId);
+        *outPutStr = this->packetToSendString(this->WRITE_FLASH, this->packetId); // 烧录第一个包
         return true;
     } else if (text.cmd == (hexDecode::WRITE_FLASH | 0x80)) {
         if(text.ACK == textStruct::ACK_OK) {
             if(text.dataArray.size() == 2) {
                 if(this->litBytetoUInt(text.dataArray) == (this->packetId + 1)) {
                     writeSuccessTime++;
-                    this->packetId++;
+                    this->packetId++;                                             // 上次发送成功后，包号++
                     hexPacketoK.append(true);
                 }
                 if(this->packetId >= this->packetNum) {
                     return DOWNLOAD_DONE;
                 }
-                *outPutStr = this->packetToSendString(this->WRITE_FLASH, this->packetId);
+                *outPutStr = this->packetToSendString(this->WRITE_FLASH, this->packetId); // 发送剩余的包
                 return true;
             } else {
-                *outPutStr = this->packetToSendString(this->WRITE_FLASH, this->packetId);
+                *outPutStr = this->packetToSendString(this->WRITE_FLASH, this->packetId); // 重新发包
                 return PACKET_NUM_LENTH_ERR;
             }
         } else {

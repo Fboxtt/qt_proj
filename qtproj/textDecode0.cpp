@@ -761,18 +761,17 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
 
 
     } else if (dataList.size() > 8 && dataList.size() < 200) {
-        // 解析烧录数据
-        if(hexDecode::isDownLoadCmd(destinyText.cmd)) {
+        if(hexDecode::isDownLoadCmd(destinyText.cmd)) { // 判断收到的命令是否是烧录相关命令
             QString outPutStr;
-            uint8_t downState = hexFile.DownLoadProcess(destinyText, &outPutStr);
+            uint8_t downState = hexFile.DownLoadProcess(destinyText, &outPutStr);   // 进入烧录程序
             QString downloadInfo = QString("packetSendingNum / packetSize = %1 / %2").arg(hexFile.packetId).arg(hexFile.packetNum);
             if(hexFile.isErrExceeding()) {
                 downState = hexDecode::DOWNLOAD_DONE;
             }
             switch (downState) {
             case true:
-                ui->downLoadLabel->setText(downloadInfo);
-                hexSendList.append(outPutStr);
+                ui->downLoadLabel->setText(downloadInfo);   // 在上位机显示相关信息
+                hexSendList.append(outPutStr);               // 发送数据列表添加待发送数据
                 break;
             case hexDecode::PACKET_NUM_LENTH_ERR:
                 ui->downLoadLabel->setText("包号长度错误");
@@ -791,6 +790,7 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
 //                break;
             case hexDecode::DOWNLOAD_DONE:
             ui->downLoadLabel->setText(downloadInfo);
+                // 烧录完成后在上位机显示相关信息
                 ui->downLoadLabel->setText(ui->downLoadLabel->text() + "\n" + "烧录结束" + hexFile.DownLoadLog());
                 break;
             }
