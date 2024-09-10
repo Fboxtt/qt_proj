@@ -789,8 +789,11 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
 //                hexSendList.append(outPutStr);
 //                break;
             case hexDecode::DOWNLOAD_DONE:
-            ui->downLoadLabel->setText(downloadInfo);
-                // 烧录完成后在上位机显示相关信息
+                ui->downLoadLabel->setText(downloadInfo);
+                hexSendList.append(outPutStr);
+                break;
+            case hexDecode::CHECKSUM_ACK:
+                ui->downLoadLabel->setText(downloadInfo);
                 ui->downLoadLabel->setText(ui->downLoadLabel->text() + "\n" + "烧录结束" + hexFile.DownLoadLog());
                 break;
             }

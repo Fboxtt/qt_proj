@@ -47,6 +47,7 @@ QString hexDecode::ReadHexFile(QFile *file)
     uint32_t lineNumber = 0;
     QString decodeLog = "";
     uint32_t lastAddr = 0;
+    uint32_t totalCheckSum = 0;
     // 如果解析正确，则exist
     this->exist = false;
     while(true) {
@@ -109,6 +110,7 @@ QString hexDecode::ReadHexFile(QFile *file)
             switch(dataType) {
             case 0:
                 this->n00dataArray.append(byteNum);
+                totalCheckSum += byteNum; // 计算总校验和
                 this->hexLenth++;
                 break;
             case 1:
@@ -133,13 +135,18 @@ QString hexDecode::ReadHexFile(QFile *file)
         if(dataCheckSum != (uint8_t)(0x100 - dataCheck)) {
             decodeLog += QString(": 校验错误------------错误行号 = %1\n").arg(lineNumber);
         }
-
     }
     // 获取扩展线性地址 08 00 -> 0x0800, 获取程序起始地址
     this->extendLinearAddress = QString::fromLocal8Bit(this->n04extendLinearArray).toUInt(&ok, 16);
     this->address = this->address + (this->extendLinearAddress << 4);
+    uint32_t limit = n00dataArray.size() % this->packetSize > 0 ? (this->packetSize - n00dataArray.size() % this->packetSize) : 0;
+    for (uint32_t i = 0; i < limit; i++) {
+        totalCheckSum += 0xff;
+    }
     if(decodeLog == "") {
         decodeLog += ": 正确---------------------错误行号 = 无\n";
+        this->totalCheckSumArray.append((char)totalCheckSum); // 计算总校验和并保存
+        this->totalCheckSumArray.append((char)(totalCheckSum / 0x100));
         this->exist = true;
         if(this->hexLenth % this->packetSize > 0) {
             this->packetNum =  this->hexLenth / this->packetSize + 1;
@@ -199,7 +206,9 @@ QString hexDecode::packetToSendString(bmsCmdType cmdType, uint32_t packetId)
                 dataArray.append(char(0xff));
             }
         }
-
+    }
+    if(cmdType == this->REC_TOTAL_CHECKSUM) {
+        dataArray.append(this->totalCheckSumArray);
     }
     uint16_t dataArrayLenth = (NO_DATA_TYPE_LENTH + dataArray.size());
     sendDataArray.append(char(0x00));
@@ -281,8 +290,8 @@ uint8_t hexDecode::DownLoadProcess(textStruct text, QString* outPutStr)
         return true;
     }
 
-    if((text.cmd == (hexDecode::EARSE_ALL| 0x80)) && eraseFlag == 1) { // 判断擦除是否成功
-        if(this->hexLenth == 0) {
+    if((text.cmd == (hexDecode::EARSE_ALL| 0x80)) && eraseFlag == 1) {
+        if(this->hexLenth == 0) { // 没有烧录内容，则认为烧录完成
             return DOWNLOAD_DONE;
         }
         *outPutStr = this->packetToSendString(this->WRITE_FLASH, this->packetId); // 烧录第一个包
@@ -296,6 +305,7 @@ uint8_t hexDecode::DownLoadProcess(textStruct text, QString* outPutStr)
                     hexPacketoK.append(true);
                 }
                 if(this->packetId >= this->packetNum) {
+                    *outPutStr = this->packetToSendString(this->REC_TOTAL_CHECKSUM, this->packetId);
                     return DOWNLOAD_DONE;
                 }
                 *outPutStr = this->packetToSendString(this->WRITE_FLASH, this->packetId); // 发送剩余的包
@@ -309,7 +319,9 @@ uint8_t hexDecode::DownLoadProcess(textStruct text, QString* outPutStr)
             return BMS_NACK;
         }
     }
-
+    if(text.cmd == (hexDecode::REC_TOTAL_CHECKSUM| 0x80)) {
+        return CHECKSUM_ACK;
+    };
     *outPutStr = "";
     return false;
 }

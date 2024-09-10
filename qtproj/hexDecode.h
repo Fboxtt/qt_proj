@@ -54,6 +54,7 @@ public:
         EARSE_ALL,
         WRITE_FLASH,
         READ_FLASH,
+        REC_TOTAL_CHECKSUM,
     };
     enum Download_ERR {
         DOWNLOAD_OK = true,
@@ -61,7 +62,7 @@ public:
         DOWNLOAD_DONE,
         BMS_NACK,
         CMD_TYPE_ERR,
-
+        CHECKSUM_ACK,
     };
 
     QByteArray n00dataArray;
@@ -72,6 +73,8 @@ public:
     QByteArray n05startLinearArray;
 
     QList<uint32_t> hexArray;
+
+    QByteArray totalCheckSumArray;
 
     bool OpenHexFile(QFile *file, QString fileUrl);
     QString ReadHexFile(QFile *file);
