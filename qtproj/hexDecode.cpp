@@ -163,10 +163,11 @@ void hexDecode::DownloadClear(void)
     dataType = 0;
     eraseFlag = 0;
     beginDownloadState = 0;
+    beginEraseState = 0;
+
     packetId = 0;
     shakeSuccessTime = 0;
     writeSuccessTime = 0;
-
     packetNumLErr = 0;
     bmsNack = 0;
     cmdTypeErr = 0;
@@ -183,6 +184,8 @@ void hexDecode::AllClear(void)
     n03startArray.clear();
     n04extendLinearArray.clear();
     n05startLinearArray.clear();
+
+    totalCheckSumArray.clear();
 
     hexArray.clear();
 }
@@ -253,7 +256,8 @@ bool hexDecode::isDownLoadCmd(char cmd)
             cmd == hexDecode::EARSE_ALL || \
             cmd == hexDecode::ENTER_BOOTMODE || \
             cmd == hexDecode::WRITE_FLASH || \
-            cmd == hexDecode::READ_FLASH) {
+            cmd == hexDecode::READ_FLASH || \
+            cmd == hexDecode::REC_TOTAL_CHECKSUM) {
         return true;
     } else {
         return false;
@@ -291,8 +295,9 @@ uint8_t hexDecode::DownLoadProcess(textStruct text, QString* outPutStr)
     }
 
     if((text.cmd == (hexDecode::EARSE_ALL| 0x80)) && eraseFlag == 1) {
-        if(this->hexLenth == 0) { // 没有烧录内容，则认为烧录完成
-            return DOWNLOAD_DONE;
+        if(this->hexLenth == 0 || this->beginEraseState == true) { // 没有烧录内容，则认为烧录完成
+            this->beginEraseState = false;
+            return JUST_ERASE;
         }
         *outPutStr = this->packetToSendString(this->WRITE_FLASH, this->packetId); // 烧录第一个包
         return true;
@@ -319,7 +324,7 @@ uint8_t hexDecode::DownLoadProcess(textStruct text, QString* outPutStr)
             return BMS_NACK;
         }
     }
-    if(text.cmd == (hexDecode::REC_TOTAL_CHECKSUM| 0x80)) {
+    if(text.cmd == (hexDecode::REC_TOTAL_CHECKSUM | 0x80)) {
         return CHECKSUM_ACK;
     };
     *outPutStr = "";

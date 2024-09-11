@@ -168,6 +168,7 @@ void serial::TimeOut(Ui::Widget *ui, QTimer *readTim)
         
         gbkBuffer = QString::fromLocal8Bit(buffer);
         //一个16进制占4位，8位为一字节，所以每两位16进制空一格
+        qDebug() << "7.0.1把字符串中间添加空格";
         for(int i=0;i<str.length();i+=2)
         {
                QString str_1 = str.mid (i,2);
@@ -196,7 +197,7 @@ void serial::TimeOut(Ui::Widget *ui, QTimer *readTim)
         else{
             receive += QString(utf8Buffer);
         }//16进制显示
-
+        qDebug() << "7.0.2信息框添加处理后的数据";
         ui->receiveData->appendPlainText(receive);
 //        serial::batComSendStatus = serial::INCOMPLETE;
     }

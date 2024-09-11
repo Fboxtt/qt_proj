@@ -433,6 +433,7 @@ textStruct::textStruct(QString text)
     this->cmdOk = true;
     this->checkSumOk = true;
     this->lenthOk = true;
+    qDebug() << "6.1.3.0==================text split";
     if (text.contains(COMUT_BAT_SEP, Qt::CaseSensitive)) {
         beSplitList = text.split(COMUT_BAT_SEP); // 和时间戳分开
         this->tim = beSplitList[0];
@@ -442,6 +443,7 @@ textStruct::textStruct(QString text)
         this->Err = (dataErr)1;
     }
     // 判断发送还是接收
+    qDebug() << "6.1.3.3==================split with space";
     if(this->tim.contains("TX")) {
         this->sendOrReceive = textStruct::SEND;
     } else {
@@ -450,6 +452,7 @@ textStruct::textStruct(QString text)
     dataList = this->text.simplified().split(' ');
     byteLenth = dataList.size();
     // 转换成char类型
+    qDebug() << "6.1.3.5==================comArray append(hexStr) ";
     foreach(QString hexStr, dataList) {
         hexStr.toInt(&ok, 16);
         if (ok == true) {
@@ -469,7 +472,7 @@ textStruct::textStruct(QString text)
     if (text.contains(QRegExp("^[0-9a-fA-F]{1,}$")) == true) {
         this->Err = (dataErr)1;
     }
-
+    qDebug() << "6.1.3.7================== comArray.size = " << comArray.size();
     if(comArray.size() < 8) {
         this->lenthOk = false;
     } else if (comArray.size() == 8) {
@@ -484,14 +487,18 @@ textStruct::textStruct(QString text)
         }
     }
     uint8_t checkSum = 0;
-    for(int i = 1; i < comArray.size() - 1; i++) {
-        checkSum += comArray[i];
-    }
-    if(checkSum != (uint8_t)comArray.back()) {
-        this->checkSumOk = false;
-    }
+
+
+    qDebug() << "6.1.3.9================== cal checkSum ";
     if(comArray.size() >= 8) {
 
+        for(int i = 1; i < comArray.size() - 1; i++) {
+            checkSum += comArray[i];
+        }
+        if(checkSum != (uint8_t)comArray.back()) {
+            this->checkSumOk = false;
+        }
+        qDebug() << "6.1.3.11================== cmd and ack ";
         this->cmd = (char)dataList.at(4).toInt(&ok, 16);
         this->ACK = (char)dataList.at(7).toInt(&ok, 16);
     }
@@ -720,17 +727,19 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
     doc = ui->receiveData->document();
 
     blockCount = ui->receiveData->blockCount();
-
+    qDebug() << "6.1.0==================读取block";
     textBlock = doc->findBlockByNumber(blockCount - 1); // 获得末尾的text
     // qDebug() << "doc" << doc;
     dataText = textBlock.text();
     qDebug() << dataText;
+    qDebug() << "6.1.3==================解析datextblock";
     textStruct destinyText = textStruct(dataText);
     timeText = "";
     // qDebug() << "dataText" << dataText;
     // if (!dataText.contains(COMUT_BAT_SEP, Qt::CaseSensitive)) {
     //     // timeAndDataList = dataText.split(";"); // 和时间戳分开
     // }
+    qDebug() << "6.1.5==================分解dataText";
     if (dataText.contains(COMUT_BAT_SEP, Qt::CaseSensitive)) {
         timeAndDataList = dataText.split(COMUT_BAT_SEP); // 和时间戳分开
         timeText = timeAndDataList[0];
@@ -749,7 +758,7 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
 
     // qDebug() << dataList << "dataList out<<" << dataList.size()<<" list size" ;
     // 通过长度判断是send还是receive
-
+    qDebug() << "6.1.7==================SendCmdDocode";
     if (dataList.size() == 8) {
         dataText = SendCmdDocode(dataList, dataText)  + COMUT_SEP + timeAndDataList[0] + COMUT_BAT_SEP;
         bool ok = false;
@@ -761,6 +770,7 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
 
 
     } else if (dataList.size() > 8 && dataList.size() < 200) {
+        qDebug() << "6.1.9==================DownLoadProcess";
         if(hexDecode::isDownLoadCmd(destinyText.cmd)) { // 判断收到的命令是否是烧录相关命令
             QString outPutStr;
             uint8_t downState = hexFile.DownLoadProcess(destinyText, &outPutStr);   // 进入烧录程序
@@ -796,6 +806,10 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
                 ui->downLoadLabel->setText(downloadInfo);
                 ui->downLoadLabel->setText(ui->downLoadLabel->text() + "\n" + "烧录结束" + hexFile.DownLoadLog());
                 break;
+            case hexDecode::JUST_ERASE:
+                ui->downLoadLabel->setText(downloadInfo);
+                ui->downLoadLabel->setText(ui->downLoadLabel->text() + "\n" + "烧录结束" + hexFile.DownLoadLog());
+                break;
             }
 
         }
@@ -828,7 +842,7 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
         dataText = QString("数据非法长度错误") + dataText;
     }
     // qDebug() << "split = " << timeText << dataText;
-
+    qDebug() << "6.1.11==================PlainTetDecode ok";
     //单独解码
     // Widget.SetTbsToTableAndChart(dataText, 1);
     return dataText;

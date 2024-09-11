@@ -187,15 +187,15 @@ void Widget::ReadSerialTimeOut()
     readTim->stop();
     qDebug() << "2=====串口接收定时器时间到" << QTime::currentTime();
     // 暂停tbs定时读取定时器防止报错
-
+    qDebug() << "7.0======";
     se.TimeOut(ui, readTim);
-    
+    qDebug() << "7.1======";
     QString receiveDecode = dcode0.PlainTextDecode(ui);
     if(hexSendList.size() > 0) {
         this->sendCmdListFunc();
-        qDebug() << "7.1======";
+        qDebug() << "7.2======";
     }
-    qDebug() << "7.2======";
+
     qDebug() << "7.3======";
     // 如果检测到某个结构体已经发生更新，则显示
     if(tverStru0->newDataStatus == true) {
@@ -323,7 +323,7 @@ void Widget::on_clearReceiveDataButton_clicked()
 void Widget::SendAndDecode(QString sendData)
 {
     sendData = se.SerialSend(ui, sendData);
-    qDebug() << "6==================发送数据函数sendata = " << sendData;
+    qDebug() << "6-0==================发送数据函数sendata = " << sendData;
     // se.batComSendStatus = serial::COMPLETE;
     QString dcodeData = dcode0.AddTimeStamp(ui, sendData);
     dcode0.PlainTextDecode(ui);
@@ -332,9 +332,10 @@ void Widget::SendAndDecode(QString sendData)
 void Widget::SendAndDecode(QByteArray sendArray)
 {
     QString sendData = se.SerialSend(ui, sendArray);
-    qDebug() << "6==================发送数据函数sendata = " << sendData;
+    qDebug() << "6.0==================发送数据函数sendata = " << sendData;
     // se.batComSendStatus = serial::COMPLETE;
     QString dcodeData = dcode0.AddTimeStamp(ui, sendData);
+    qDebug() << "6.1==================发送数据函数sendata = " << sendData;
     dcode0.PlainTextDecode(ui);
 }
 
@@ -772,10 +773,23 @@ void Widget::on_pushButton_11_clicked()
 
 QMap<QString, QCheckBox*> checkBMap;
 QMap<QString, QCheckBox*> sysCheckBMap;
+
 void Widget::on_pushButton_12_clicked()
 {
-
+    hexFile.DownloadClear();
+    hexFile.beginEraseState = true;
+    if(hexFile.beginDownloadState == 0) {
+        hexFile.downloadStartTim = QTime::currentTime();
+        hexFile.beginDownloadState = 1;
+    }
+    if(hexFile.shakeSuccessTime < 3) {
+        QString writeStr = hexFile.packetToSendString(hexDecode::ENTER_BOOTMODE);
+        hexSendList.append(writeStr);
+        this->sendCmdListFunc();
+        return;
+    }
 }
+
 void Widget::tbsRepayInit()
 {
     testLCD->addStatusBits();

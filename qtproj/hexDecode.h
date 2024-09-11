@@ -31,6 +31,7 @@ public:
     uint32_t dataType;
     bool eraseFlag;
     bool beginDownloadState;
+    bool beginEraseState;
     uint32_t packetId;
     uint32_t packetSize = 512;
     uint32_t packetNum;
@@ -63,6 +64,7 @@ public:
         BMS_NACK,
         CMD_TYPE_ERR,
         CHECKSUM_ACK,
+        JUST_ERASE,
     };
 
     QByteArray n00dataArray;
