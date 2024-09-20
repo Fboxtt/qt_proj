@@ -96,6 +96,7 @@ public:
     QString displayData(void);
     QString csvName(void);
     QString csvData(void);
+    QString strArray(void);
     bool newDataStatus;
 
     QList<QString> keyList;
@@ -117,6 +118,13 @@ class sysStruct:public dataStruct
     using dataStruct::dataStruct;
     public:
         sysStruct();
+};
+
+class snStruct:public dataStruct
+{
+    using dataStruct::dataStruct;
+    public:
+        snStruct(int);
 };
 
 class tverStruct

@@ -1,4 +1,4 @@
-#include "widget.h"
+﻿#include "widget.h"
 #include "ui_widget.h"
 #include "textDecode0.h"
 
@@ -30,6 +30,8 @@ tverStruct *tverStru0;
 caliStruct *caliStru0;
 tbsStruct *tbsStru0;
 tbsStruct *testLCD;
+snStruct* snStru20;
+snStruct* snStru30;
 
 QStringList waitSendList;
 QStringList readySendList;
@@ -113,7 +115,8 @@ Widget::Widget(QWidget *parent)
     tbsStru0 = new tbsStruct();
     testLCD = new tbsStruct();
     sysStru0 = new sysStruct();
-
+    snStru20 = new snStruct(20);
+    snStru30 = new snStruct(30);
     // 发送定时器初始化
     sendTim = new QTimer();
     sendTim->setInterval(SEND_INTERVAL);
@@ -216,6 +219,14 @@ void Widget::ReadSerialTimeOut()
                 csv::dataToCsv(fileName, sysStru0);
             }
         }
+    }
+    if(snStru20->newDataStatus == true) {
+        this->DisplaySnCode(snStru20->strArray());
+        snStru20->newDataStatus = false;
+    }
+    if(snStru30->newDataStatus == true) {
+        this->DisplaySnCode(snStru30->strArray());
+        snStru30->newDataStatus = false;
     }
 
     if(receiveDecode.contains("数据非法")) {
@@ -885,4 +896,14 @@ void Widget::on_pushButton_13_clicked()
     sysStru0->value("系统电池数量")->uintVal = ui->comboBox->currentIndex() + 1;
     sysStru0->value("系统SOC值")->uintVal = 50;
     waitSendList.append(sysStru0->OutPutStru());
+}
+
+void Widget::on_GetSnCode_clicked()
+{
+    QString sendData = "00 00 04 01 10 55 AA 14";
+    waitSendList.append(sendData);
+}
+void Widget::DisplaySnCode(QString str)
+{
+    ui->versionLabel->setText(str);
 }

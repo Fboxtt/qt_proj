@@ -8,6 +8,8 @@ extern QStringList waitSendList;
 extern QStringList readySendList;
 extern QStringList hexSendList;
 extern sysStruct* sysStru0;
+extern snStruct* snStru20;
+extern snStruct* snStru30;
 extern hexDecode hexFile;
 datTypDic::datTypDic(DATA_TYPE type, QString typeName, uint32_t typeLenth, ENDIAN_TYPE endianType, SIGNED_TYPE signedType)
 {
@@ -304,6 +306,18 @@ sysStruct::sysStruct()
     this->value("错误状态HEX")->bitMap.insert(0x10,"电芯异常");
     this->value("错误状态HEX")->bitMap.insert(0x100,"电芯寿命终止");
 
+}
+
+// ***************************************snStruct**************************************//
+// ***************************************snStruct**************************************//
+snStruct::snStruct(int SnNum)
+{
+    this->dataLenth = 0;
+    this->newDataStatus = false;
+    this->cmdType = 0x30;
+    for(uint8_t i = 0; i < SnNum; i++) {
+        this->insert({"预留" + QString::number(i) , datTypDic::BYTE});
+    }
 }
 // ***************************************tver**************************************//
 tver::tver(QString valName, datTypDic::DATA_TYPE dataType, uint32_t lenth)
@@ -665,6 +679,9 @@ QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
         HexWriteDataStruct(hexStrLis.mid(16, sysStru0->dataLenth), sysStru0);
     } else if (hexStrLis.size() > 8 && (hexStrLis[4].toInt(&ok, 16)) == 0xb0) {
         HexWriteDataStruct(hexStrLis.mid(8, sysStru0->dataLenth), sysStru0);
+    } else if (hexStrLis.size() > 8 && (hexStrLis[4].toInt(&ok, 16)) == 0x90) {
+        HexWriteDataStruct(hexStrLis.mid(8, snStru20->dataLenth), snStru20);
+        HexWriteDataStruct(hexStrLis.mid(8, snStru30->dataLenth), snStru30);
     } else {
         // qDebug() << "dataList <= 8 or datalist[4] != 93";
     }
@@ -1255,4 +1272,13 @@ QString dataStruct::csvData(void)
         }
     }
     return csvDataLine;
+}
+
+QString dataStruct::strArray(void)
+{
+    QString output = "";
+    foreach(dataCell cell, dataCellList) {
+        output += QString(cell.byteArray);
+    }
+    return output;
 }

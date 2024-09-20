@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1178</width>
-    <height>637</height>
+    <height>657</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -894,6 +894,13 @@
       <string>电池信息</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_17">
+      <item row="0" column="0">
+       <widget class="QPushButton" name="getVersionButton">
+        <property name="text">
+         <string>获取芯片版本信息</string>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="1">
        <spacer name="horizontalSpacer_2">
         <property name="orientation">
@@ -907,17 +914,17 @@
         </property>
        </spacer>
       </item>
-      <item row="0" column="0">
-       <widget class="QPushButton" name="getVersionButton">
+      <item row="2" column="0">
+       <widget class="QLabel" name="versionLabel">
         <property name="text">
-         <string>获取芯片版本信息</string>
+         <string/>
         </property>
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="versionLabel">
+       <widget class="QPushButton" name="GetSnCode">
         <property name="text">
-         <string/>
+         <string>获取SN码</string>
         </property>
        </widget>
       </item>
