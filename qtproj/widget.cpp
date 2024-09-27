@@ -205,16 +205,20 @@ qDebug()<<"++++++++++定时器结束时间:"<<QTime::currentTime();
 
         this->on_pushButton_13_clicked(); // 读取上位机内Editline的数据
         sysStru0->beingReading = false;
-        readySendList.append(sysStru0->OutPutStru()); // 发送列表加上待发送数据
+        if(ui->replyRadioButton->isChecked()) {
+            readySendList.append(sysStru0->OutPutStru()); // 发送列表加上待发送数据
+        }
     }
     if(testLCD->beingReading == true) {
         this->on_tbsReply_clicked();
         testLCD->beingReading = false;
-        if(ui->checkBox_3->checkState() == Qt::Checked) {
-            readySendList.append(testLCD->OutPutStru());
-        } else {
-            if(testLCD->deviceAddr == (uint32_t)ui->comboBox_2->currentIndex()) {
+        if(ui->replyRadioButton->isChecked()) { //是否打开了监听功能
+            if(ui->checkBox_3->checkState() == Qt::Checked) {
                 readySendList.append(testLCD->OutPutStru());
+            } else {
+                if(testLCD->deviceAddr == (uint32_t)ui->comboBox_2->currentIndex()) {
+                    readySendList.append(testLCD->OutPutStru());
+                }
             }
         }
     }
@@ -344,7 +348,7 @@ void Widget::on_sendRegisterBox_clicked()
 void Widget::sendCmdListFunc()
 {
     QString tbsSendData = "00 00 04 01 13 55 AA 17";
-    int waitCount = 0;
+//    int waitCount = 0;
 
 //    if(waitCount >= 20) {
 //        // 如果waitSendList有命令则发送最新入栈的cmd
@@ -437,7 +441,7 @@ void Widget::on_pushButton_8_clicked()
 void Widget::on_pushButton_7_clicked()
 {
     QString fileName = ui->lineEdit_2->text();
-    csv::tbsToCsv(ui, fileName, &dcode0);
+    csv::tbsToCsv(ui, fileName);
 }
 
 void Widget::on_pushButton_2_clicked()

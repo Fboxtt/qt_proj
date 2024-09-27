@@ -26,7 +26,7 @@ bool csv::createDir(QString fileName)
     return true;
 }
 
-void csv::tbsToCsv(Ui::Widget *ui, QString fileName, textDcode* dcode0)
+void csv::tbsToCsv(Ui::Widget *ui, QString fileName)
 {
     QStringList timeAndDataList, dataList;
     QStringList strListToCsv;

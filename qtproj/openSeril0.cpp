@@ -239,7 +239,7 @@ QString serial::SerialSend(Ui::Widget *ui, QString Data)
     return Data;
 }
 
-void serial::SerialSend(Ui::Widget *ui, QByteArray Data)
+void serial::SerialSend(QByteArray Data)
 {
     // 写入发送缓存区
     qDebug() << Data << "send data";

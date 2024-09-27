@@ -17,7 +17,7 @@ public:
     csv();
     static void saveCsv(QString fileName, QStringList strListToCsv);
     static bool createDir(QString fileName);
-    static void tbsToCsv(Ui::Widget *ui, QString fileName, textDcode* dcode0);
+    static void tbsToCsv(Ui::Widget *ui, QString fileName);
     static bool ReadCsv(QFile *file, QString fileName);
     static bool ReadCsvFile(QFile *file, QStringList* strList);
     
