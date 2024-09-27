@@ -579,6 +579,10 @@ QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
         HexWriteDataStruct(hexStrLis.mid(8, caliStru0->dataLenth), caliStru0);
     } else if (hexStrLis.size() > 8 && (hexStrLis[4].toInt(&ok, 16) == 0xb0)) {
         HexWriteDataStruct(hexStrLis.mid(8, sysStru0->dataLenth), sysStru0);
+    // 屏幕和电池互发，数据会连在一起，截取后段进行解析    
+    } else if ((hexStrLis.size() >= ((int)sysStru0->dataLenth + 8)) && (hexStrLis[4].toInt(&ok, 16) == 0x30)) {
+        // 把数据写入tbsUnit
+        HexWriteDataStruct(hexStrLis.mid(16, sysStru0->dataLenth), sysStru0); // 需要改成自适应
     } else {
         qDebug() << "dataList <= 8 or datalist[4] != 93";
     }
