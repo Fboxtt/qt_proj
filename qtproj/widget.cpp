@@ -243,7 +243,7 @@ void Widget::ReadSerialTimeOut()
     }
     ui->listWidget->setCurrentRow(row - 1);
     this->SetTbsToTableAndChart(ui->listWidget->item(row - 1), 1);
-    
+
 //    qDebug() << "ou ++++ timeout     time"<< QTime::currentTime();
     // 开启tbs定时读取定时器
    sendTim->start();
@@ -906,4 +906,10 @@ void Widget::on_GetSnCode_clicked()
 void Widget::DisplaySnCode(QString str)
 {
     ui->versionLabel->setText(str);
+}
+
+void Widget::on_readBootInfButton_clicked()
+{
+    QString sendData = "00 00 04 01 5A 55 AA 5E";
+    waitSendList.append(sendData);
 }

@@ -88,6 +88,8 @@ private slots:
 
     void on_GetSnCode_clicked();
 
+    void on_readBootInfButton_clicked();
+
 private:
     Ui::Widget *ui; //似乎是定义了一个类指针
     QTimer *tim;
