@@ -48,14 +48,19 @@ public:
 
     QTime downloadStartTim;
     enum bmsCmdType {
-        READ_BOOT_CODE_INF = 0x10,
-        READ_IC_INF = 0x51,
-        HEX_INFO,
-        ENTER_BOOTMODE,
-        EARSE_ALL,
-        WRITE_FLASH,
-        READ_FLASH,
-        REC_TOTAL_CHECKSUM,
+        READ_IC_INF         = 0x51,
+        HEX_INFO            = 0x52,
+        GET_BT_VERSION      = 0x53,
+
+        DOWNLOAD_BUFFER     = 0x55,
+        ENTER_BOOTMODE      = 0x56,
+        WRITE_FLASH         = 0x57,
+        REC_TOTAL_CHECKSUM  = 0x58,
+        READ_FLASH          = 0x59,
+        ENTER_APP           = 0x5A,
+        
+        DOWNLOAD_BACKUP     = 0x5C,
+
     };
     enum Download_ERR {
         DOWNLOAD_OK = true,

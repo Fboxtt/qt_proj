@@ -250,14 +250,8 @@ QString hexDecode::packetToSendString(bmsCmdType cmdType, uint32_t packetId)
 bool hexDecode::isDownLoadCmd(char cmd)
 {
     cmd &= 0x7f;
-    if(cmd == hexDecode::READ_BOOT_CODE_INF || \
-            cmd == hexDecode::READ_IC_INF || \
-            cmd == hexDecode::HEX_INFO || \
-            cmd == hexDecode::EARSE_ALL || \
-            cmd == hexDecode::ENTER_BOOTMODE || \
-            cmd == hexDecode::WRITE_FLASH || \
-            cmd == hexDecode::READ_FLASH || \
-            cmd == hexDecode::REC_TOTAL_CHECKSUM) {
+    if(cmd >= hexDecode::READ_IC_INF && cmd <= hexDecode::DOWNLOAD_BACKUP
+            ) {
         return true;
     } else {
         return false;
@@ -284,17 +278,17 @@ uint8_t hexDecode::DownLoadProcess(textStruct text, QString* outPutStr)
         *outPutStr = this->packetToSendString(this->ENTER_BOOTMODE, this->packetId);
         return true;
     }
-    if(text.cmd == (hexDecode::EARSE_ALL | 0x80)) { // 判断擦除flash成功返回
+    if(text.cmd == (hexDecode::DOWNLOAD_BUFFER | 0x80)) { // 判断擦除flash成功返回
         if(text.ACK == textStruct::ACK_OK) {
             eraseFlag = 1;
         }
     }
     if(eraseFlag == 0) { // 进入擦除模式
-        *outPutStr = this->packetToSendString(this->EARSE_ALL, this->packetId);
+        *outPutStr = this->packetToSendString(this->DOWNLOAD_BUFFER, this->packetId);
         return true;
     }
 
-    if((text.cmd == (hexDecode::EARSE_ALL| 0x80)) && eraseFlag == 1) {
+    if((text.cmd == (hexDecode::DOWNLOAD_BUFFER| 0x80)) && eraseFlag == 1) {
         if(this->hexLenth == 0 || this->beginEraseState == true) { // 没有烧录内容，则认为烧录完成
             this->beginEraseState = false;
             return JUST_ERASE;
