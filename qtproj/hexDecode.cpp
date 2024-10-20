@@ -250,8 +250,7 @@ QString hexDecode::packetToSendString(bmsCmdType cmdType, uint32_t packetId)
 bool hexDecode::isDownLoadCmd(char cmd)
 {
     cmd &= 0x7f;
-    if(cmd >= hexDecode::READ_IC_INF && cmd <= hexDecode::DOWNLOAD_BACKUP
-            ) {
+    if(cmd >= hexDecode::READ_IC_INF && cmd <= hexDecode::DOWNLOAD_BACKUP) {
         return true;
     } else {
         return false;

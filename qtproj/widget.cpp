@@ -908,8 +908,20 @@ void Widget::DisplaySnCode(QString str)
     ui->versionLabel->setText(str);
 }
 
-void Widget::on_readBootInfButton_clicked()
+void Widget::on_readBtVer_14_clicked()
 {
-    QString sendData = "00 00 04 01 5A 55 AA 5E";
+    QString sendData = "00 00 04 01 53 55 AA 57";
+    waitSendList.append(sendData);
+}
+
+void Widget::on_readAPPVer_clicked()
+{
+    QString sendData = "00 00 04 01 16 55 AA 1A";
+    waitSendList.append(sendData);
+}
+
+void Widget::on_readBackupVer_clicked()
+{
+    QString sendData = "00 00 04 01 18 55 AA 1C";
     waitSendList.append(sendData);
 }
