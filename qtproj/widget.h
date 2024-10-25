@@ -88,11 +88,9 @@ private slots:
 
     void on_GetSnCode_clicked();
 
-    void on_readBtVer_14_clicked();
-
     void on_readAPPVer_clicked();
 
-    void on_readBackupVer_clicked();
+    void on_pushButton_15_clicked();
 
 private:
     Ui::Widget *ui; //似乎是定义了一个类指针
@@ -114,6 +112,8 @@ public slots:
     void sendHexListFunc();
 
     void DisplaySnCode(QString str);
+
+    void sendSomeCmd(void);
 };
 
 

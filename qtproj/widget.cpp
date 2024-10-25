@@ -908,20 +908,40 @@ void Widget::DisplaySnCode(QString str)
     ui->versionLabel->setText(str);
 }
 
-void Widget::on_readBtVer_14_clicked()
-{
-    QString sendData = "00 00 04 01 53 55 AA 57";
-    waitSendList.append(sendData);
-}
-
 void Widget::on_readAPPVer_clicked()
 {
     QString sendData = "00 00 04 01 16 55 AA 1A";
     waitSendList.append(sendData);
 }
 
-void Widget::on_readBackupVer_clicked()
+static QTimer *testRebackTim;
+void Widget::sendSomeCmd()
 {
-    QString sendData = "00 00 04 01 18 55 AA 1C";
-    waitSendList.append(sendData);
+    QString sendData = "00 00 04 01 13 55 AA 17";
+    bool ok = true;
+    static int count = 0;
+    if(count < ui->lineEdit_5->text().toInt(&ok,10)) {
+        SendAndDecode(sendData);
+        count++;
+    } else {
+        count = 0;
+        testRebackTim->stop();
+    }
+}
+
+void Widget::on_pushButton_15_clicked()
+{
+    static int i = 0;
+
+    bool ok = true;
+    if(i == 0) {
+        i = 1;
+        testRebackTim = new QTimer();
+        testRebackTim->setInterval(ui->lineEdit_4->text().toInt(&ok,10));
+        connect(testRebackTim, SIGNAL(timeout()), this, SLOT(sendSomeCmd()));
+        testRebackTim->start();
+    } else {
+        testRebackTim->setInterval(ui->lineEdit_4->text().toInt(&ok,10));
+        testRebackTim->start();
+    }
 }
