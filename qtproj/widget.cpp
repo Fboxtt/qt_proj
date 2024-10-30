@@ -945,3 +945,40 @@ void Widget::on_pushButton_15_clicked()
         testRebackTim->start();
     }
 }
+
+void Widget::on_SaveDataButton_clicked()
+{
+    QString fileName = QString("%1").arg(QDateTime::currentDateTime().toString("yyyyMMdd_HH_mm_ss"));
+    fileName = QFileDialog::getSaveFileName(this,tr("Open hex"), "/home/" + fileName, tr("(*.csv)"));
+    if (fileName.isEmpty()) {
+        return;
+    }
+
+    qDebug() << "listwidgetcount" << ui->receiveData->blockCount();
+    if(ui->receiveData->blockCount() < 1)
+    {
+        return;
+    }
+
+    QString txtData = ui->receiveData->document()->toPlainText();
+
+    QDir dir(fileName);
+
+    QFile file;
+    file.setFileName(fileName);
+    if(!file.open(QIODevice::Append))
+    {
+        qDebug()<<"文件打开失败";
+        file.close();
+        return;
+    }
+
+    QTextCodec* codec = QTextCodec::codecForName("UTF-8");
+
+    QByteArray encodedLine = codec->fromUnicode(txtData);
+    file.write(encodedLine);
+//    }
+
+    file.close();
+    return;
+}

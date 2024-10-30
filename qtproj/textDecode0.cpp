@@ -183,7 +183,7 @@ tbsStruct::tbsStruct()
     this->insert({"剩余容量%", datTypDic::USHORT});
     this->insert({"电池健康%", datTypDic::ULONG});
     this->insert({"放电次数", datTypDic::ULONG});
-    this->insert({"总充电次数", datTypDic::ULONG});
+    this->insert({"放电总容量", datTypDic::ULONG});
 
     this->cmdType = 0x13;
 }
