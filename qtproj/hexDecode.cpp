@@ -133,7 +133,7 @@ QString hexDecode::ReadHexFile(QFile *file)
 
         // 检查校验和是否正确
         if(dataCheckSum != (uint8_t)(0x100 - dataCheck)) {
-            decodeLog += QString(": 校验错误------------错误行号 = %1\n").arg(lineNumber);
+            decodeLog += QString(": 校验错误------------错误行号 = %1实际是0x%2\n").arg(lineNumber).arg(0x100 - dataCheckSum,2,16);
         }
     }
     // 获取扩展线性地址 08 00 -> 0x0800, 获取程序起始地址
@@ -277,17 +277,36 @@ uint8_t hexDecode::DownLoadProcess(textStruct text, QString* outPutStr)
         *outPutStr = this->packetToSendString(this->ENTER_BOOTMODE, this->packetId);
         return true;
     }
-    if(text.cmd == (hexDecode::DOWNLOAD_BUFFER | 0x80)) { // 判断擦除flash成功返回
-        if(text.ACK == textStruct::ACK_OK) {
-            eraseFlag = 1;
+
+    if(this->downloadBackupFlag == true) {
+        if(text.cmd == (hexDecode::DOWNLOAD_BACKUP | 0x80)) {  // 判断烧录备份握手次数
+            if(text.ACK == textStruct::ACK_OK) {
+                this->shakeBackupSuccTim++;
+            }
+        }
+        if(this->shakeBackupSuccTim < SHAKE_BACKUP_TIME_LIMIT) {
+            *outPutStr = this->packetToSendString(this->DOWNLOAD_BACKUP, this->packetId);
+            return true;
+        }
+        eraseFlag = 1;
+    } else {
+        if(text.cmd == (hexDecode::DOWNLOAD_BUFFER | 0x80)) { // 判断擦除flash成功返回
+            if(text.ACK == textStruct::ACK_OK) {
+                eraseFlag = 1;
+            }
+        }
+        if(eraseFlag == 0) { // 进入擦除模式
+            *outPutStr = this->packetToSendString(this->DOWNLOAD_BUFFER, this->packetId);
+            return true;
         }
     }
-    if(eraseFlag == 0) { // 进入擦除模式
-        *outPutStr = this->packetToSendString(this->DOWNLOAD_BUFFER, this->packetId);
-        return true;
-    }
 
-    if((text.cmd == (hexDecode::DOWNLOAD_BUFFER| 0x80)) && eraseFlag == 1) {
+
+
+
+    if(((text.cmd == (hexDecode::DOWNLOAD_BUFFER | 0x80)) && eraseFlag == 1) || \
+        ((text.cmd == (hexDecode::DOWNLOAD_BACKUP | 0x80)) && eraseFlag == 1))
+    {
         if(this->hexLenth == 0 || this->beginEraseState == true) { // 没有烧录内容，则认为烧录完成
             this->beginEraseState = false;
             return JUST_ERASE;

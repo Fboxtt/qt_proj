@@ -777,7 +777,7 @@ void Widget::on_pushButton_4_clicked()
 void Widget::on_pushButton_11_clicked()
 {
     // 读取ic
-    QString sendData = "00 00 04 01 51 55 AA 55";
+    QString sendData = "00 00 04 01 71 55 AA 75";
     waitSendList.append(sendData);
 
 }
@@ -799,6 +799,8 @@ void Widget::on_pushButton_12_clicked()
         this->sendCmdListFunc();
         return;
     }
+    hexFile.downloadBackupFlag = false;
+    hexFile.shakeBackupSuccTim = 0;
 }
 
 void Widget::tbsRepayInit()
@@ -981,4 +983,21 @@ void Widget::on_SaveDataButton_clicked()
 
     file.close();
     return;
+}
+
+void Widget::on_pushButton_14_clicked()
+{
+    hexFile.DownloadClear();
+
+    if(hexFile.beginDownloadState == 0) {
+        hexFile.downloadStartTim = QTime::currentTime();
+        hexFile.beginDownloadState = 1;
+    }
+    if(hexFile.shakeSuccessTime < 3) {
+        QString writeStr = hexFile.packetToSendString(hexDecode::ENTER_BOOTMODE);
+        hexSendList.append(writeStr);
+        this->sendCmdListFunc();
+    }
+    hexFile.downloadBackupFlag = true;
+    hexFile.shakeBackupSuccTim = 0;
 }

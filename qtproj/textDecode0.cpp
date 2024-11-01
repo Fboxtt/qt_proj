@@ -750,7 +750,7 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
         qDebug() << "6.1.9==================DownLoadProcess";
         if(hexDecode::isDownLoadCmd(destinyText.cmd)) { // 判断收到的命令是否是烧录相关命令
             QString outPutStr;
-            uint8_t downState = hexFile.DownLoadProcess(destinyText, &outPutStr);   // 进入烧录程序
+            uint8_t downState = hexFile.DownLoadProcess(destinyText, &outPutStr);   // 进入烧录程序,获得下一步状态和发送内容
             QString downloadInfo = QString("packetSendingNum / packetSize = %1 / %2").arg(hexFile.packetId).arg(hexFile.packetNum);
             if(hexFile.isErrExceeding()) {
                 downState = hexDecode::DOWNLOAD_DONE;

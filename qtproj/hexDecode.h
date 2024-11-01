@@ -17,7 +17,7 @@
 #endif // HEXDECODE_H
 
 #define SHAKE_TIME_LIMIT 3
-
+#define SHAKE_BACKUP_TIME_LIMIT 3
 class hexDecode {
 
 public:
@@ -37,6 +37,9 @@ public:
     uint32_t packetNum;
     uint32_t shakeSuccessTime;
 
+    bool downloadBackupFlag = 0;
+    uint32_t shakeBackupSuccTim = 0;
+
     uint32_t writeSuccessTime;
     QList<bool> hexPacketoK;
 
@@ -48,19 +51,19 @@ public:
 
     QTime downloadStartTim;
     enum bmsCmdType {
-        READ_IC_INF         = 0x51,
-        HEX_INFO            = 0x52,
-        GET_BT_VERSION      = 0x53,
+        READ_IC_INF         = 0x71,
+//        HEX_INFO            = 0x72,
+//        GET_BT_VERSION      = 0x53,
 
-        DOWNLOAD_BUFFER     = 0x55,
-        ENTER_BOOTMODE      = 0x56,
-        WRITE_FLASH         = 0x57,
-        REC_TOTAL_CHECKSUM  = 0x58,
-        READ_FLASH          = 0x59,
-        ENTER_APP           = 0x5A,
+        DOWNLOAD_BUFFER     = 0x75,
+        ENTER_BOOTMODE      = 0x76,
+        WRITE_FLASH         = 0x77,
+        REC_TOTAL_CHECKSUM  = 0x78,
+        READ_FLASH          = 0x79,
+        ENTER_APP           = 0x7A,
         
-        DOWNLOAD_BACKUP     = 0x5C,
-
+        DOWNLOAD_BACKUP     = 0x7C,
+        RESTORE_BACKUP      = 0x7D,
     };
     enum Download_ERR {
         DOWNLOAD_OK = true,
