@@ -767,11 +767,12 @@ void Widget::on_pushButton_4_clicked()
         hexFile.downloadStartTim = QTime::currentTime();
         hexFile.beginDownloadState = 1;
     }
+    hexFile.downloadBackupFlag = false;
+    hexFile.shakeBackupSuccTim = 0;
     if(hexFile.shakeSuccessTime < 3) {
         QString writeStr = hexFile.packetToSendString(hexDecode::ENTER_BOOTMODE);
         hexSendList.append(writeStr);
         this->sendCmdListFunc();
-        return;
     }
 }
 void Widget::on_pushButton_11_clicked()
@@ -797,7 +798,6 @@ void Widget::on_pushButton_12_clicked()
         QString writeStr = hexFile.packetToSendString(hexDecode::ENTER_BOOTMODE);
         hexSendList.append(writeStr);
         this->sendCmdListFunc();
-        return;
     }
     hexFile.downloadBackupFlag = false;
     hexFile.shakeBackupSuccTim = 0;
