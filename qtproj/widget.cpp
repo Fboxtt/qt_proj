@@ -123,6 +123,11 @@ Widget::Widget(QWidget *parent)
     connect(sendTim, SIGNAL(timeout()), this, SLOT(sendCmdListFunc()));
     sendTim->start();
     this->tbsRepayInit();
+
+    QPushButton* forceRestoreBackup = new QPushButton(this);
+    ui->gridLayout_6->addWidget(forceRestoreBackup, 6, 1);
+    forceRestoreBackup->setText("强制恢复备份区");
+    connect(forceRestoreBackup, &QPushButton::clicked, this, &Widget::restoreBackup_clicked);
 }
 
 Widget::~Widget()
@@ -1000,4 +1005,12 @@ void Widget::on_pushButton_14_clicked()
     }
     hexFile.downloadBackupFlag = true;
     hexFile.shakeBackupSuccTim = 0;
+}
+
+
+void Widget::restoreBackup_clicked()
+{
+    qDebug() << "output_test restoreBackup";
+    QString sendData = "00 00 04 01 7D 55 AA 81";
+    waitSendList.append(sendData);
 }

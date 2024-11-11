@@ -118,6 +118,8 @@ public slots:
     void DisplaySnCode(QString str);
 
     void sendSomeCmd(void);
+
+    void restoreBackup_clicked();
 };
 
 
