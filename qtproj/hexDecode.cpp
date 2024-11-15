@@ -257,6 +257,21 @@ bool hexDecode::isDownLoadCmd(char cmd)
     }
 }
 
+//typedef enum {
+//    ENTER_CMD = 0xA,
+//    BUFFER_CMD = 0xB,
+//    BACKUP_CMD = 0XC,
+//    BUFFER_FLAG = 0xAAAB,
+//    BACKUP_FLAG  = 0xACCC,
+//}SHAKE_FLAG;
+
+//static uint32_t g_shakehandFlag = 0x0;
+//void SetShakehandFlag(SHAKE_FLAG flag)
+//{
+//    g_shakehandFlag |= flag;
+//    g_shakehandFlag = g_shakehandFlag << 8;
+//}
+
 uint8_t hexDecode::DownLoadProcess(textStruct text, QString* outPutStr)
 {
     QByteArray outPutArray;
@@ -267,18 +282,19 @@ uint8_t hexDecode::DownLoadProcess(textStruct text, QString* outPutStr)
     if(this->beginDownloadState != true) { // 判断是否开始烧录
         return false;
     }
-    if(text.cmd == (hexDecode::ENTER_BOOTMODE | 0x80)) {  // 判断握手次数
-        if(text.ACK == textStruct::ACK_OK) {
-            this->shakeSuccessTime++;
-        }
-    }
-
-    if(shakeSuccessTime < SHAKE_TIME_LIMIT) { // 握手次数不够，则继续握手
-        *outPutStr = this->packetToSendString(this->ENTER_BOOTMODE, this->packetId);
-        return true;
-    }
 
     if(this->downloadBackupFlag == true) {
+        //烧录备份区握手过程
+        if(text.cmd == (hexDecode::ENTER_BOOTMODE | 0x80)) {  // 判断握手次数
+            if(text.ACK == textStruct::ACK_OK) {
+                this->shakeSuccessTime++;
+            }
+        }
+
+        if(shakeSuccessTime < 1) { // 握手次数不够，则继续握手
+            *outPutStr = this->packetToSendString(this->ENTER_BOOTMODE, this->packetId);
+            return true;
+        }
         if(text.cmd == (hexDecode::DOWNLOAD_BACKUP | 0x80)) {  // 判断烧录备份握手次数
             if(text.ACK == textStruct::ACK_OK) {
                 this->shakeBackupSuccTim++;
@@ -289,8 +305,19 @@ uint8_t hexDecode::DownLoadProcess(textStruct text, QString* outPutStr)
             return true;
         }
         eraseFlag = 1;
-    } else {
-        if(text.cmd == (hexDecode::DOWNLOAD_BUFFER | 0x80)) { // 判断擦除flash成功返回
+    } else { //烧录缓冲区握手过程
+        if(text.cmd == (hexDecode::ENTER_BOOTMODE | 0x80)) {  // 判断握手次数
+            if(text.ACK == textStruct::ACK_OK) {
+                this->shakeSuccessTime++;
+            }
+        }
+
+        if(shakeSuccessTime < 3) { // 握手次数不够，则继续握手
+            *outPutStr = this->packetToSendString(this->ENTER_BOOTMODE, this->packetId);
+            return true;
+        }
+
+        if(text.cmd == (hexDecode::DOWNLOAD_BUFFER | 0x80)) { // 判断烧录buffer握手次数
             if(text.ACK == textStruct::ACK_OK) {
                 eraseFlag = 1;
             }
