@@ -895,7 +895,7 @@ void textDcode::IntWriteTbs(QStringList dataList)
             uintVal = hexStr.toUInt(&ok, 16);
             tbsStru0->dataCellList[tbsUnitIdx].uintVal = uintVal;
         } else if(tbsStru0->dataCellList[tbsUnitIdx].valName.contains("电流")) {
-            uintVal = hexStr.toUInt(&ok, 10);
+            uintVal = hexStr.toInt(&ok, 10);
             tbsStru0->dataCellList[tbsUnitIdx].uintVal = uintVal;
         } else {
             uintVal = hexStr.toUInt(&ok, 10);
