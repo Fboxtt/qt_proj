@@ -296,7 +296,7 @@ uint8_t hexDecode::DownLoadProcess(textStruct text, QString* outPutStr)
             return true;
         }
         if(text.cmd == (hexDecode::DOWNLOAD_BACKUP | 0x80)) {  // 判断烧录备份握手次数
-            if(text.ACK == textStruct::ACK_OK) {
+            if(text.ACK == textStruct::ACK_OK || text.ACK == textStruct::ACK_SHAKE_SUCCESS) {
                 this->shakeBackupSuccTim++;
             }
         }
@@ -318,7 +318,7 @@ uint8_t hexDecode::DownLoadProcess(textStruct text, QString* outPutStr)
         }
 
         if(text.cmd == (hexDecode::DOWNLOAD_BUFFER | 0x80)) { // 判断烧录buffer握手次数
-            if(text.ACK == textStruct::ACK_OK) {
+            if(text.ACK == textStruct::ACK_OK || text.ACK == textStruct::ACK_SHAKE_SUCCESS) {
                 eraseFlag = 1;
             }
         }

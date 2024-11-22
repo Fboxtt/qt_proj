@@ -25,12 +25,13 @@ public:
     };
     enum ACK_STATE {
         ACK_OK = 0x0,
-        ACK_LENTH_ERR,
+        ACK_LENTH_ERR = 0x02,
         ACK_TYPE_ERR,
         ACK_ID_ERR,
         ACK_SHAKE_ERR,
         ACK_CHECK_ERR,
         ACK_PACKET_ERR,
+        ACK_SHAKE_SUCCESS = 0x29,
     };
     textStruct(){
         byteLenth = 0;
