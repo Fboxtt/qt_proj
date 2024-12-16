@@ -26,6 +26,12 @@ public:
 private:
 
 public:
+
+
+    QByteArray receiveHex;
+    QString receiveStr;
+    QString receiveTimeStr;
+
     void TimeOut(Ui::Widget *ui, QTimer *tim);
 
     enum BAT_COMMAND_SEND_STATUS {

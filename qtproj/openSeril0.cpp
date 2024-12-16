@@ -156,17 +156,19 @@ void serial::TimeOut(Ui::Widget *ui, QTimer *readTim)
 {
     QString utf8Buffer;
     //从缓冲区中读取数据
-    QByteArray buffer = SerialPort.readAll();
-    QByteArray testbu ;
+    this->receiveHex.clear();
+    this->receiveStr.clear();
+    this->receiveTimeStr.clear();
+    this->receiveHex = SerialPort.readAll();
 
-    qDebug() << buffer << "serial read buffer";
+//    qDebug() << buffer << "serial read buffer";
     QString gbkBuffer;
-    if(!buffer.isEmpty())//如果非空说明有数据接收
+    if(!this->receiveHex.isEmpty())//如果非空说明有数据接收
     {   //转换成16进制大写
-        QString str=buffer.toHex().data();
+        QString str=this->receiveHex.toHex().data();
         str=str.toUpper();
         
-        gbkBuffer = QString::fromLocal8Bit(buffer);
+        gbkBuffer = QString::fromLocal8Bit(this->receiveHex);
         //一个16进制占4位，8位为一字节，所以每两位16进制空一格
         qDebug() << "7.0.1把字符串中间添加空格";
         for(int i=0;i<str.length();i+=2)
@@ -175,34 +177,30 @@ void serial::TimeOut(Ui::Widget *ui, QTimer *readTim)
                utf8Buffer += str_1;
                utf8Buffer += " ";
         }
-        // utf8Buffer = utf8Buffer.simplified();
-        //读取之前显示数据
-        QString receive = ui->receiveData->toPlainText();
-        //清空显示
-        ui->receiveData->clear();
-        //重新显示
 
 //        if(serial::batComSendStatus == serial::COMPLETE) // 加换行符
 //        {
-            qDebug() << "complete func in" << "\r";
-            receive += "\r";
+        qDebug() << "complete func in" << "\r";
+//            receive += "\r";
 //        }
+
+        if(ui->hexDisplay->checkState() == Qt::Unchecked){ // 加数据
+            //直接显示
+            this->receiveStr = QString(gbkBuffer);
+        } else {
+            //16进制显示
+            this->receiveStr = QString(utf8Buffer);
+        }
         if (ui->TimeCheckBox->isChecked()) // 加时间戳
         {
-            receive += QString("[%1]:RX ->").arg(QTime::currentTime().toString("HH:mm:ss:zzz")) + COMUT_BAT_SEP;
+            this->receiveTimeStr += QString("[%1]:RX ->").arg(QTime::currentTime().toString("HH:mm:ss:zzz")) + COMUT_BAT_SEP + this->receiveStr;
         }
-        if(ui->hexDisplay->checkState() == Qt::Unchecked){ // 加数据
-            receive += QString(gbkBuffer);
-        }//直接显示
-        else{
-            receive += QString(utf8Buffer);
-        }//16进制显示
+
         qDebug() << "7.0.2信息框添加处理后的数据";
-        ui->receiveData->appendPlainText(receive);
+        ui->receiveData->appendPlainText(this->receiveTimeStr);
 //        serial::batComSendStatus = serial::INCOMPLETE;
     }
     readTim->stop(); // 开启定时器，如果100ms后没有收到数据，则换行；
-    buffer.clear();
 }
 
 void serial::ReadyRead(QTimer *readTim)

@@ -1,4 +1,4 @@
-﻿#include "widget.h"
+#include "widget.h"
 #include "ui_widget.h"
 #include "textDecode0.h"
 
@@ -313,7 +313,8 @@ void Widget::on_openBtn_clicked()
 void Widget::SerialPortReadyRead_slot()
 {
     qDebug() << "1===============串口收到数据" << QTime::currentTime();
-    se.ReadyRead(readTim);
+    // se.ReadyRead(readTim);
+    readTim->start();
 }
 
 void Widget::on_sendBox_clicked()
