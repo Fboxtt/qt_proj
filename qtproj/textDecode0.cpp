@@ -684,6 +684,7 @@ QString textDcode::AddTimeStamp(Ui::Widget *ui, QString decodeStr)
 }
 
 
+
 // 将plaintext 最后一个block内的可解析数据替换
 QString textDcode::PlainTextDecode(Ui::Widget *ui)
 {
@@ -1241,4 +1242,79 @@ QString dataStruct::strArray(void)
         output += QString(cell.byteArray);
     }
     return output;
+}
+
+bool textDcode::SplitData(QByteArray hex)
+{
+    this->haveHex = false;
+    this->legality = false;
+
+    this->actualLen = 0;
+
+    this->address = 0x00;
+
+    this->bmsType = 0;
+    this->cmd = 0;
+
+
+    this->dataLen = 0;
+
+    this->checkSum = 0;
+    this->ack = 0;
+
+
+    this->fullLen = 0;
+    if(hex.length() > 0) {
+        this->haveHex = true;
+        this->actualHex = hex;
+        this->actualLen = hex.length();
+    } else {
+        return false;
+    }
+    this->dataHex = this->actualHex.mid(8, this->dataLen);
+    this->fullHex = this->actualHex;
+
+    this->dataLen = this->actualHex[1] * 0x100 + this->actualHex[2];
+    this->cmd = this->actualHex[4];
+    this->no80Cmd = this->actualHex[4] & 0x7f;
+
+    this->ack = ERR_NO;
+    //计算单板类型到数据位的校验和
+    for(uint32_t i = 1; i < this->actualLen - 1; i++)
+    {
+       this->checkSum += (uint8_t)this->actualHex[i];
+    }
+    if((cmd & 0x80) == 0) {
+//        this->ack = ERR_CMD_ID;
+    } else {
+        if(this->actualLen != this->dataLen + 4) {
+            this->ack = ERR_CMD_LEN;
+        }
+    }
+    if( this->no80Cmd != PC_SET_WRITE_FLASH && \
+        this->no80Cmd != PC_SET_ALL_CHECKSUM && \
+        this->no80Cmd != PC_SET_DOWNLOAD_BUFFER && \
+        this->no80Cmd != PC_SET_DOWNLOAD_BACKUP) {
+
+        if(this->actualLen != 9) {
+            this->ack = ERR_CMD_LEN;
+        }
+    }
+    //校验成功,提取控制码
+    qDebug() << "aa = " << (uint8_t)actualHex.at(this->actualLen - 1);
+    if((uint8_t)this->checkSum != (uint8_t)actualHex.at(this->actualLen - 1))
+    {
+        this->ack = ERR_CHKSUM;
+    }
+    if(cmd == PC_SET_WRITE_FLASH) {
+        this->noPacketLen = this->dataLen - 2;//取长度
+        this->noPacketHex = this->dataHex.mid(2, this->noPacketLen);
+//     } else {
+//        noPacketLen = this->dataLen - 2;//取长度
+    }
+    if(this->ack != ERR_NO) {
+        return false;
+    } else {
+        return true;
+    }
 }

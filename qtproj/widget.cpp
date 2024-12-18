@@ -1,4 +1,4 @@
-#include "widget.h"
+﻿#include "widget.h"
 #include "ui_widget.h"
 #include "textDecode0.h"
 
@@ -198,7 +198,11 @@ void Widget::ReadSerialTimeOut()
     qDebug() << "7.0======";
     se.TimeOut(ui, readTim);
     qDebug() << "7.1======";
-    QString receiveDecode = dcode0.PlainTextDecode(ui);
+    QString receiveDecode = dcode0.PlainTextDecode(ui); // 数据解析和分类
+    if(dcode0.SplitData(se.receiveHex)) {
+
+    }
+    qDebug() << "7.1.1======" << dcode0.ack;
     if(hexSendList.size() > 0) {
         this->sendCmdListFunc();
         qDebug() << "7.2======";
