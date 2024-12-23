@@ -358,7 +358,32 @@ void Widget::SendAndDecode(QString sendData)
 
 void Widget::SendAndDecode(QByteArray sendArray)
 {
-    QString sendData = se.SerialSend(ui, sendArray);
+    QVector<char> charList(sendArray.size() + 8);
+    QByteArray sendArray0;
+    sendArray0.resize(sendArray.size() + 8);
+    int id = 7;
+    int i = 0;
+    charList[0] = 0x00;
+    charList[1] = (sendArray.size() + 4) / 256;
+    charList[2] = (sendArray.size() + 4);
+    charList[3] = 0x01;
+    charList[4] = 0x11;
+    charList[5] = 0x55;
+    charList[6] = 0xAA;
+
+    foreach(char data, sendArray) {
+        charList[id] = data;
+        id++;
+    }
+    for(i = 0; i < 6 + sendArray.size(); i++) {
+        // 计算校验和
+        charList[7 + sendArray.size()] += charList[i + 1];
+    }
+    for(i = 0; i < sendArray.size() + 8; i++) {
+        // char 转换成 QByteArray
+        sendArray0[i] = charList[i];
+    }
+    QString sendData = se.SerialSend(ui, sendArray0);
     qDebug() << "6.0==================发送数据函数sendata = " << sendData;
     // se.batComSendStatus = serial::COMPLETE;
     QString dcodeData = dcode0.AddTimeStamp(ui, sendData);
@@ -1104,4 +1129,18 @@ void Widget::serverSend(QString str)
 void Widget::serverReceive(QByteArray hex)
 {
     // server receive
+}
+
+void Widget::on_setSncode_clicked()
+{
+    QString sn = ui->lineEdit_6->text();
+    QByteArray snByteArray = sn.toUtf8();
+    if(snByteArray.size() > 10 && snByteArray.size() <= 20)
+    {
+        QByteArray byteEnd(20 - snByteArray.size(), '\0');
+        SendAndDecode(snByteArray.append(byteEnd));
+    } else if(snByteArray.size() > 20 && snByteArray.size() <= 30) {
+        QByteArray byteEnd(30 - snByteArray.size(), '\0');
+        SendAndDecode(snByteArray.append(byteEnd));
+    }
 }
