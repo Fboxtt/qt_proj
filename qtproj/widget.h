@@ -6,6 +6,9 @@
 #include <QPoint>
 #include <QListWidgetItem>
 #include <QLabel>
+
+#include <QTcpServer>
+#include <QTcpSocket>
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
 QT_END_NAMESPACE
@@ -101,6 +104,12 @@ private:
     QTimer *tim;
     QTimer *tbsTim = nullptr;
 
+    QTcpServer *server;
+    QTcpSocket *serverTcpSocket;
+    QString ip;
+    int port;
+
+
 public slots:
     void ReadSerialTimeOut();
     void SetTbsToTableAndChart(QListWidgetItem *item, int flag);
@@ -120,6 +129,10 @@ public slots:
     void sendSomeCmd(void);
 
     void restoreBackup_clicked();
+
+    void serverInit(void);
+    void serverReceive(QByteArray);
+    void serverSend(QString);
 };
 
 

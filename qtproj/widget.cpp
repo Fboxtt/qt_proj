@@ -19,6 +19,9 @@
 #include "chart.h"
 #include "hexDecode.h"
 
+#include <QTcpServer>
+#include <QTcpSocket>
+
 serial se;
 textDcode dcode0;
 QVector<QTableWidgetItem> itemTableList(80);
@@ -128,6 +131,9 @@ Widget::Widget(QWidget *parent)
     ui->gridLayout_6->addWidget(forceRestoreBackup, 6, 1);
     forceRestoreBackup->setText("强制恢复备份区");
     connect(forceRestoreBackup, &QPushButton::clicked, this, &Widget::restoreBackup_clicked);
+
+    // socket初始化
+    this->serverInit();
 }
 
 Widget::~Widget()
@@ -1020,4 +1026,82 @@ void Widget::restoreBackup_clicked()
     qDebug() << "output_test restoreBackup";
     QString sendData = "00 00 04 01 7D 55 AA 81";
     waitSendList.append(sendData);
+}
+
+void Widget::serverInit()
+{
+    server=new QTcpServer(this);
+    //2.设置服务器监听listen(ipAddr,port)
+    auto res=server->listen(QHostAddress::Any,8888);//返回监听成功与否，可能存在端口占用情况
+    //3.基于 QTcpServer::newConnection() 信号检测是否有新的客户端连接
+
+    ui->sendData->appendPlainText("[server] 初始化");
+
+    connect(server,&QTcpServer::newConnection,[=]()
+    {
+        ui->sendData->appendPlainText("[server] 发现新的连接");
+        serverTcpSocket=server->nextPendingConnection();//接收新的客户端连接，用于实际的收发处理
+
+        //4.收发处理,
+        //4.1 当收到数据请求时，tcpSocket会发射readyread信号
+        connect(serverTcpSocket,&QTcpSocket::readyRead,[=]()
+        {
+            //收到信息请求
+            auto sMsg=serverTcpSocket->readAll();
+            serverReceive(sMsg);
+            qDebug()<<"servar get Datas from the remote client:"<<sMsg;
+            ui->sendData->appendPlainText("[server] 收到数据:" + sMsg);
+        });
+        //4.2 写数据
+//        QByteArray sWriteMsg="Hello Client";
+//        ui->sendData->appendPlainText("[server] 发送数据:" + sWriteMsg);
+//        serverTcpSocket->write(sWriteMsg);
+    });
+}
+
+class testProcess {
+public:
+    testProcess();
+    ~testProcess();
+
+    enum STATUS {
+        build,
+        testing,
+        tested,
+    };
+    QStringList testNameList = {
+        "握手中断测试",
+        "发送HEX中断测试",
+        "发送校验不成功测试",
+        "发送错误命令后是否可以烧录",
+        "测试各种相关NACK是否能产生",
+        "正确烧录并完成之后功能是否正常",
+        "是否能识别识别出丢包的报文",
+        "",
+    };
+    QStringList cmdErrList = {
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+    };
+    uint8_t status = build;
+    QString log = "";
+
+    uint8_t testId = 0;
+};
+
+void Widget::serverSend(QString str)
+{
+    // server send
+    QByteArray sWriteMsg = str.toUtf8();
+    ui->sendData->appendPlainText("[server] 发送数据:" + str);
+    serverTcpSocket->write(sWriteMsg);
+}
+
+void Widget::serverReceive(QByteArray hex)
+{
+    // server receive
 }
