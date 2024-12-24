@@ -101,13 +101,15 @@ private slots:
 
     void on_setSncode_clicked();
 
+    void on_openTest_clicked();
+
 private:
     Ui::Widget *ui; //似乎是定义了一个类指针
     QTimer *tim;
     QTimer *tbsTim = nullptr;
 
     QTcpServer *server;
-    QTcpSocket *serverTcpSocket;
+    QTcpSocket *TcpSocket;
     QString ip;
     int port;
 
@@ -133,8 +135,12 @@ public slots:
     void restoreBackup_clicked();
 
     void serverInit(void);
-    void serverReceive(QByteArray);
-    void serverSend(QString);
+//    void serverReceive(QByteArray);
+//    void serverSend(QString);
+    void socketSend(void);
+
+    void shakeInterrruptTest();
+    void testProcess(QString key);
 };
 
 

@@ -1,0 +1,70 @@
+#ifndef SOCKET_H
+#define SOCKET_H
+#include <QWidget>
+#include <QTimer>
+#include <QPoint>
+#include <QListWidgetItem>
+#include <QLabel>
+
+#include <QTcpServer>
+#include <QTcpSocket>
+
+#include <QJsonDocument>
+#include <QJsonObject>
+
+
+class testObject {
+public:
+    testObject(){};
+//    ~testProcess();
+
+    enum STATUS {
+        build,
+        testing,
+        tested,
+    };
+    QStringList testNameList = {
+        "握手中断测试",
+        "发送HEX中断测试",
+        "发送校验不成功测试",
+        "发送错误命令后是否可以烧录",
+        "测试各种相关NACK是否能产生",
+        "正确烧录并完成之后功能是否正常",
+        "是否能识别识别出丢包的报文",
+        "",
+    };
+    QStringList cmdErrList = {
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+    };
+    uint8_t status = build;
+    QString log = "";
+
+    uint8_t testId = 0;
+    QTcpServer *server;
+    QTcpSocket *TcpSocket;
+    QJsonObject sJsonObj;
+    QJsonObject rJsonObj;
+
+    int step = 0;
+//    void serverSend(QString str);
+//    void serverReceive(QByteArray hex);
+
+    void QByteToJson(QByteArray);
+    QByteArray jsonToQByte();
+    void add(QString key, void* val);
+
+    QMap<QString, void*> handleMap;
+    int mapSize;
+
+    void* pFunc(QString key);
+
+
+};
+
+
+#endif // SOCKET_H

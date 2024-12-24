@@ -18,9 +18,14 @@
 #include "csv1.h"
 #include "chart.h"
 #include "hexDecode.h"
+#include "socket.h"
 
 #include <QTcpServer>
 #include <QTcpSocket>
+
+
+#include <QJsonDocument>
+#include <QJsonObject>
 
 serial se;
 textDcode dcode0;
@@ -44,6 +49,8 @@ QTimer *sendTim;
 QTimer *readTim;
 
 sysStruct *sysStru0;
+
+testObject testObj; // 测试程序，包括socket模块和json解析模块
 
 #define SEND_INTERVAL 20
 #define SEND_TBS_COUNT (1000/SEND_INTERVAL)
@@ -132,8 +139,6 @@ Widget::Widget(QWidget *parent)
     forceRestoreBackup->setText("强制恢复备份区");
     connect(forceRestoreBackup, &QPushButton::clicked, this, &Widget::restoreBackup_clicked);
 
-    // socket初始化
-    this->serverInit();
 }
 
 Widget::~Widget()
@@ -1053,84 +1058,6 @@ void Widget::restoreBackup_clicked()
     waitSendList.append(sendData);
 }
 
-void Widget::serverInit()
-{
-    server=new QTcpServer(this);
-    //2.设置服务器监听listen(ipAddr,port)
-    auto res=server->listen(QHostAddress::Any,8888);//返回监听成功与否，可能存在端口占用情况
-    //3.基于 QTcpServer::newConnection() 信号检测是否有新的客户端连接
-
-    ui->sendData->appendPlainText("[server] 初始化");
-
-    connect(server,&QTcpServer::newConnection,[=]()
-    {
-        ui->sendData->appendPlainText("[server] 发现新的连接");
-        serverTcpSocket=server->nextPendingConnection();//接收新的客户端连接，用于实际的收发处理
-
-        //4.收发处理,
-        //4.1 当收到数据请求时，tcpSocket会发射readyread信号
-        connect(serverTcpSocket,&QTcpSocket::readyRead,[=]()
-        {
-            //收到信息请求
-            auto sMsg=serverTcpSocket->readAll();
-            serverReceive(sMsg);
-            qDebug()<<"servar get Datas from the remote client:"<<sMsg;
-            ui->sendData->appendPlainText("[server] 收到数据:" + sMsg);
-        });
-        //4.2 写数据
-//        QByteArray sWriteMsg="Hello Client";
-//        ui->sendData->appendPlainText("[server] 发送数据:" + sWriteMsg);
-//        serverTcpSocket->write(sWriteMsg);
-    });
-}
-
-class testProcess {
-public:
-    testProcess();
-    ~testProcess();
-
-    enum STATUS {
-        build,
-        testing,
-        tested,
-    };
-    QStringList testNameList = {
-        "握手中断测试",
-        "发送HEX中断测试",
-        "发送校验不成功测试",
-        "发送错误命令后是否可以烧录",
-        "测试各种相关NACK是否能产生",
-        "正确烧录并完成之后功能是否正常",
-        "是否能识别识别出丢包的报文",
-        "",
-    };
-    QStringList cmdErrList = {
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-    };
-    uint8_t status = build;
-    QString log = "";
-
-    uint8_t testId = 0;
-};
-
-void Widget::serverSend(QString str)
-{
-    // server send
-    QByteArray sWriteMsg = str.toUtf8();
-    ui->sendData->appendPlainText("[server] 发送数据:" + str);
-    serverTcpSocket->write(sWriteMsg);
-}
-
-void Widget::serverReceive(QByteArray hex)
-{
-    // server receive
-}
-
 void Widget::on_setSncode_clicked()
 {
     QString sn = ui->lineEdit_6->text();
@@ -1143,4 +1070,90 @@ void Widget::on_setSncode_clicked()
         QByteArray byteEnd(30 - snByteArray.size(), '\0');
         SendAndDecode(snByteArray.append(byteEnd));
     }
+}
+
+void Widget::serverInit()
+{
+    server=new QTcpServer(this);
+    //2.设置服务器监听listen(ipAddr,port)
+    auto res=server->listen(QHostAddress::Any,8888);//返回监听成功与否，可能存在端口占用情况
+    //3.基于 QTcpServer::newConnection() 信号检测是否有新的客户端连接
+
+    ui->sendData->appendPlainText("[server] 初始化");
+
+    connect(server,&QTcpServer::newConnection,[=]()
+    {
+        ui->sendData->appendPlainText("[server] 发现新的连接");
+        TcpSocket=server->nextPendingConnection();//接收新的客户端连接，用于实际的收发处理
+
+        //4.收发处理,
+        //4.1 当收到数据请求时，tcpSocket会发射readyread信号
+        connect(TcpSocket,&QTcpSocket::readyRead,[=]()
+        {
+            //收到信息请求
+            auto sMsg=TcpSocket->readAll();
+            testObj.QByteToJson(sMsg);
+            qDebug()<<"servar get Datas from the remote client:"<<sMsg;
+            ui->sendData->appendPlainText("[server] 收到数据:" + sMsg);
+        });
+        //4.2 写数据
+//        QByteArray sWriteMsg="Hello Client";
+//        ui->sendData->appendPlainText("[server] 发送数据:" + sWriteMsg);
+//        TcpSocket->write(sWriteMsg);
+    });
+}
+
+void Widget::socketSend()
+{
+    QByteArray array = testObj.jsonToQByte();
+    TcpSocket->write(array);
+}
+
+void Widget::on_openTest_clicked()
+{
+
+    // socket初始化
+    this->serverInit();
+//    testObj.add("握手中断测试", (void*)Widget::shakeInterrruptTest);
+//    testObj.add("发送HEX中断测试",)
+//    testObj.add("发送校验不成功测试",)
+//    testObj.add("发送错误命令后是否可以烧录",)
+//    testObj.add("测试各种相关NACK是否能产生",)
+//    testObj.add("正确烧录并完成之后功能是否正常",)
+//    testObj.add("是否能识别识别出丢包的报文",)
+}
+
+void Widget::testProcess(QString key)
+{
+    if(key == "握手中断测试") {
+        this->shakeInterrruptTest();
+    }
+}
+
+void Widget::shakeInterrruptTest()
+{
+    if(testObj.status != testObject::testing) {
+        testObj.status = testObject::testing;
+        testObj.step = 0;
+    }
+    QString writeStr;
+    switch (testObj.step) {
+    case 0:
+        writeStr = hexFile.packetToSendString(hexDecode::ENTER_BOOTMODE);
+        break;
+    case 1:
+        writeStr = hexFile.packetToSendString(hexDecode::ENTER_BOOTMODE);
+        break;
+    case 2:
+        writeStr = hexFile.packetToSendString(hexDecode::ENTER_BOOTMODE);
+        break;
+    case 3:
+        testObj.step = 0;
+        break;
+    }
+    testObj.step++;
+
+    hexSendList.append(writeStr);
+    this->sendCmdListFunc();
+
 }

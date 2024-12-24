@@ -244,7 +244,7 @@
       <enum>QTabWidget::North</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
@@ -997,6 +997,9 @@
        </property>
       </widget>
      </item>
+     <item row="2" column="0">
+      <widget class="QComboBox" name="rateBox"/>
+     </item>
      <item row="0" column="0">
       <widget class="QLabel" name="label_2">
        <property name="text">
@@ -1004,8 +1007,25 @@
        </property>
       </widget>
      </item>
+     <item row="5" column="1">
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>停止位</string>
+       </property>
+      </widget>
+     </item>
      <item row="3" column="0">
       <widget class="QComboBox" name="dataBox"/>
+     </item>
+     <item row="4" column="0">
+      <widget class="QComboBox" name="checkBox"/>
+     </item>
+     <item row="6" column="1">
+      <widget class="QLabel" name="portStatus">
+       <property name="text">
+        <string>未连接串口</string>
+       </property>
+      </widget>
      </item>
      <item row="7" column="1">
       <widget class="QPushButton" name="openBtn">
@@ -1020,45 +1040,11 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="0">
-      <widget class="QComboBox" name="checkBox"/>
-     </item>
-     <item row="4" column="1">
-      <widget class="QLabel" name="label_6">
-       <property name="text">
-        <string>校验位</string>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="0">
-      <widget class="QComboBox" name="portBox"/>
-     </item>
-     <item row="5" column="1">
-      <widget class="QLabel" name="label_7">
-       <property name="text">
-        <string>停止位</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
-      <widget class="QLabel" name="label_5">
-       <property name="text">
-        <string>数据位</string>
-       </property>
-      </widget>
-     </item>
      <item row="5" column="0">
       <widget class="QComboBox" name="stopBox"/>
      </item>
-     <item row="6" column="1">
-      <widget class="QLabel" name="portStatus">
-       <property name="text">
-        <string>未连接串口</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QComboBox" name="rateBox"/>
+     <item row="6" column="0">
+      <widget class="QComboBox" name="portBox"/>
      </item>
      <item row="7" column="0">
       <widget class="QPushButton" name="searchBtn">
@@ -1071,6 +1057,27 @@
       <widget class="QPushButton" name="pushButton_5">
        <property name="text">
         <string>更新日志</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>数据位</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QLabel" name="label_6">
+       <property name="text">
+        <string>校验位</string>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="1">
+      <widget class="QPushButton" name="openTest">
+       <property name="text">
+        <string>开启测试模式</string>
        </property>
       </widget>
      </item>
@@ -1089,6 +1096,13 @@
         </property>
        </widget>
       </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="versionLabel">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="1">
        <spacer name="horizontalSpacer_2">
         <property name="orientation">
@@ -1102,17 +1116,24 @@
         </property>
        </spacer>
       </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="versionLabel">
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="0">
        <widget class="QPushButton" name="GetSnCode">
         <property name="text">
          <string>获取SN码</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QPushButton" name="setSncode">
+        <property name="text">
+         <string>写入sn码</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="lineEdit_6">
+        <property name="text">
+         <string/>
         </property>
        </widget>
       </item>
