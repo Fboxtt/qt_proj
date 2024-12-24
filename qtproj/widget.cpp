@@ -220,6 +220,9 @@ void Widget::ReadSerialTimeOut()
     }
 
     qDebug() << "7.3======";
+    if(testObj.status == testObject::testing) {
+        testProcess(testObj.testingKey);
+    }
     // 如果检测到某个结构体已经发生更新，则显示
     if(tverStru0->newDataStatus == true) {
         this->SetVersionLable();
@@ -1125,6 +1128,12 @@ void Widget::on_openTest_clicked()
 
 void Widget::testProcess(QString key)
 {
+    if(testObj.status != testObject::testing) {
+        testObj.status = testObject::testing;
+        testObj.step = 0;
+        testObj.testingKey = key;
+    }
+
     if(key == "握手中断测试") {
         this->shakeInterrruptTest();
     }
@@ -1132,10 +1141,7 @@ void Widget::testProcess(QString key)
 
 void Widget::shakeInterrruptTest()
 {
-    if(testObj.status != testObject::testing) {
-        testObj.status = testObject::testing;
-        testObj.step = 0;
-    }
+
     QString writeStr;
     switch (testObj.step) {
     case 0:
@@ -1149,11 +1155,17 @@ void Widget::shakeInterrruptTest()
         break;
     case 3:
         testObj.step = 0;
-        break;
+        testObj.status = testObject::tested;
+        return;
     }
     testObj.step++;
 
     hexSendList.append(writeStr);
     this->sendCmdListFunc();
 
+}
+
+void Widget::on_pushButton_16_clicked()
+{
+    this->testProcess("握手中断测试");
 }

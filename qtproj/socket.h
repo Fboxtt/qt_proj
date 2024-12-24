@@ -51,6 +51,7 @@ public:
     QJsonObject rJsonObj;
 
     int step = 0;
+
 //    void serverSend(QString str);
 //    void serverReceive(QByteArray hex);
 
@@ -62,7 +63,7 @@ public:
     int mapSize;
 
     void* pFunc(QString key);
-
+    QString testingKey;
 
 };
 
