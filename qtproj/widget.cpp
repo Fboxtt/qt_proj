@@ -213,7 +213,7 @@ void Widget::ReadSerialTimeOut()
     if(dcode0.SplitData(se.receiveHex)) {
 
     }
-    qDebug() << "7.1.1======" << dcode0.ack;
+    qDebug() << "7.1.1======" << dcode0.legality;
     if(hexSendList.size() > 0) {
         this->sendCmdListFunc();
         qDebug() << "7.2======";
@@ -1143,6 +1143,36 @@ void Widget::shakeInterrruptTest()
 {
 
     QString writeStr;
+
+    if(testObj.comStatus == testObject::RECEIVING) {
+        switch (testObj.step) {
+        case 4:
+            if (dcode0.cmdAck == ERR_NO && dcode0.haveHex == true && dcode0.dataHex.at(0) == 0x00) {
+                testObj.comStatus = testObject::SENDING;
+            } else {
+                testObj.comStatus = testObject::FAILED;
+            }
+            break;
+        default:
+            if (dcode0.cmdAck == ERR_NO && dcode0.haveHex == true) {
+                testObj.comStatus = testObject::SENDING;
+            } else {
+                testObj.comStatus = testObject::FAILED;
+            }
+            break;
+        }
+        if(testObj.comStatus == testObject::SENDING) {
+            testObj.step++;
+            dcode0.haveHex = false;
+        } else if(testObj.comStatus == testObject::FAILED) {
+            qDebug() << testObj.testingKey << "测试失败 第" << testObj.step << "步失败";
+            ui->sendData->appendPlainText(testObj.testingKey + "测试失败" + QString::number(testObj.step) + "步失败");
+            return;
+        }
+    } else if(testObj.comStatus == testObject::NO_START) {
+        testObj.comStatus = testObject::SENDING;
+    }
+
     switch (testObj.step) {
     case 0:
         writeStr = hexFile.packetToSendString(hexDecode::ENTER_BOOTMODE);
@@ -1154,14 +1184,19 @@ void Widget::shakeInterrruptTest()
         writeStr = hexFile.packetToSendString(hexDecode::ENTER_BOOTMODE);
         break;
     case 3:
+        writeStr = hexFile.packetToSendString(hexDecode::DOWNLOAD_BUFFER);
+        break;
+    case 4:
+
         testObj.step = 0;
         testObj.status = testObject::tested;
+//        qDebug() << testObj.testingKey << "测试成功";
+        ui->sendData->appendPlainText(testObj.testingKey + "测试成功");
         return;
     }
-    testObj.step++;
-
     hexSendList.append(writeStr);
     this->sendCmdListFunc();
+    testObj.comStatus = testObject::RECEIVING;
 
 }
 

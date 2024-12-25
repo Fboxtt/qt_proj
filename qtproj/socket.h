@@ -23,6 +23,12 @@ public:
         testing,
         tested,
     };
+    enum COM_STATUS {
+        NO_START,
+        SENDING,
+        RECEIVING,
+        FAILED,
+    };
     QStringList testNameList = {
         "握手中断测试",
         "发送HEX中断测试",
@@ -42,6 +48,7 @@ public:
         "",
     };
     uint8_t status = build;
+    uint8_t comStatus = SENDING;
     QString log = "";
 
     uint8_t testId = 0;

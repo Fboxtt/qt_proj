@@ -200,7 +200,7 @@ class textDcode
 public:
 
     bool haveHex = false;
-    bool legality = false;
+    uint8_t legality = 0;
 
     uint32_t actualLen = 0;
     QByteArray actualHex;
@@ -215,7 +215,7 @@ public:
     uint32_t dataLen = 0;
 
     uint32_t checkSum = 0;
-    uint32_t ack = 0;
+    uint32_t cmdAck = 0;
 
     QByteArray fullHex;
     uint32_t fullLen = 0;
