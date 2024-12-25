@@ -223,6 +223,8 @@ public:
     QByteArray noPacketHex;
     uint32_t noPacketLen;
 
+    uint32_t cmdPacketNum;
+
     bool SplitData(QByteArray);
     textDcode();
 

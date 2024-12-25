@@ -1272,13 +1272,15 @@ bool textDcode::SplitData(QByteArray hex)
         this->legality = ERR_CMD_LEN;
         return false;
     }
-    this->dataHex = this->actualHex.mid(8, this->dataLen);
-    this->fullHex = this->actualHex;
 
-    this->dataLen = this->actualHex[1] * 0x100 + this->actualHex[2];
+
+
+    this->dataLen = this->actualHex[1] * 0x100 + this->actualHex[2] - 5;
     this->cmd = this->actualHex[4];
     this->no80Cmd = this->actualHex[4] & 0x7f;
 
+
+    this->fullHex = this->actualHex;
     //计算单板类型到数据位的校验和
     for(uint32_t i = 1; i < this->actualLen - 1; i++)
     {
@@ -1287,10 +1289,13 @@ bool textDcode::SplitData(QByteArray hex)
     if((cmd & 0x80) == 0) {
 //        this->cmdAck = ERR_CMD_ID;
     } else {
-        if(this->actualLen != this->dataLen + 4) {
+        if(this->actualLen != this->dataLen + 9) {
             this->legality = ERR_CMD_LEN;
+        } else {
+            this->dataHex = this->actualHex.mid(8, this->dataLen);
         }
     }
+
     if( this->no80Cmd != PC_SET_WRITE_FLASH && \
         this->no80Cmd != PC_SET_ALL_CHECKSUM && \
         this->no80Cmd != PC_SET_DOWNLOAD_BUFFER && \
@@ -1306,15 +1311,13 @@ bool textDcode::SplitData(QByteArray hex)
     {
         this->legality = ERR_CHKSUM;
     }
-    if(hex.length() >= 9 ) {
+    if(actualHex.length() >= 9 ) {
         this->cmdAck = this->dataHex[8];
-    } else {
-        if(hex.length() >= 11) {
-            if(cmd == PC_SET_WRITE_FLASH) {
+        if(actualHex.length() >= 11) {
+            if(this->no80Cmd == PC_SET_WRITE_FLASH) {
                 this->noPacketLen = this->dataLen - 2;//取长度
                 this->noPacketHex = this->dataHex.mid(2, this->noPacketLen);
-        //     } else {
-        //        noPacketLen = this->dataLen - 2;//取长度
+                this->cmdPacketNum = (uint8_t)this->dataHex.at(0) + (uint8_t)this->dataHex.at(1) * 256;
             }
         }
     }

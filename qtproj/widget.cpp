@@ -1141,16 +1141,34 @@ void Widget::testProcess(QString key)
 
 void Widget::shakeInterrruptTest()
 {
-
+    static uint32_t packetNum;
     QString writeStr;
 
     if(testObj.comStatus == testObject::RECEIVING) {
         switch (testObj.step) {
-        case 4:
+        case 3:
             if (dcode0.cmdAck == ERR_NO && dcode0.haveHex == true && dcode0.dataHex.at(0) == 0x00) {
                 testObj.comStatus = testObject::SENDING;
             } else {
                 testObj.comStatus = testObject::FAILED;
+            }
+            break;
+        case 4:
+            if (dcode0.cmdAck == ERR_NO && dcode0.haveHex == true && packetNum + 1 == dcode0.cmdPacketNum) {
+                if(packetNum + 1 < hexFile.packetNum) {
+                    packetNum++;
+                    testObj.step--;
+                }
+                testObj.comStatus = testObject::SENDING;
+            } else {
+                testObj.comStatus = testObject::FAILED;
+            }
+            break;
+        case 5:
+            if (dcode0.cmdAck == ERR_ALL_CHECK && dcode0.haveHex == true) {
+                testObj.comStatus = testObject::FAILED;
+            } else {
+                testObj.comStatus = testObject::SENDING;
             }
             break;
         default:
@@ -1167,6 +1185,7 @@ void Widget::shakeInterrruptTest()
         } else if(testObj.comStatus == testObject::FAILED) {
             qDebug() << testObj.testingKey << "测试失败 第" << testObj.step << "步失败";
             ui->sendData->appendPlainText(testObj.testingKey + "测试失败" + QString::number(testObj.step) + "步失败");
+            testObj.step = 0;
             return;
         }
     } else if(testObj.comStatus == testObject::NO_START) {
@@ -1175,6 +1194,7 @@ void Widget::shakeInterrruptTest()
 
     switch (testObj.step) {
     case 0:
+        packetNum = 0;
         writeStr = hexFile.packetToSendString(hexDecode::ENTER_BOOTMODE);
         break;
     case 1:
@@ -1187,7 +1207,13 @@ void Widget::shakeInterrruptTest()
         writeStr = hexFile.packetToSendString(hexDecode::DOWNLOAD_BUFFER);
         break;
     case 4:
-
+        writeStr = hexFile.packetToSendString(hexDecode::WRITE_FLASH, packetNum);
+        break;
+    case 5:
+//        writeStr = hexFile.packetToSendString(hexDecode::REC_TOTAL_CHECKSUM);
+        writeStr = "00 00 06 01 78 55 AA 00 00 DB";
+        break;
+    case 6:
         testObj.step = 0;
         testObj.status = testObject::tested;
 //        qDebug() << testObj.testingKey << "测试成功";
