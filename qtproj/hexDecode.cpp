@@ -340,7 +340,7 @@ uint8_t hexDecode::DownLoadProcess(textStruct text, QString* outPutStr)
         }
         *outPutStr = this->packetToSendString(this->WRITE_FLASH, this->packetId); // 烧录第一个包
         return true;
-    } else if (text.cmd == (hexDecode::WRITE_FLASH | 0x80)) {
+    } else if (text.cmd == (hexDecode::WRITE_FLASH | 0x80) && this->beginDownloadState == true) {
         if(text.ACK == textStruct::ACK_OK) {
             if(text.dataArray.size() == 2) {
                 if(this->litBytetoUInt(text.dataArray) == (this->packetId + 1)) {
@@ -350,6 +350,7 @@ uint8_t hexDecode::DownLoadProcess(textStruct text, QString* outPutStr)
                 }
                 if(this->packetId >= this->packetNum) {
                     *outPutStr = this->packetToSendString(this->REC_TOTAL_CHECKSUM, this->packetId);
+                    this->DownloadClear();
                     return DOWNLOAD_DONE;
                 }
                 *outPutStr = this->packetToSendString(this->WRITE_FLASH, this->packetId); // 发送剩余的包

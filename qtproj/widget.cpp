@@ -1190,6 +1190,7 @@ void Widget::shakeInterrruptTest()
         }
     } else if(testObj.comStatus == testObject::NO_START) {
         testObj.comStatus = testObject::SENDING;
+        testObj.step = 0;
     }
 
     switch (testObj.step) {
@@ -1211,7 +1212,7 @@ void Widget::shakeInterrruptTest()
         break;
     case 5:
 //        writeStr = hexFile.packetToSendString(hexDecode::REC_TOTAL_CHECKSUM);
-        writeStr = "00 00 06 01 78 55 AA 00 00 DB";
+        writeStr = "00 00 06 01 78 55 AA 00 00 00"; // 7E才是正确的
         break;
     case 6:
         testObj.step = 0;
