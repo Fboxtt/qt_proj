@@ -51,7 +51,7 @@ public:
     uint8_t status = build;
     uint8_t comStatus = SENDING;
     QString log = "";
-
+    uint32_t packetNum;
     uint8_t testId = 0;
     QTcpServer *server;
     QTcpSocket *TcpSocket;

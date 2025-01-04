@@ -80,13 +80,6 @@ void testObject::clear()
 
 void testObject::testProcess(QString key)
 {
-    if(this->status != testObject::testing) {
-        this->status = testObject::testing;
-        this->comStatus = testObject::NO_START;
-        this->step = 0;
-        this->testingKey = key;
-    }
-
     if(bar == nullptr) {
         bar = new QProgressDialog(); // 烧录滑动窗口
         bar->setMinimumWidth(400);
@@ -94,20 +87,32 @@ void testObject::testProcess(QString key)
         bar->setLabelText("正在烧录");
         bar->setCancelButtonText("烧录取消");
         bar->setWindowTitle(("烧录进度"));
-        bar->setRange(0, 100);
+
+//        bar->setValue(100);
+    }
+    if(this->status != testObject::testing) {
+        this->status = testObject::testing;
+        this->comStatus = testObject::NO_START;
+        this->step = 0;
+        this->testingKey = key;
+        bar->setRange(0, 5 + hexFile.packetNum);
         bar->setValue(1);
-        bar->setValue(100);
+        bar->open();
     }
 
     if(key == "握手中断测试") {
         this->shakeInterrruptTest();
     }
-//    hexSendList.append(writeStr);
+    bar->setValue(this->step + this->packetNum);
+    if(this->status == tested) {
+        this->step = 0;
+        bar->cancel();
+    }
 }
 
 void testObject::shakeInterrruptTest()
 {
-    static uint32_t packetNum;
+//    static uint32_t packetNum;
     writeStr = "";
 
     if(this->comStatus == testObject::RECEIVING) {
@@ -123,7 +128,7 @@ void testObject::shakeInterrruptTest()
             if (dcode0.cmdAck == ERR_NO && dcode0.haveHex == true && packetNum + 1 == dcode0.cmdPacketNum) {
                 if(packetNum + 1 < hexFile.packetNum) {
                     packetNum++;
-                    this->step--;
+//                    this->step--;
                 }
                 this->comStatus = testObject::SENDING;
             } else {
@@ -146,13 +151,14 @@ void testObject::shakeInterrruptTest()
             break;
         }
         if(this->comStatus == testObject::SENDING) {
-            this->step++;
+            if(packetNum == 0 || packetNum + 1 == hexFile.packetNum) {
+                this->step++;
+            }
             dcode0.haveHex = false;
         } else if(this->comStatus == testObject::FAILED) {
             qDebug() << this->testingKey << "测试失败 第" << this->step << "步失败";
             this->status = tested;
             this->reportLog = this->testingKey + "测试失败" + QString::number(this->step) + "步失败";
-            this->step = 0;
             return;
         }
     } else if(this->comStatus == testObject::NO_START) {
@@ -179,7 +185,7 @@ void testObject::shakeInterrruptTest()
         break;
     case 5:
 //        writeStr = hexFile.packetToSendString(hexDecode::REC_TOTAL_CHECKSUM);
-        writeStr = "00 00 06 01 78 55 AA 00 00 00"; // 7E才是正确的
+        writeStr = "00 00 06 01 78 55 AA 00 00 7E"; // 7E才是正确的
         break;
     case 6:
         this->step = 0;
