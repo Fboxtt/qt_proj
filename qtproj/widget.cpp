@@ -79,7 +79,7 @@ Widget::Widget(QWidget *parent)
 
     // tableWidget设置
     ui->tableWidget->setFont(QFont("黑体", 7)); // table字体设置
-    ui->tableWidget->setFixedSize(600,800);
+//    ui->tableWidget->setFixedSize(600,800);
     ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableWidget->setVerticalHeaderLabels({"","","","","","","","","","", \
@@ -90,7 +90,7 @@ Widget::Widget(QWidget *parent)
     }
     // k值校准tableWidget设置
     ui->tableWidget_2->setFont(QFont("黑体", 7)); // table字体设置
-    ui->tableWidget_2->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch); //自动适应列宽
+    // ui->tableWidget_2->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch); //自动适应列宽
 
     // 波形chart配置
     chartV0 = new chartV();
@@ -109,10 +109,10 @@ Widget::Widget(QWidget *parent)
     ui->gridLayout_5->addWidget(chartV0->chartMap.value("容量")->chartview,     1, 1);
 
     // 状态盒默认尺寸设置
-    ui->alarmGroupBox->setMinimumWidth(300);
+    // ui->alarmGroupBox->setMinimumWidth(200);
 
-    ui->alarmGroupBox->setMaximumWidth(400);
-    ui->groupBox_3->setMaximumWidth(400);
+    // ui->alarmGroupBox->setMaximumWidth(300);
+    // ui->groupBox_3->setMaximumWidth(300);
 
     // 设置状态颜色提示信息，红色和绿色代表什么颜色
     ui->label_8->setStyleSheet("QLabel { background-color: green}");
@@ -221,7 +221,9 @@ void Widget::ReadSerialTimeOut()
 
     qDebug() << "7.3======";
     if(testObj.status == testObject::testing) {
-        testProcess(testObj.testingKey);
+        this->OTAtestReceive();
+//        testProcess(testObj.testingKey);
+        this->sendCmdListFunc();
     }
     // 如果检测到某个结构体已经发生更新，则显示
     if(tverStru0->newDataStatus == true) {
@@ -1116,7 +1118,11 @@ void Widget::on_openTest_clicked()
 {
 
     // socket初始化
-    this->serverInit();
+//    this->setEnabled(false);
+//    QWidget * refreshData=new QWidget();
+
+
+//    this->serverInit();
 //    testObj.add("握手中断测试", (void*)Widget::shakeInterrruptTest);
 //    testObj.add("发送HEX中断测试",)
 //    testObj.add("发送校验不成功测试",)
@@ -1126,108 +1132,29 @@ void Widget::on_openTest_clicked()
 //    testObj.add("是否能识别识别出丢包的报文",)
 }
 
-void Widget::testProcess(QString key)
-{
-    if(testObj.status != testObject::testing) {
-        testObj.status = testObject::testing;
-        testObj.step = 0;
-        testObj.testingKey = key;
-    }
 
-    if(key == "握手中断测试") {
-        this->shakeInterrruptTest();
-    }
-}
-
-void Widget::shakeInterrruptTest()
-{
-    static uint32_t packetNum;
-    QString writeStr;
-
-    if(testObj.comStatus == testObject::RECEIVING) {
-        switch (testObj.step) {
-        case 3:
-            if (dcode0.cmdAck == ERR_NO && dcode0.haveHex == true && dcode0.dataHex.at(0) == 0x00) {
-                testObj.comStatus = testObject::SENDING;
-            } else {
-                testObj.comStatus = testObject::FAILED;
-            }
-            break;
-        case 4:
-            if (dcode0.cmdAck == ERR_NO && dcode0.haveHex == true && packetNum + 1 == dcode0.cmdPacketNum) {
-                if(packetNum + 1 < hexFile.packetNum) {
-                    packetNum++;
-                    testObj.step--;
-                }
-                testObj.comStatus = testObject::SENDING;
-            } else {
-                testObj.comStatus = testObject::FAILED;
-            }
-            break;
-        case 5:
-            if (dcode0.cmdAck == ERR_ALL_CHECK && dcode0.haveHex == true) {
-                testObj.comStatus = testObject::FAILED;
-            } else {
-                testObj.comStatus = testObject::SENDING;
-            }
-            break;
-        default:
-            if (dcode0.cmdAck == ERR_NO && dcode0.haveHex == true) {
-                testObj.comStatus = testObject::SENDING;
-            } else {
-                testObj.comStatus = testObject::FAILED;
-            }
-            break;
-        }
-        if(testObj.comStatus == testObject::SENDING) {
-            testObj.step++;
-            dcode0.haveHex = false;
-        } else if(testObj.comStatus == testObject::FAILED) {
-            qDebug() << testObj.testingKey << "测试失败 第" << testObj.step << "步失败";
-            ui->sendData->appendPlainText(testObj.testingKey + "测试失败" + QString::number(testObj.step) + "步失败");
-            testObj.step = 0;
-            return;
-        }
-    } else if(testObj.comStatus == testObject::NO_START) {
-        testObj.comStatus = testObject::SENDING;
-        testObj.step = 0;
-    }
-
-    switch (testObj.step) {
-    case 0:
-        packetNum = 0;
-        writeStr = hexFile.packetToSendString(hexDecode::ENTER_BOOTMODE);
-        break;
-    case 1:
-        writeStr = hexFile.packetToSendString(hexDecode::ENTER_BOOTMODE);
-        break;
-    case 2:
-        writeStr = hexFile.packetToSendString(hexDecode::ENTER_BOOTMODE);
-        break;
-    case 3:
-        writeStr = hexFile.packetToSendString(hexDecode::DOWNLOAD_BUFFER);
-        break;
-    case 4:
-        writeStr = hexFile.packetToSendString(hexDecode::WRITE_FLASH, packetNum);
-        break;
-    case 5:
-//        writeStr = hexFile.packetToSendString(hexDecode::REC_TOTAL_CHECKSUM);
-        writeStr = "00 00 06 01 78 55 AA 00 00 00"; // 7E才是正确的
-        break;
-    case 6:
-        testObj.step = 0;
-        testObj.status = testObject::tested;
-//        qDebug() << testObj.testingKey << "测试成功";
-        ui->sendData->appendPlainText(testObj.testingKey + "测试成功");
-        return;
-    }
-    hexSendList.append(writeStr);
-    this->sendCmdListFunc();
-    testObj.comStatus = testObject::RECEIVING;
-
-}
 
 void Widget::on_pushButton_16_clicked()
 {
-    this->testProcess("握手中断测试");
+    testObj.clear();
+    testObj.testProcess("握手中断测试");
+    if(testObj.writeStr != "") {
+        hexSendList.append(testObj.writeStr);
+    }
+    this->sendCmdListFunc();
+//    bar->open();
+}
+
+void Widget::OTAtestReceive()
+{
+    if(testObj.status == testObject::tested) {
+        testObj.status = testObject::avalible;
+
+        ui->sendData->appendPlainText(testObj.reportLog);
+    } else if(testObj.status ==testObject::testing) {
+        testObj.testProcess(testObj.testingKey);
+    }
+    if(testObj.writeStr != "") {
+        hexSendList.append(testObj.writeStr);
+    }
 }

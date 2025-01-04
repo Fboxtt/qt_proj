@@ -9,6 +9,7 @@
 
 #include <QTcpServer>
 #include <QTcpSocket>
+#include <QProgressDialog>
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
 QT_END_NAMESPACE
@@ -141,8 +142,9 @@ public slots:
 //    void serverSend(QString);
     void socketSend(void);
 
-    void shakeInterrruptTest();
-    void testProcess(QString key);
+//    void shakeInterrruptTest();
+//    void testProcess(QString key);
+    void OTAtestReceive();
 };
 
 

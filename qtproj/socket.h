@@ -11,7 +11,7 @@
 
 #include <QJsonDocument>
 #include <QJsonObject>
-
+#include <QProgressDialog>
 
 class testObject {
 public:
@@ -20,6 +20,7 @@ public:
 
     enum STATUS {
         build,
+        avalible,
         testing,
         tested,
     };
@@ -72,6 +73,13 @@ public:
     void* pFunc(QString key);
     QString testingKey;
 
+    QString writeStr; // 用于发送给BMS的字符串
+    QString reportLog; // 测试报告
+    void testProcess(QString key);
+    void shakeInterrruptTest();
+    QProgressDialog *bar = nullptr;
+
+    void clear();
 };
 
 
