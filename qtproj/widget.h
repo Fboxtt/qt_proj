@@ -145,6 +145,7 @@ public slots:
 //    void shakeInterrruptTest();
 //    void testProcess(QString key);
     void OTAtestReceive();
+    void addTestKey(QString);
 };
 
 

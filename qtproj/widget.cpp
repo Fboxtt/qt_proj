@@ -1119,40 +1119,52 @@ void Widget::on_openTest_clicked()
 
     // socket初始化
 //    this->setEnabled(false);
-//    QWidget * refreshData=new QWidget();
-
-
+    if(testObj.testWidget == nullptr) {
+        testObj.testWidget=new QWidget();
+        testObj.testWidget->resize(100,100);
+        testObj.layout = new QGridLayout;
+        foreach(QString keyName, testObj.keyNameList) {
+            addTestKey(keyName);
+        }
+        testObj.testWidget->setLayout(testObj.layout);
+    }
+    testObj.testWidget->show();
+//    test1->setText();
 //    this->serverInit();
-//    testObj.add("握手中断测试", (void*)Widget::shakeInterrruptTest);
-//    testObj.add("发送HEX中断测试",)
-//    testObj.add("发送校验不成功测试",)
-//    testObj.add("发送错误命令后是否可以烧录",)
-//    testObj.add("测试各种相关NACK是否能产生",)
-//    testObj.add("正确烧录并完成之后功能是否正常",)
-//    testObj.add("是否能识别识别出丢包的报文",)
+
 }
 
-
+void Widget::addTestKey(QString testName)
+{
+    QPushButton* test1 = new QPushButton(testName);
+    // 把测试启动程序和测试按钮链接起来
+    connect(test1,&QPushButton::clicked,[=]()
+    {
+        qDebug() << testName;
+        testObj.clear();
+        testObj.testProcess(testName);
+        if(testObj.writeStr != "") {
+            hexSendList.append(testObj.writeStr);
+        }
+        // 发送第一个命令
+//        this->sendCmdListFunc();
+    });
+    testObj.layout->addWidget(test1);
+}
 
 void Widget::on_pushButton_16_clicked()
 {
-    testObj.clear();
-    testObj.testProcess("握手中断测试");
-    if(testObj.writeStr != "") {
-        hexSendList.append(testObj.writeStr);
-    }
-    this->sendCmdListFunc();
-//    bar->open();
+
 }
 
 void Widget::OTAtestReceive()
 {
-    if(testObj.status == testObject::tested) {
-        testObj.status = testObject::avalible;
-
-        ui->sendData->appendPlainText(testObj.reportLog);
-    } else if(testObj.status ==testObject::testing) {
+    if(testObj.status ==testObject::testing) {
         testObj.testProcess(testObj.testingKey);
+        if(testObj.status == testObject::tested) {
+            testObj.status = testObject::avalible;
+            ui->sendData->appendPlainText(testObj.reportLog);
+        }
     }
     if(testObj.writeStr != "") {
         hexSendList.append(testObj.writeStr);

@@ -12,10 +12,12 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QProgressDialog>
-
+#include "ui_widget.h"
+#include "widget.h"
+#include "ui_widget.h"
 class testObject {
 public:
-    testObject(){};
+    testObject();
 //    ~testProcess();
 
     enum STATUS {
@@ -65,9 +67,10 @@ public:
 
     void QByteToJson(QByteArray);
     QByteArray jsonToQByte();
-    void add(QString key, void* val);
+    void add(QString key);
 
     QMap<QString, void*> handleMap;
+    QStringList keyNameList;
     int mapSize;
 
     void* pFunc(QString key);
@@ -77,8 +80,19 @@ public:
     QString reportLog; // 测试报告
     void testProcess(QString key);
     void shakeInterrruptTest();
+    void sendHexInterTest();
+    void sendErrCheckTest();
+    void sendErrCmdTest();
+    void testNack();
+    void losePacket();
+    void normalDownload();
+
+
     QProgressDialog *bar = nullptr;
 
+    // 新增的窗口用于放置烧录按钮
+    QWidget *testWidget = nullptr;
+    QGridLayout *layout = nullptr;
     void clear();
 };
 
