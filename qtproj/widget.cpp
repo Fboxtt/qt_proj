@@ -75,7 +75,7 @@ Widget::Widget(QWidget *parent)
     // ui->listWidget->setMaximumWidth(300);
     // listWidget设置
     ui->listWidget->setWordWrap(true); // 设置可以换行 listwidget格式设置
-    ui->listWidget->setStyleSheet("QListWidget{font-size:10px;}"); // 设置字体大小 listwidget格式设置
+//    ui->listWidget->setStyleSheet("QListWidget{font-size:10px;}"); // 设置字体大小 listwidget格式设置
 
     // tableWidget设置
     ui->tableWidget->setFont(QFont("黑体", 7)); // table字体设置
@@ -163,15 +163,29 @@ void Widget::on_selectFileButton_clicked()
         if(hexFile.OpenHexFile(&file, fileName)) {
             hexFile.AllClear();
             QString errLog = hexFile.ReadHexFile(&file);
+            // QByteArray hexdata = hexFile.CopyHexFile(&file);
+//            QByteArray verBegain("APP");
+            char point[2];
+            point[0] = 0xE8;
+            point[1] = 0x07;
+            QByteArray verBegain(point, 2);
+            QByteArray verArray;
+            int idx = hexFile.n00dataArray.indexOf(verBegain);
+            if(idx != -1) {
+                verArray = hexFile.n00dataArray.mid(idx - 6,80);
+                dcode0.HexWriteTver_hex(verArray, tverStru0);
+                this->SetVersionLable();
+            }
             QString HexStatus = QString("\
 大小         = %1字节\n\
 扩展线性地址 = 0x%2\n\
 起始地址     = 0x%3\n\
-解析HEX结果:\n%4")\
+解析HEX结果:\n%4\n\
+app开头位置 = %5")\
 .arg(hexFile.hexLenth)\
 .arg(hexFile.extendLinearAddress, 4, 16, QChar('0'))\
 .arg(hexFile.address, 4, 16, QChar('0'))\
-.arg(errLog);
+.arg(errLog).arg(idx);
             ui->label->setText(HexStatus);
         }
 

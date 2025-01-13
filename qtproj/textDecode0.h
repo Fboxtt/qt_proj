@@ -239,8 +239,9 @@ public:
     QVector<tbs> HexWriteTbs(QStringList dataList);
     void IntWriteTbs(QStringList dataList);
     QString HexWriteTver(QStringList dataList, tverStruct* tver);
+    QString HexWriteTver_hex(QByteArray dataList, tverStruct* tver);
     QString HexWriteDataStruct(QStringList dataList, dataStruct* struObject);
-
+    QString HexWriteDataStruct_hex(QByteArray dataList, dataStruct* struObject);
 
     void unsignedToSigned(uint32_t val, datTypDic typedic);
     QMap<uint32_t, QString> typeCode;

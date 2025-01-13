@@ -956,6 +956,52 @@ QString textDcode::HexWriteTver(QStringList dataList, tverStruct* tverStuObject)
     tverStuObject->newDataStatus = true;
     return "tver解析正确";
 }
+
+// 将字符串str转换成真实的int值，再转换成str写入tverStruct
+QString textDcode::HexWriteTver_hex(QByteArray dataList, tverStruct* tverStuObject)
+{
+
+//    bool ok;
+//    QVector<uint8_t> hexVector;
+    uint8_t byteInUnit = 0;
+    uint32_t  uintVal = 0;
+
+//    foreach(QString hexStr, dataList) {
+//        hexStr.toInt(&ok, 16);
+//        if (ok == true) {
+//            hexVector.append((uint8_t)hexStr.toInt(&ok, 16));
+//        }
+//    }
+
+    if((uint32_t)dataList.size() != tverStuObject->dataLenth) {
+        return "tver数据长度不对";
+    }
+
+    QList<QString>::iterator it;
+    it = tverStuObject->keyList.begin();
+    tver tver0 = tverStuObject->tverMap.value(*it);
+    foreach(uint8_t hex, dataList) {
+        uintVal += (((uint32_t)hex) <<  (byteInUnit * 8));
+        tver0.byteArray.append(hex);
+        byteInUnit++;
+        if(byteInUnit == tver0.typeLenth) {
+            tver0.uintVal = uintVal;
+            uintVal = 0;
+            byteInUnit = 0;
+            qDebug() << tver0.valName << tver0.uintVal << tver0.byteArray;
+            tverStuObject->tverMap.insert(*it,tver0);
+            qDebug() << tverStuObject->tverMap.value(*it).valName << tverStuObject->tverMap.value(*it).uintVal << tverStuObject->tverMap.value(*it).byteArray;
+            it++;
+            if(it == tverStuObject->keyList.end()){
+                break;
+            }
+            tver0 = tverStuObject->tverMap.value(*it);
+        }
+    }
+    tverStuObject->newDataStatus = true;
+    return "tver解析正确";
+}
+
 //// 将字符串str转换成真实的int值，再转换成str写入dataStruct
 QString textDcode::HexWriteDataStruct(QStringList dataList, dataStruct* struObject)
 {
@@ -982,6 +1028,56 @@ QString textDcode::HexWriteDataStruct(QStringList dataList, dataStruct* struObje
     cell0->bigEndianBArray.clear();
     cell0->byteArray.clear();
     foreach(uint8_t hex, hexVector) {
+        uintVal += (((uint32_t)hex) <<  (byteInUnit * 8));
+        cell0->byteArray.append(hex);
+        cell0->bigEndianBArray.insert(0, hex);
+        byteInUnit++;
+        if(byteInUnit == cell0->typeLenth) {
+            cell0->uintVal = uintVal;
+            uintVal = 0;
+            byteInUnit = 0;
+            qDebug() << struObject->value(*it)->valName << struObject->value(*it)->uintVal << struObject->value(*it)->byteArray;
+            it++;
+            if(it == struObject->keyList.end()){
+                break;
+            }
+            cell0 = struObject->value(*it);
+            cell0->bigEndianBArray.clear();
+            cell0->byteArray.clear();
+        }
+        qDebug() << cell0->valName << cell0->uintVal << cell0->byteArray;
+    }
+    struObject->accurTime = QTime::currentTime();
+    struObject->newDataStatus = true;
+    return "tver解析正确";
+}
+
+//// 将字符串str转换成真实的int值，再转换成str写入dataStruct
+QString textDcode::HexWriteDataStruct_hex(QByteArray dataList, dataStruct* struObject)
+{
+
+//    bool ok;
+    QVector<uint8_t> hexVector;
+    uint8_t byteInUnit = 0;
+    uint32_t  uintVal = 0;
+
+//    foreach(QString hexStr, dataList) {
+//        hexStr.toInt(&ok, 16);
+//        if (ok == true) {
+//            hexVector.append((uint8_t)hexStr.toInt(&ok, 16));
+//        }
+//    }
+
+    if((uint32_t)dataList.size() != struObject->dataLenth) {
+        return "tver数据长度不对";
+    }
+
+    QList<QString>::iterator it;
+    it = struObject->keyList.begin();
+    dataCell* cell0 = struObject->value(*it);
+    cell0->bigEndianBArray.clear();
+    cell0->byteArray.clear();
+    foreach(uint8_t hex, dataList) {
         uintVal += (((uint32_t)hex) <<  (byteInUnit * 8));
         cell0->byteArray.append(hex);
         cell0->bigEndianBArray.insert(0, hex);

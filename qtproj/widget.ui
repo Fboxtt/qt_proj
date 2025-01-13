@@ -6,102 +6,22 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1178</width>
-    <height>787</height>
+    <width>1001</width>
+    <height>654</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Widget</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_12">
-   <item row="5" column="0" rowspan="2">
-    <layout class="QGridLayout" name="gridLayout_10">
-     <item row="2" column="0">
-      <widget class="QPushButton" name="sendRegisterBox">
-       <property name="text">
-        <string>发送注册</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QGroupBox" name="groupBox_3">
-       <property name="title">
-        <string>电池状态</string>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_13">
-        <item row="0" column="0">
-         <layout class="QGridLayout" name="batGridLayout"/>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item row="4" column="1">
-      <widget class="QLineEdit" name="lineEdit_4">
-       <property name="text">
-        <string>10</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0">
-      <widget class="QPushButton" name="pushButton_15">
-       <property name="text">
-        <string>PushButton</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QPushButton" name="pushButton_3">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="text">
-        <string>开始读取tbs</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QPushButton" name="sendTbs">
-       <property name="text">
-        <string>单次获取tbs数据</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="2">
-      <widget class="QLineEdit" name="lineEdit_5">
-       <property name="text">
-        <string>2</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="0" column="2" rowspan="5">
-    <widget class="QGroupBox" name="groupBox_6">
-     <property name="title">
-      <string>GroupBox</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_4">
-      <item row="0" column="0">
-       <widget class="QListWidget" name="listWidget"/>
-      </item>
-      <item row="1" column="0">
-       <widget class="QPushButton" name="clearReceiveDataButton_2">
-        <property name="text">
-         <string>清空</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="0" column="3" rowspan="7">
+   <item row="0" column="3" rowspan="8">
     <widget class="QLabel" name="label_12">
      <property name="text">
       <string>TextLabel</string>
      </property>
     </widget>
    </item>
-   <item row="5" column="2">
+   <item row="2" column="2">
     <widget class="QGroupBox" name="groupBox_4">
      <property name="title">
       <string>数据解析</string>
@@ -133,118 +53,13 @@
      </layout>
     </widget>
    </item>
-   <item row="6" column="2">
-    <widget class="QGroupBox" name="groupBox_5">
-     <property name="title">
-      <string>数据保存</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_3">
-      <item row="1" column="0">
-       <widget class="QPushButton" name="pushButton_8">
-        <property name="text">
-         <string>保存地址</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QPushButton" name="pushButton_7">
-        <property name="text">
-         <string>保存数据</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0" colspan="2">
-       <widget class="QLineEdit" name="lineEdit_2"/>
-      </item>
-      <item row="2" column="0" colspan="2">
-       <widget class="QCheckBox" name="checkBox_3">
-        <property name="text">
-         <string>收到一个数据就保存一个数据</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QGroupBox" name="groupBox_7">
-     <property name="title">
-      <string>文件烧录</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_25">
-      <item row="1" column="0">
-       <layout class="QGridLayout" name="gridLayout_6">
-        <item row="1" column="1">
-         <widget class="QPushButton" name="pushButton_12">
-          <property name="text">
-           <string>擦除APP</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QPushButton" name="pushButton_4">
-          <property name="text">
-           <string>烧录</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="downLoadLabel">
-          <property name="text">
-           <string>烧录信息</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QPushButton" name="selectFileButton">
-          <property name="text">
-           <string>选择HEX文件</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="1">
-         <widget class="QPushButton" name="readAPPVer">
-          <property name="text">
-           <string>readAppVer</string>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="1">
-         <widget class="QPushButton" name="pushButton_11">
-          <property name="text">
-           <string>readIC</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="1">
-         <widget class="QPushButton" name="pushButton_14">
-          <property name="text">
-           <string>downLoadBackup</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLineEdit" name="lineEdit"/>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>TextLabel</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="0" column="1" rowspan="7">
+   <item row="0" column="1" rowspan="8">
     <widget class="QTabWidget" name="tabWidget">
      <property name="tabPosition">
       <enum>QTabWidget::North</enum>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
@@ -494,12 +309,6 @@
           </item>
           <item row="0" column="0">
            <widget class="QLabel" name="label_8">
-            <property name="maximumSize">
-             <size>
-              <width>50</width>
-              <height>50</height>
-             </size>
-            </property>
             <property name="text">
              <string/>
             </property>
@@ -622,20 +431,6 @@
        <string>校准模块</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_18">
-       <item row="1" column="4">
-        <widget class="QPushButton" name="pushButton_10">
-         <property name="text">
-          <string>写入</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QPushButton" name="getKB">
-         <property name="text">
-          <string>读取KB</string>
-         </property>
-        </widget>
-       </item>
        <item row="1" column="2">
         <widget class="QPushButton" name="pushButton_9">
          <property name="text">
@@ -869,6 +664,20 @@
          </property>
         </widget>
        </item>
+       <item row="1" column="0">
+        <widget class="QPushButton" name="getKB">
+         <property name="text">
+          <string>读取KB</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="4">
+        <widget class="QPushButton" name="pushButton_10">
+         <property name="text">
+          <string>写入</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="tab_4">
@@ -988,102 +797,242 @@
      </widget>
     </widget>
    </item>
-   <item row="0" column="0">
-    <layout class="QGridLayout" name="gridLayout_14">
-     <item row="2" column="1">
-      <widget class="QLabel" name="label_4">
-       <property name="text">
-        <string>波特率</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QComboBox" name="rateBox"/>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>版本号0.0.5</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="1">
-      <widget class="QLabel" name="label_7">
-       <property name="text">
-        <string>停止位</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QComboBox" name="dataBox"/>
-     </item>
-     <item row="4" column="0">
-      <widget class="QComboBox" name="checkBox"/>
-     </item>
-     <item row="6" column="1">
-      <widget class="QLabel" name="portStatus">
-       <property name="text">
-        <string>未连接串口</string>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="1">
-      <widget class="QPushButton" name="openBtn">
-       <property name="font">
-        <font>
-         <family>黑体</family>
-         <pointsize>10</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>打开串口</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="0">
-      <widget class="QComboBox" name="stopBox"/>
-     </item>
-     <item row="6" column="0">
-      <widget class="QComboBox" name="portBox"/>
-     </item>
-     <item row="7" column="0">
-      <widget class="QPushButton" name="searchBtn">
-       <property name="text">
-        <string>刷新串口</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QPushButton" name="pushButton_5">
-       <property name="text">
-        <string>更新日志</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
-      <widget class="QLabel" name="label_5">
-       <property name="text">
-        <string>数据位</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="1">
-      <widget class="QLabel" name="label_6">
-       <property name="text">
-        <string>校验位</string>
-       </property>
-      </widget>
-     </item>
-     <item row="8" column="1">
-      <widget class="QPushButton" name="openTest">
-       <property name="text">
-        <string>开启测试模式</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+   <item row="3" column="2">
+    <widget class="QGroupBox" name="groupBox_5">
+     <property name="title">
+      <string>数据保存</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="1" column="0">
+       <widget class="QPushButton" name="pushButton_8">
+        <property name="text">
+         <string>保存地址</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QPushButton" name="pushButton_7">
+        <property name="text">
+         <string>保存数据</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" colspan="2">
+       <widget class="QLineEdit" name="lineEdit_2"/>
+      </item>
+      <item row="2" column="0" colspan="2">
+       <widget class="QCheckBox" name="checkBox_3">
+        <property name="text">
+         <string>收到一个数据就保存一个数据</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
-   <item row="4" column="0">
+   <item row="0" column="0">
+    <widget class="QGroupBox" name="groupBox_13">
+     <property name="title">
+      <string>GroupBox</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_26">
+      <item row="0" column="0">
+       <layout class="QGridLayout" name="gridLayout_14">
+        <item row="5" column="0">
+         <widget class="QComboBox" name="stopBox"/>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLabel" name="label_4">
+          <property name="text">
+           <string>波特率</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QComboBox" name="rateBox"/>
+        </item>
+        <item row="3" column="1">
+         <widget class="QLabel" name="label_5">
+          <property name="text">
+           <string>数据位</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="0">
+         <widget class="QComboBox" name="portBox"/>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>版本号0.0.5</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QLabel" name="label_6">
+          <property name="text">
+           <string>校验位</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QComboBox" name="checkBox"/>
+        </item>
+        <item row="5" column="1">
+         <widget class="QLabel" name="label_7">
+          <property name="text">
+           <string>停止位</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="1">
+         <widget class="QLabel" name="portStatus">
+          <property name="text">
+           <string>未连接串口</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QComboBox" name="dataBox"/>
+        </item>
+        <item row="5" column="2">
+         <widget class="QPushButton" name="openTest">
+          <property name="text">
+           <string>开启测试模式</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="2">
+         <widget class="QPushButton" name="pushButton_16">
+          <property name="text">
+           <string>test1</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="2">
+         <widget class="QPushButton" name="searchBtn">
+          <property name="text">
+           <string>刷新串口</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="2">
+         <widget class="QPushButton" name="openBtn">
+          <property name="font">
+           <font>
+            <family>黑体</family>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>打开串口</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QPushButton" name="pushButton_5">
+          <property name="text">
+           <string>更新日志</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QGroupBox" name="groupBox_6">
+     <property name="title">
+      <string>GroupBox</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="0" column="0">
+       <widget class="QListWidget" name="listWidget"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QPushButton" name="clearReceiveDataButton_2">
+        <property name="text">
+         <string>清空</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QGroupBox" name="groupBox_7">
+     <property name="title">
+      <string>文件烧录</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_25">
+      <item row="1" column="0">
+       <layout class="QGridLayout" name="gridLayout_6">
+        <item row="1" column="1">
+         <widget class="QPushButton" name="pushButton_12">
+          <property name="text">
+           <string>擦除APP</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLineEdit" name="lineEdit"/>
+        </item>
+        <item row="2" column="1">
+         <widget class="QPushButton" name="pushButton_4">
+          <property name="text">
+           <string>烧录</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QPushButton" name="pushButton_14">
+          <property name="text">
+           <string>downLoadBackup</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>TextLabel</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QPushButton" name="readAPPVer">
+          <property name="text">
+           <string>readAppVer</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="2">
+         <widget class="QPushButton" name="pushButton_11">
+          <property name="text">
+           <string>readIC</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QPushButton" name="selectFileButton">
+          <property name="text">
+           <string>选择HEX文件</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="downLoadLabel">
+          <property name="text">
+           <string>烧录信息</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="2" column="0">
     <widget class="QGroupBox" name="groupBox_9">
      <property name="title">
       <string>电池信息</string>
@@ -1139,6 +1088,67 @@
       </item>
      </layout>
     </widget>
+   </item>
+   <item row="3" column="0">
+    <layout class="QGridLayout" name="gridLayout_10">
+     <item row="3" column="2">
+      <widget class="QPushButton" name="pushButton_3">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>开始读取tbs</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="3">
+      <widget class="QLineEdit" name="lineEdit_5">
+       <property name="text">
+        <string>2</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="2">
+      <widget class="QPushButton" name="sendTbs">
+       <property name="text">
+        <string>单次获取tbs数据</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="3">
+      <widget class="QPushButton" name="pushButton_15">
+       <property name="text">
+        <string>PushButton</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QPushButton" name="sendRegisterBox">
+       <property name="text">
+        <string>发送注册</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="3">
+      <widget class="QLineEdit" name="lineEdit_4">
+       <property name="text">
+        <string>10</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="4">
+      <widget class="QGroupBox" name="groupBox_3">
+       <property name="title">
+        <string>电池状态</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_13">
+        <item row="0" column="0">
+         <layout class="QGridLayout" name="batGridLayout"/>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

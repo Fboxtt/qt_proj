@@ -88,6 +88,7 @@ public:
 
     bool OpenHexFile(QFile *file, QString fileUrl);
     QString ReadHexFile(QFile *file);
+    QByteArray CopyHexFile(QFile *file);
     void Clear(void);
     QString packetToSendString(bmsCmdType cmdType, uint32_t packetNumber = 0);
     static bool isDownLoadCmd(char cmd);

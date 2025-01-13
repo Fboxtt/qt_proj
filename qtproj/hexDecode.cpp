@@ -156,6 +156,26 @@ QString hexDecode::ReadHexFile(QFile *file)
     }
     return decodeLog;
 }
+QByteArray hexDecode::CopyHexFile(QFile *file)
+{
+    QByteArray lineData;
+//    bool ok = false;
+    uint32_t lineNumber = 0;
+    QString decodeLog = "";
+//    uint32_t lastAddr = 0;
+//    uint32_t totalCheckSum = 0;
+    // 如果解析正确，则exist
+    this->exist = false;
+    while(true) {
+        lineNumber++;
+//        lineData = ;
+        lineData.append(file->readLine());
+        if(lineData == "") {
+            break;
+        }
+    }
+}
+
 void hexDecode::DownloadClear(void)
 {
     address = 0;
