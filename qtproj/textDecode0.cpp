@@ -1408,7 +1408,7 @@ bool textDcode::SplitData(QByteArray hex)
         this->legality = ERR_CHKSUM;
     }
     if(actualHex.length() >= 9 ) {
-        this->cmdAck = this->dataHex[8];
+        this->cmdAck = this->actualHex[8];
         if(actualHex.length() >= 11) {
             if(this->no80Cmd == PC_SET_WRITE_FLASH) {
                 this->noPacketLen = this->dataLen - 2;//取长度
