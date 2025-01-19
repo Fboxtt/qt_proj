@@ -411,3 +411,69 @@ QString hexDecode::DownLoadLog(void)
     log += "下载耗时ms" + QString::number(downloadStartTim.msecsTo(QTime::currentTime()), 10);
     return log;
 }
+
+void hexDecode::MergeHex(QStringList nameList)
+{
+    QByteArray data;
+    QByteArray dataOne;
+    QByteArray dataTwo;
+//    QByteArray dataAll;
+    QByteArray lnneData2;
+    QByteArray lineDataEx;
+    QByteArray lineData;
+    char addr[4] = {'2','0','0','0'};
+    QByteArray firstAddress(addr,4);
+    int hexIdx = 1;
+    int hexLineNum = 0;
+    this->mergeHexOk = false;
+    foreach(QString fileName, nameList) {
+
+        QFile file;
+        if (fileName.isEmpty()) {
+            return;
+        }
+
+        file.setFileName(fileName);
+        if(!file.open(QIODevice::ReadOnly))
+        {
+            qDebug()<<"文件打开失败";
+            file.close();
+            return;
+        }
+        lineDataEx.clear();
+        hexIdx = 0;
+        while(true) {
+            lineData = file.readLine();
+            if(hexLineNum == 1) {
+                lnneData2 = lineData.mid(3,4);
+                if(lnneData2 == firstAddress) {
+                    hexIdx = 1;
+                } else {
+                    hexIdx = 0;
+                }
+            }
+
+            if(lineData == "") {
+                if(hexIdx == 0) {
+                    dataOne = data;
+                } else {
+                    data.append(lineDataEx); // 合并的第二个hex文件需要包含最后一行
+                    dataTwo = data;
+                }
+                break;
+            } else {
+                data.append(lineDataEx);
+
+            }
+
+            lineDataEx = lineData;
+            hexLineNum++;
+        }
+
+        data.clear();
+        file.close();
+    }
+    this->dataAll.append(dataOne);
+    this->dataAll.append(dataTwo);
+    this->mergeHexOk = true;
+}

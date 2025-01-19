@@ -82,6 +82,9 @@ public:
     QByteArray n04extendLinearArray;
     QByteArray n05startLinearArray;
 
+    QByteArray dataAll;
+    bool mergeHexOk = false;
+
     QList<uint32_t> hexArray;
 
     QByteArray totalCheckSumArray;
@@ -89,6 +92,8 @@ public:
     bool OpenHexFile(QFile *file, QString fileUrl);
     QString ReadHexFile(QFile *file);
     QByteArray CopyHexFile(QFile *file);
+    void MergeHex(QStringList nameList);
+
     void Clear(void);
     QString packetToSendString(bmsCmdType cmdType, uint32_t packetNumber = 0);
     static bool isDownLoadCmd(char cmd);
