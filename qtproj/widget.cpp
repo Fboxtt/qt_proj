@@ -150,9 +150,30 @@ Widget::~Widget()
 
 void Widget::on_selectFileButton_clicked()
 {
-    QString fileName = QFileDialog::getOpenFileName(this,
-          tr("Open hex"), "/home/jana", tr("(*.hex)"));
-
+    QStringList fileNameList = QFileDialog::getOpenFileNames(this,
+        tr("Open hex"), "/home/jana", tr("(*.hex)"));
+    QString fileName;
+//    QString fileName = QFileDialog::getOpenFileName(this,
+//          tr("Open hex"), "/home/jana", tr("(*.hex)"));
+    if(fileNameList.size() > 1) {
+        hexFile.MergeHex(fileNameList);
+        if(hexFile.mergeHexOk == true) {
+            QString writeFileName = QFileDialog::getSaveFileName(this,
+                tr("Open hex"), "/home/jana", tr("(*.hex)"));
+            QFile writeFile;
+            writeFile.setFileName(writeFileName);
+            if(!writeFile.open(QIODevice::ReadWrite))
+            {
+                qDebug()<<"文件打开失败";
+                writeFile.close();
+                return;
+            }
+            writeFile.write(hexFile.dataAll);
+        }
+        return;
+    } else if(fileNameList.size() == 1) {
+        fileName = fileNameList.at(0);
+    }
     QFile file;
     if (fileName.isEmpty()) {
 //        QMessageBox::warning(this, "Warning!", "Failed to open the file!");
