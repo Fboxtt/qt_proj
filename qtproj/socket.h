@@ -15,10 +15,11 @@
 #include "ui_widget.h"
 #include "widget.h"
 #include "ui_widget.h"
-class testObject {
+class testObject
+{
 public:
     testObject();
-//    ~testProcess();
+    //    ~testProcess();
 
     enum STATUS {
         build,
@@ -50,51 +51,49 @@ public:
         "",
         "",
     };
-    uint8_t status = build;
-    uint8_t comStatus = SENDING;
-    QString log = "";
-    uint32_t packetNum;
-    uint8_t testId = 0;
+    uint8_t     status    = build;
+    uint8_t     comStatus = SENDING;
+    QString     log       = "";
+    uint32_t    packetNum;
+    uint8_t     testId = 0;
     QTcpServer *server;
     QTcpSocket *TcpSocket;
     QJsonObject sJsonObj;
     QJsonObject rJsonObj;
 
-    int step = 0;
+    int         step = 0;
 
-//    void serverSend(QString str);
-//    void serverReceive(QByteArray hex);
+    //    void serverSend(QString str);
+    //    void serverReceive(QByteArray hex);
 
-    void QByteToJson(QByteArray);
-    QByteArray jsonToQByte();
-    void add(QString key);
+    void                  QByteToJson(QByteArray);
+    QByteArray            jsonToQByte();
+    void                  add(QString key);
 
-    QMap<QString, void*> handleMap;
-    QStringList keyNameList;
-    int mapSize;
+    QMap<QString, void *> handleMap;
+    QStringList           keyNameList;
+    int                   mapSize;
 
-    void* pFunc(QString key);
-    QString testingKey;
+    void                 *pFunc(QString key);
+    QString               testingKey;
 
-    QString writeStr; // 用于发送给BMS的字符串
-    QString reportLog; // 测试报告
-    void testProcess(QString key);
-    void shakeInterrruptTest();
-    void sendHexInterTest();
-    void sendErrCheckTest();
-    void sendErrCmdTest();
-    void testNack();
-    void losePacket();
-    void normalDownload();
+    QString               writeStr;  // 用于发送给BMS的字符串
+    QString               reportLog; // 测试报告
+    void                  testProcess(QString key);
+    void                  shakeInterrruptTest();
+    void                  sendHexInterTest();
+    void                  sendErrCheckTest();
+    void                  sendErrCmdTest();
+    void                  testNack();
+    void                  losePacket();
+    void                  normalDownload();
 
-
-    QProgressDialog *bar = nullptr;
+    QProgressDialog      *bar = nullptr;
 
     // 新增的窗口用于放置烧录按钮
-    QWidget *testWidget = nullptr;
-    QGridLayout *layout = nullptr;
-    void clear();
+    QWidget     *testWidget = nullptr;
+    QGridLayout *layout     = nullptr;
+    void         clear();
 };
-
 
 #endif // SOCKET_H

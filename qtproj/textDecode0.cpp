@@ -3,46 +3,46 @@
 #include <hexDecode.h>
 extern tverStruct *tverStru0;
 extern caliStruct *caliStru0;
-extern tbsStruct *tbsStru0;
+extern tbsStruct  *tbsStru0;
 extern QStringList waitSendList;
 extern QStringList readySendList;
 extern QStringList hexSendList;
-extern sysStruct* sysStru0;
-extern snStruct* snStru20;
-extern snStruct* snStru30;
-extern hexDecode hexFile;
+extern sysStruct  *sysStru0;
+extern snStruct   *snStru20;
+extern snStruct   *snStru30;
+extern hexDecode   hexFile;
 datTypDic::datTypDic(DATA_TYPE type, QString typeName, uint32_t typeLenth, ENDIAN_TYPE endianType, SIGNED_TYPE signedType)
 {
-    this->type = type;
-    this->typeName = typeName;
-    this->typeLenth = typeLenth;
+    this->type       = type;
+    this->typeName   = typeName;
+    this->typeLenth  = typeLenth;
     this->endianType = endianType;
     this->signedType = signedType;
 }
 
 QList<datTypDic> TypUnion = {
-    {datTypDic::ULONG,   "ULONG", 4, datTypDic::LITTLE, datTypDic::UNSIGNED},
-    {datTypDic::LONG,     "LONG", 4, datTypDic::LITTLE, datTypDic::SIGNED},
+    {datTypDic::ULONG, "ULONG", 4, datTypDic::LITTLE, datTypDic::UNSIGNED},
+    {datTypDic::LONG, "LONG", 4, datTypDic::LITTLE, datTypDic::SIGNED},
     {datTypDic::USHORT, "USHORT", 2, datTypDic::LITTLE, datTypDic::UNSIGNED},
-    {datTypDic::SHORT,   "SHORT", 2, datTypDic::LITTLE, datTypDic::SIGNED},
-    {datTypDic::CHAR,     "CHAR", 1, datTypDic::LITTLE, datTypDic::SIGNED},
-    {datTypDic::UCHAR,     "UCHAR", 1, datTypDic::LITTLE, datTypDic::SIGNED},
-    {datTypDic::STRING,     "STRING", 1, datTypDic::LITTLE, datTypDic::UNSIGNED},
-    {datTypDic::WORD,     "WORD", 2, datTypDic::LITTLE, datTypDic::UNSIGNED},
-    {datTypDic::DWORD,     "DWORD", 4, datTypDic::LITTLE, datTypDic::UNSIGNED},
-    {datTypDic::BYTE,     "BYTE", 1, datTypDic::LITTLE, datTypDic::UNSIGNED},
+    {datTypDic::SHORT, "SHORT", 2, datTypDic::LITTLE, datTypDic::SIGNED},
+    {datTypDic::CHAR, "CHAR", 1, datTypDic::LITTLE, datTypDic::SIGNED},
+    {datTypDic::UCHAR, "UCHAR", 1, datTypDic::LITTLE, datTypDic::SIGNED},
+    {datTypDic::STRING, "STRING", 1, datTypDic::LITTLE, datTypDic::UNSIGNED},
+    {datTypDic::WORD, "WORD", 2, datTypDic::LITTLE, datTypDic::UNSIGNED},
+    {datTypDic::DWORD, "DWORD", 4, datTypDic::LITTLE, datTypDic::UNSIGNED},
+    {datTypDic::BYTE, "BYTE", 1, datTypDic::LITTLE, datTypDic::UNSIGNED},
 };
 // ***************************************dataCell**************************************//
 // ***************************************dataCell**************************************//
 dataCell::dataCell(QString valName, datTypDic::DATA_TYPE dataType, uint32_t lenth)
 {
     this->valName = valName;
-//    this->unitInCmdAddr = tver::datInCmdAddr;
+    //    this->unitInCmdAddr = tver::datInCmdAddr;
     // this->unitInDatAddr = tver::datLenth;
     this->dataType = dataType;
 
-    foreach(datTypDic unit, TypUnion) {
-        if(unit.type == this->dataType) {
+    foreach (datTypDic unit, TypUnion) {
+        if (unit.type == this->dataType) {
             this->typeLenth = lenth;
             // this->datLenth += lenth;
             this->endianType = unit.endianType;
@@ -57,8 +57,8 @@ dataCell::dataCell(QString valName, datTypDic::DATA_TYPE dataType)
     // this->unitInDatAddr = tver::datLenth;
     this->dataType = dataType;
 
-    foreach(datTypDic unit, TypUnion) {
-        if(unit.type == this->dataType) {
+    foreach (datTypDic unit, TypUnion) {
+        if (unit.type == this->dataType) {
             this->typeLenth = unit.typeLenth;
             // this->datLenth += unit.typeLenth;
             this->endianType = unit.endianType;
@@ -69,29 +69,29 @@ dataCell::dataCell(QString valName, datTypDic::DATA_TYPE dataType)
 uint32_t dataCell::findBitVal(QString bitName)
 {
     uint32_t i = 0;
-    if(bitMap.size() > 0) {
-        foreach(QString name, bitMap.values()) {
-            if(name == bitName) {
+    if (bitMap.size() > 0) {
+        foreach (QString name, bitMap.values()) {
+            if (name == bitName) {
                 return bitMap.keys()[i];
             }
             i++;
         }
     }
-        return 0;
+    return 0;
 }
 // ***************************************dataStruct**************************************//
 // ***************************************dataStruct**************************************//
 dataStruct::dataStruct()
 {
     this->newDataStatus = false;
-    this->dataLenth = 0;
+    this->dataLenth     = 0;
 }
 
-dataCell* dataStruct::value(QString valName)
+dataCell *dataStruct::value(QString valName)
 {
     uint32_t i = 0;
-    foreach(QString key, keyList) {
-        if(key == valName) {
+    foreach (QString key, keyList) {
+        if (key == valName) {
             return &dataCellList[i];
         }
         i++;
@@ -114,9 +114,9 @@ caliStruct::caliStruct()
     this->insert({"usPackVk", datTypDic::USHORT});
     this->insert({"usBattVk", datTypDic::USHORT});
 
-    for(uint8_t i = 1; i <= 16; i++)
+    for (uint8_t i = 1; i <= 16; i++)
     {
-        this->insert({"电芯" + QString::number(i,10), datTypDic::USHORT});//
+        this->insert({"电芯" + QString::number(i, 10), datTypDic::USHORT}); //
     }
 
     this->insert({"usChgCurrK", datTypDic::USHORT});
@@ -131,9 +131,9 @@ caliStruct::caliStruct()
     this->insert({"sChgCurrSSB;", datTypDic::SHORT});
     this->insert({"usDisCurrSSK", datTypDic::USHORT});
     this->insert({"sDisCurrSSB", datTypDic::SHORT});
-    for(uint8_t i = 1; i <= 8; i++)
+    for (uint8_t i = 1; i <= 8; i++)
     {
-        this->insert({"温度" + QString::number(i,10), datTypDic::USHORT});//
+        this->insert({"温度" + QString::number(i, 10), datTypDic::USHORT}); //
     }
 
     qDebug() << this->value("usChgCurrK")->valName << this->dataLenth;
@@ -142,7 +142,7 @@ caliStruct::caliStruct()
 // ***************************************tbsStruct**************************************//
 tbsStruct::tbsStruct()
 {
-    this->dataLenth = 0;
+    this->dataLenth     = 0;
     this->newDataStatus = false;
 
     this->insert({"PACK电压mV", datTypDic::ULONG});
@@ -189,49 +189,49 @@ tbsStruct::tbsStruct()
 }
 void tbsStruct::addStatusBits(void)
 {
-    this->value("其他信息HEX")->bitMap.insert(0x2,"加热器开启");
-    this->value("其他信息HEX")->bitMap.insert(0x00200000,"自加热模式");
-    this->value("其他信息HEX")->bitMap.insert(0x40,"充电mos断开");
-    this->value("其他信息HEX")->bitMap.insert(0x80,"放电mos断开");
+    this->value("其他信息HEX")->bitMap.insert(0x2, "加热器开启");
+    this->value("其他信息HEX")->bitMap.insert(0x00200000, "自加热模式");
+    this->value("其他信息HEX")->bitMap.insert(0x40, "充电mos断开");
+    this->value("其他信息HEX")->bitMap.insert(0x80, "放电mos断开");
 
-    this->value("告警状态HEX")->bitMap.insert(0x4,"单节过压警告");
-    this->value("告警状态HEX")->bitMap.insert(0x00040000,"低温单节过压警告");
-    this->value("告警状态HEX")->bitMap.insert(0x00000020,"单节低压警告");
-    this->value("告警状态HEX")->bitMap.insert(0x40,"充电过流警告");
-    this->value("告警状态HEX")->bitMap.insert(0x80,"放电过流警告");
-    this->value("告警状态HEX")->bitMap.insert(0x100,"充电高温警告");
-    this->value("告警状态HEX")->bitMap.insert(0x200,"放电高温警告护");
-    this->value("告警状态HEX")->bitMap.insert(0x400,"充电低温警告");
-    this->value("告警状态HEX")->bitMap.insert(0x800,"放电低温警告");
-    this->value("告警状态HEX")->bitMap.insert(0x4000,"短路警告");
-    this->value("告警状态HEX")->bitMap.insert(0x800000,"MOS高温警告");
+    this->value("告警状态HEX")->bitMap.insert(0x4, "单节过压警告");
+    this->value("告警状态HEX")->bitMap.insert(0x00040000, "低温单节过压警告");
+    this->value("告警状态HEX")->bitMap.insert(0x00000020, "单节低压警告");
+    this->value("告警状态HEX")->bitMap.insert(0x40, "充电过流警告");
+    this->value("告警状态HEX")->bitMap.insert(0x80, "放电过流警告");
+    this->value("告警状态HEX")->bitMap.insert(0x100, "充电高温警告");
+    this->value("告警状态HEX")->bitMap.insert(0x200, "放电高温警告护");
+    this->value("告警状态HEX")->bitMap.insert(0x400, "充电低温警告");
+    this->value("告警状态HEX")->bitMap.insert(0x800, "放电低温警告");
+    this->value("告警状态HEX")->bitMap.insert(0x4000, "短路警告");
+    this->value("告警状态HEX")->bitMap.insert(0x800000, "MOS高温警告");
 
-    this->value("保护状态HEX")->bitMap.insert(0x4,"单节过压保护");
-    this->value("保护状态HEX")->bitMap.insert(0x00040000,"低温单节过压保护");
-    this->value("保护状态HEX")->bitMap.insert(0x00000020,"单节低压保护");
-    this->value("保护状态HEX")->bitMap.insert(0x40,"充电过流保护");
-    this->value("保护状态HEX")->bitMap.insert(0x80,"放电过流保护");
-    this->value("保护状态HEX")->bitMap.insert(0x100,"充电高温保护");
-    this->value("保护状态HEX")->bitMap.insert(0x200,"放电高温保护");
-    this->value("保护状态HEX")->bitMap.insert(0x400,"充电低温保护");
-    this->value("保护状态HEX")->bitMap.insert(0x800,"放电低温保护");
-    this->value("保护状态HEX")->bitMap.insert(0x4000,"短路保护");
-    this->value("保护状态HEX")->bitMap.insert(0x800000,"MOS高温保护");
+    this->value("保护状态HEX")->bitMap.insert(0x4, "单节过压保护");
+    this->value("保护状态HEX")->bitMap.insert(0x00040000, "低温单节过压保护");
+    this->value("保护状态HEX")->bitMap.insert(0x00000020, "单节低压保护");
+    this->value("保护状态HEX")->bitMap.insert(0x40, "充电过流保护");
+    this->value("保护状态HEX")->bitMap.insert(0x80, "放电过流保护");
+    this->value("保护状态HEX")->bitMap.insert(0x100, "充电高温保护");
+    this->value("保护状态HEX")->bitMap.insert(0x200, "放电高温保护");
+    this->value("保护状态HEX")->bitMap.insert(0x400, "充电低温保护");
+    this->value("保护状态HEX")->bitMap.insert(0x800, "放电低温保护");
+    this->value("保护状态HEX")->bitMap.insert(0x4000, "短路保护");
+    this->value("保护状态HEX")->bitMap.insert(0x800000, "MOS高温保护");
 
-    this->value("错误状态HEX")->bitMap.insert(0x01,"电压传感器异常");
-    this->value("错误状态HEX")->bitMap.insert(0x02,"温度传感器异常");
-    this->value("错误状态HEX")->bitMap.insert(0x04,"充电控制异常");
-    this->value("错误状态HEX")->bitMap.insert(0x08,"放电控制异常");
-    this->value("错误状态HEX")->bitMap.insert(0x10,"电芯异常");
-    this->value("错误状态HEX")->bitMap.insert(0x100,"电芯寿命终止");
+    this->value("错误状态HEX")->bitMap.insert(0x01, "电压传感器异常");
+    this->value("错误状态HEX")->bitMap.insert(0x02, "温度传感器异常");
+    this->value("错误状态HEX")->bitMap.insert(0x04, "充电控制异常");
+    this->value("错误状态HEX")->bitMap.insert(0x08, "放电控制异常");
+    this->value("错误状态HEX")->bitMap.insert(0x10, "电芯异常");
+    this->value("错误状态HEX")->bitMap.insert(0x100, "电芯寿命终止");
 
-    this->value("电池状态HEX")->bitMap.insert(0x00,"空闲");
-    this->value("电池状态HEX")->bitMap.insert(0x01,"充电");
-    this->value("电池状态HEX")->bitMap.insert(0x02,"放电");
-    this->value("电池状态HEX")->bitMap.insert(0x04,"满充");
+    this->value("电池状态HEX")->bitMap.insert(0x00, "空闲");
+    this->value("电池状态HEX")->bitMap.insert(0x01, "充电");
+    this->value("电池状态HEX")->bitMap.insert(0x02, "放电");
+    this->value("电池状态HEX")->bitMap.insert(0x04, "满充");
 
-    for(uint8_t i = 1; i <= 16; i++) {
-        this->value("均衡状态HEX")->bitMap.insert(0x1 << (i - 1),"电芯" + QString::number(i));
+    for (uint8_t i = 1; i <= 16; i++) {
+        this->value("均衡状态HEX")->bitMap.insert(0x1 << (i - 1), "电芯" + QString::number(i));
     }
 }
 
@@ -239,9 +239,9 @@ void tbsStruct::addStatusBits(void)
 // ***************************************sysStruct**************************************//
 sysStruct::sysStruct()
 {
-    this->dataLenth = 0;
+    this->dataLenth     = 0;
     this->newDataStatus = false;
-    this->cmdType = 0x30;
+    this->cmdType       = 0x30;
     this->insert({"预留1", datTypDic::BYTE});
     this->insert({"预留2", datTypDic::BYTE});
     this->insert({"单模块容量", datTypDic::WORD});
@@ -282,53 +282,52 @@ sysStruct::sysStruct()
     this->insert({"保护状态HEX", datTypDic::ULONG});
     this->insert({"错误状态HEX", datTypDic::ULONG});
     this->insert({"系统循环数量", datTypDic::ULONG});
-//    this->insert({"预留7", datTypDic::WORD});
+    //    this->insert({"预留7", datTypDic::WORD});
 
-    for(uint8_t i = 0; i <= 9; i++) {
-        this->insert({"预留" + QString::number(i + 7) , datTypDic::WORD});
+    for (uint8_t i = 0; i <= 9; i++) {
+        this->insert({"预留" + QString::number(i + 7), datTypDic::WORD});
     }
-    this->value("保护状态HEX")->bitMap.insert(0x4,"单节过压保护");
-    this->value("保护状态HEX")->bitMap.insert(0x00040000,"低温单节过压保护");
-    this->value("保护状态HEX")->bitMap.insert(0x00000020,"单节低压保护");
-    this->value("保护状态HEX")->bitMap.insert(0x40,"充电过流保护");
-    this->value("保护状态HEX")->bitMap.insert(0x80,"放电过流保护");
-    this->value("保护状态HEX")->bitMap.insert(0x100,"充电高温保护");
-    this->value("保护状态HEX")->bitMap.insert(0x200,"放电高温保护");
-    this->value("保护状态HEX")->bitMap.insert(0x400,"充电低温保护");
-    this->value("保护状态HEX")->bitMap.insert(0x800,"放电低温保护");
-    this->value("保护状态HEX")->bitMap.insert(0x4000,"短路保护");
-    this->value("保护状态HEX")->bitMap.insert(0x800000,"MOS高温保护");
+    this->value("保护状态HEX")->bitMap.insert(0x4, "单节过压保护");
+    this->value("保护状态HEX")->bitMap.insert(0x00040000, "低温单节过压保护");
+    this->value("保护状态HEX")->bitMap.insert(0x00000020, "单节低压保护");
+    this->value("保护状态HEX")->bitMap.insert(0x40, "充电过流保护");
+    this->value("保护状态HEX")->bitMap.insert(0x80, "放电过流保护");
+    this->value("保护状态HEX")->bitMap.insert(0x100, "充电高温保护");
+    this->value("保护状态HEX")->bitMap.insert(0x200, "放电高温保护");
+    this->value("保护状态HEX")->bitMap.insert(0x400, "充电低温保护");
+    this->value("保护状态HEX")->bitMap.insert(0x800, "放电低温保护");
+    this->value("保护状态HEX")->bitMap.insert(0x4000, "短路保护");
+    this->value("保护状态HEX")->bitMap.insert(0x800000, "MOS高温保护");
 
-    this->value("错误状态HEX")->bitMap.insert(0x01,"电压传感器异常");
-    this->value("错误状态HEX")->bitMap.insert(0x02,"温度传感器异常");
-    this->value("错误状态HEX")->bitMap.insert(0x04,"充电控制异常");
-    this->value("错误状态HEX")->bitMap.insert(0x08,"放电控制异常");
-    this->value("错误状态HEX")->bitMap.insert(0x10,"电芯异常");
-    this->value("错误状态HEX")->bitMap.insert(0x100,"电芯寿命终止");
-
+    this->value("错误状态HEX")->bitMap.insert(0x01, "电压传感器异常");
+    this->value("错误状态HEX")->bitMap.insert(0x02, "温度传感器异常");
+    this->value("错误状态HEX")->bitMap.insert(0x04, "充电控制异常");
+    this->value("错误状态HEX")->bitMap.insert(0x08, "放电控制异常");
+    this->value("错误状态HEX")->bitMap.insert(0x10, "电芯异常");
+    this->value("错误状态HEX")->bitMap.insert(0x100, "电芯寿命终止");
 }
 
 // ***************************************snStruct**************************************//
 // ***************************************snStruct**************************************//
 snStruct::snStruct(int SnNum)
 {
-    this->dataLenth = 0;
+    this->dataLenth     = 0;
     this->newDataStatus = false;
-    this->cmdType = 0x30;
-    for(uint8_t i = 0; i < SnNum; i++) {
-        this->insert({"预留" + QString::number(i) , datTypDic::BYTE});
+    this->cmdType       = 0x30;
+    for (uint8_t i = 0; i < SnNum; i++) {
+        this->insert({"预留" + QString::number(i), datTypDic::BYTE});
     }
 }
 // ***************************************tver**************************************//
 tver::tver(QString valName, datTypDic::DATA_TYPE dataType, uint32_t lenth)
 {
     this->valName = valName;
-//    this->unitInCmdAddr = tver::datInCmdAddr;
+    //    this->unitInCmdAddr = tver::datInCmdAddr;
     // this->unitInDatAddr = tver::datLenth;
     this->dataType = dataType;
 
-    foreach(datTypDic unit, TypUnion) {
-        if(unit.type == this->dataType) {
+    foreach (datTypDic unit, TypUnion) {
+        if (unit.type == this->dataType) {
             this->typeLenth = lenth;
             // this->datLenth += lenth;
             this->endianType = unit.endianType;
@@ -343,8 +342,8 @@ tver::tver(QString valName, datTypDic::DATA_TYPE dataType)
     // this->unitInDatAddr = tver::datLenth;
     this->dataType = dataType;
 
-    foreach(datTypDic unit, TypUnion) {
-        if(unit.type == this->dataType) {
+    foreach (datTypDic unit, TypUnion) {
+        if (unit.type == this->dataType) {
             this->typeLenth = unit.typeLenth;
             // this->datLenth += unit.typeLenth;
             this->endianType = unit.endianType;
@@ -355,7 +354,7 @@ tver::tver(QString valName, datTypDic::DATA_TYPE dataType)
 
 tverStruct::tverStruct()
 {
-    this->dataLenth = 0;
+    this->dataLenth     = 0;
     this->newDataStatus = false;
     this->insert({"主版本号", datTypDic::USHORT});
     this->insert({"次版本号", datTypDic::USHORT});
@@ -380,96 +379,92 @@ void tverStruct::insert(tver addTver)
     this->dataLenth += addTver.typeLenth;
 }
 
-
-tbs::tbs(QString valName,datTypDic::DATA_TYPE dataType)
+tbs::tbs(QString valName, datTypDic::DATA_TYPE dataType)
 {
-    this->valName = valName;
+    this->valName  = valName;
     this->dataType = dataType;
 
-    foreach(datTypDic unit, TypUnion) {
-        if(unit.type == this->dataType) {
+    foreach (datTypDic unit, TypUnion) {
+        if (unit.type == this->dataType) {
             this->typeLenth = unit.typeLenth;
-//            this->datLenth += unit.typeLenth;
+            //            this->datLenth += unit.typeLenth;
             this->endianType = unit.endianType;
             this->signedType = unit.signedType;
         }
     }
 }
 
-
 textStruct::textStruct(QString text)
 {
     QStringList beSplitList = text.split(COMUT_BAT_SEP);
     QStringList dataList;
-    bool ok;
-    QByteArray comArray;
+    bool        ok;
+    QByteArray  comArray;
 
-    this->cmdOk = true;
+    this->cmdOk      = true;
     this->checkSumOk = true;
-    this->lenthOk = true;
+    this->lenthOk    = true;
     qDebug() << "6.1.3.0==================text split";
     if (text.contains(COMUT_BAT_SEP, Qt::CaseSensitive)) {
         beSplitList = text.split(COMUT_BAT_SEP); // 和时间戳分开
-        this->tim = beSplitList[0];
-        this->text = beSplitList[1];
+        this->tim   = beSplitList[0];
+        this->text  = beSplitList[1];
     } else {
-//        return QString("数据非法,无;,") + text;
+        //        return QString("数据非法,无;,") + text;
         this->Err = (dataErr)1;
     }
     // 判断发送还是接收
     qDebug() << "6.1.3.3==================split with space";
-    if(this->tim.contains("TX")) {
+    if (this->tim.contains("TX")) {
         this->sendOrReceive = textStruct::SEND;
     } else {
         this->sendOrReceive = textStruct::RECEIVE;
     }
-    dataList = this->text.simplified().split(' ');
+    dataList  = this->text.simplified().split(' ');
     byteLenth = dataList.size();
     // 转换成char类型
     qDebug() << "6.1.3.5==================comArray append(hexStr) ";
-    foreach(QString hexStr, dataList) {
+    foreach (QString hexStr, dataList) {
         hexStr.toInt(&ok, 16);
         if (ok == true) {
             comArray.append((uint8_t)hexStr.toInt(&ok, 16));
         }
     }
-    if(this->sendOrReceive == textStruct::SEND) {
-        if((this->cmd & 0x80) > 0) {
+    if (this->sendOrReceive == textStruct::SEND) {
+        if ((this->cmd & 0x80) > 0) {
             this->cmdOk = false;
         }
     } else {
-        if((this->cmd & 0x80) == 0) {
+        if ((this->cmd & 0x80) == 0) {
             this->cmdOk = false;
         }
     }
 
-    if (text.contains(QRegExp("^[0-9a-fA-F]{1,}$")) == true) {
+    if (text.contains(QRegularExpression("^[0-9a-fA-F]{1,}$")) == true) {
         this->Err = (dataErr)1;
     }
     qDebug() << "6.1.3.7================== comArray.size = " << comArray.size();
-    if(comArray.size() < 8) {
+    if (comArray.size() < 8) {
         this->lenthOk = false;
     } else if (comArray.size() == 8) {
-        if(comArray.size() != (comArray[1] * 0x100 + comArray[2] + 4)) {
+        if (comArray.size() != (comArray[1] * 0x100 + comArray[2] + 4)) {
             this->lenthOk = false;
         }
     } else {
-        if(comArray.size() != (comArray[1] * 0x100 + comArray[2] + 4)) {
+        if (comArray.size() != (comArray[1] * 0x100 + comArray[2] + 4)) {
             this->lenthOk = false;
         } else {
-            dataArray.append(comArray.mid(8,comArray[1] * 0x100 + comArray[2] - 5));
+            dataArray.append(comArray.mid(8, comArray[1] * 0x100 + comArray[2] - 5));
         }
     }
     uint8_t checkSum = 0;
 
-
     qDebug() << "6.1.3.9================== cal checkSum ";
-    if(comArray.size() >= 8) {
-
-        for(int i = 1; i < comArray.size() - 1; i++) {
+    if (comArray.size() >= 8) {
+        for (int i = 1; i < comArray.size() - 1; i++) {
             checkSum += comArray[i];
         }
-        if(checkSum != (uint8_t)comArray.back()) {
+        if (checkSum != (uint8_t)comArray.back()) {
             this->checkSumOk = false;
         }
         qDebug() << "6.1.3.11================== cmd and ack ";
@@ -484,55 +479,82 @@ textStruct::textStruct(QString text)
 
 textDcode::textDcode(void)
 {
-    funcCode =  {{0x01,"产品注册"} \
-                ,{0x02,"断开注册"}\
-                ,{0x13,"TBS数据"}\
-                ,{0x0A,"开chg fet"}\
-                ,{0x0B,"关chg fet"}\
-                ,{0x0C,"开dchg fet"}\
-                ,{0x0D,"关dchg fet"}\
-                ,{0x10,"获取产品序列号"}\
-                ,{0x16,"获取版本"}\
-                ,{0x60,"关机命令"}\
-                ,{0x64,"休眠命令"}};
+    funcCode = {{0x01, "产品注册"}, {0x02, "断开注册"}, {0x13, "TBS数据"}, {0x0A, "开chg fet"}, {0x0B, "关chg fet"}, {0x0C, "开dchg fet"}, {0x0D, "关dchg fet"}, {0x10, "获取产品序列号"}, {0x16, "获取版本"}, {0x60, "关机命令"}, {0x64, "休眠命令"}};
 
-    ackCode =   {{0x00,"ACK无异常"}\
-                ,{0x01,"ACK长度错误"}\
-                ,{0x03,"ACK类型错误"}\
-                ,{0x04,"ACKid错误"}\
-                ,{0x05,"ACK握手错误"}\
-                ,{0x06,"ACK校验错误"}};
+    ackCode  = {{0x00, "ACK无异常"}, {0x01, "ACK长度错误"}, {0x03, "ACK类型错误"}, {0x04, "ACKid错误"}, {0x05, "ACK握手错误"}, {0x06, "ACK校验错误"}};
 
-//    this->tbsUnion = &tbsUnit;
+    //    this->tbsUnion = &tbsUnit;
 }
 
-QList<QLabel*> alarmLabel;
-QList<QLabel*> loseLabel;
-QList<QLabel*> otherLabel;
-QList<QLabel*> batLabel;
-QList<QLabel*> balanceLabel;
+QList<QLabel *> alarmLabel;
+QList<QLabel *> loseLabel;
+QList<QLabel *> otherLabel;
+QList<QLabel *> batLabel;
+QList<QLabel *> balanceLabel;
 
-QList<QString> alarmStat = {
-    "","","单节过压保护","",
-    "","单节低压保护","充电过流保护","放电过流保护",
-    "充电高温","放电高温","充电低温","放电低温",
-    "","","短路保护","",
-    "","","低温单节过压保护","",
-    "","","","MOS高温保护",
+QList<QString>  alarmStat = {
+    "",
+    "",
+    "单节过压保护",
+    "",
+    "",
+    "单节低压保护",
+    "充电过流保护",
+    "放电过流保护",
+    "充电高温",
+    "放电高温",
+    "充电低温",
+    "放电低温",
+    "",
+    "",
+    "短路保护",
+    "",
+    "",
+    "",
+    "低温单节过压保护",
+    "",
+    "",
+    "",
+    "",
+    "MOS高温保护",
 };
 QList<QString> loseStat = {
-    "电压传感器失效","温度传感器失效","充电控制异常","放电控制异常",
-    "电芯异常","","","",
+    "电压传感器失效",
+    "温度传感器失效",
+    "充电控制异常",
+    "放电控制异常",
+    "电芯异常",
+    "",
+    "",
+    "",
     "电芯寿命终止    ",
 };
 
 QList<QString> otherInfo = {
-    "","加热器开启","","",
-    "","","充电MOS断开","放电MOS断开",
-    "","","","",
-    "","","","",
-    "","","","",
-    "","自加热模式         ","","",
+    "",
+    "加热器开启",
+    "",
+    "",
+    "",
+    "",
+    "充电MOS断开",
+    "放电MOS断开",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "自加热模式         ",
+    "",
+    "",
 };
 QList<QString> batStat = {
     "充电",
@@ -543,10 +565,22 @@ QList<QString> batStat = {
 };
 
 QList<QString> balanceStat = {
-    "电芯1","电芯2","电芯3","电芯4",
-    "电芯5","电芯6","电芯7","电芯8",
-    "电芯9","电芯10","电芯11","电芯12",
-    "电芯13","电芯14","电芯15","电芯16          ",
+    "电芯1",
+    "电芯2",
+    "电芯3",
+    "电芯4",
+    "电芯5",
+    "电芯6",
+    "电芯7",
+    "电芯8",
+    "电芯9",
+    "电芯10",
+    "电芯11",
+    "电芯12",
+    "电芯13",
+    "电芯14",
+    "电芯15",
+    "电芯16          ",
 };
 
 // 输入值，输出对应字符串
@@ -554,19 +588,17 @@ QString textDcode::ByteDecode(QMap<uint32_t, QString> mapCode, uint8_t keys)
 {
     QString strCode;
     if (!mapCode.contains(keys)) {
-        strCode =  "--";
+        strCode = "--";
         return strCode;
     }
     strCode = mapCode.value(keys);
     return strCode;
 }
 
-
-
 uint32_t textDcode::CalCheckSum(QVector<uint8_t> hexVector)
 {
     uint32_t checkSum = 0;
-    foreach(uint8_t hexVal, hexVector) {
+    foreach (uint8_t hexVal, hexVector) {
         checkSum += hexVal;
     }
     return checkSum;
@@ -575,14 +607,14 @@ uint32_t textDcode::CalCheckSum(QVector<uint8_t> hexVector)
 // 把收到的所有数据，替换成type，ack和data.
 QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
 {
-    QStringList Command = {"地址","高字节","低字节","单板类型","功能码","握手1","握手2","ack","data","check"};
+    QStringList      Command = {"地址", "高字节", "低字节", "单板类型", "功能码", "握手1", "握手2", "ack", "data", "check"};
     QVector<uint8_t> hexVector;
-    uint32_t dataNum = 0, dataSum = 0, datId = 0;
-    QStringList codeList;
+    uint32_t         dataNum = 0, dataSum = 0, datId = 0;
+    QStringList      codeList;
     decodeStr = "";
     bool ok;
 
-    foreach(QString hexStr, hexStrLis) {
+    foreach (QString hexStr, hexStrLis) {
         hexVector.append((uint8_t)hexStr.toInt(&ok, 16));
     }
     // qDebug() << "size hexStrLis = " << hexStrLis.size() << "decodeStr.lenth = " << decodeStr.length();
@@ -611,7 +643,7 @@ QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
             // qDebug() << "datId" << datId << "dataNum" << dataNum << "hexstrlis size = " << hexStrLis.size();
             if (dataNum == 5) {
             } else if (dataNum > 5) {
-                dataSum += this->CalCheckSum(hexVector.mid(i,dataNum - 5));
+                dataSum += this->CalCheckSum(hexVector.mid(i, dataNum - 5));
                 datId += dataNum - 5;
             }
             continue;
@@ -628,7 +660,7 @@ QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
         datId++;
     }
 
-    if(hexStrLis.size() > 8 && (hexStrLis[4] == "93")) {
+    if (hexStrLis.size() > 8 && (hexStrLis[4] == "93")) {
         // 把数据写入tbsUnit
         HexWriteDataStruct(hexStrLis.mid(8, 96), tbsStru0); // 需要改成自适应
     } else if (hexStrLis.size() > 8 && (hexStrLis[4] == "96")) {
@@ -653,11 +685,11 @@ QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
 // 将除了data的所有hex字节数据用 字符 替换。
 QString textDcode::SendCmdDocode(QStringList hexStrLis, QString decodeStr)
 {
-    QString Command[8] = {"地址","低字节","高字节","单板类型","功能码","握手1","握手2","check"};
-    QString strm;
+    QString     Command[8] = {"地址", "低字节", "高字节", "单板类型", "功能码", "握手1", "握手2", "check"};
+    QString     strm;
     QStringList outStrL;
 
-    bool ok;
+    bool        ok;
     for (uint32_t i = 0, limit = hexStrLis.size(); i < limit; i++) {
         qDebug() << hexStrLis[i].toInt(&ok, 16) << decodeStr;
         if (Command[i] == "功能码") {
@@ -673,7 +705,7 @@ QString textDcode::SendCmdDocode(QStringList hexStrLis, QString decodeStr)
 QString textDcode::AddTimeStamp(Ui::Widget *ui, QString decodeStr)
 {
     QString outToPlainText;
-//    Data += '\r';//插入换行
+    //    Data += '\r';//插入换行
     // qDebug() << ui->TimeCheckBox->isChecked() << "time checkbox";
     if (ui->TimeCheckBox->isChecked()) {
         outToPlainText = QString("[%1]:TX&->").arg(QTime::currentTime().toString("HH:mm:ss:zzz")) + COMUT_BAT_SEP + decodeStr;
@@ -683,26 +715,24 @@ QString textDcode::AddTimeStamp(Ui::Widget *ui, QString decodeStr)
     return outToPlainText;
 }
 
-
-
 // 将plaintext 最后一个block内的可解析数据替换
 QString textDcode::PlainTextDecode(Ui::Widget *ui)
 {
-    QString Command[10] = {"地址","低字节","高字节","单板类型","功能码","握手1","握手2","ack","data","check"};
-    QString timeText, dataText;
-    QTextBlock textBlock;
+    QString        Command[10] = {"地址", "低字节", "高字节", "单板类型", "功能码", "握手1", "握手2", "ack", "data", "check"};
+    QString        timeText, dataText;
+    QTextBlock     textBlock;
     QTextDocument *doc;
-    QByteArray textByte;
-    QStringList timeAndDataList, dataList;
-    int blockCount;
+    QByteArray     textByte;
+    QStringList    timeAndDataList, dataList;
+    int            blockCount;
 
-//    Command[0] = "address";
-//    ui->receiveData->setPlainText("00 00 05 01 81 55 AA 00");
-//    ui->receiveData->setPlainText("00 00 04 01 01 55 AA 06");
-//    ui->HexEncodeText->appendPlainText(ui->receiveData->);
+    //    Command[0] = "address";
+    //    ui->receiveData->setPlainText("00 00 05 01 81 55 AA 00");
+    //    ui->receiveData->setPlainText("00 00 04 01 01 55 AA 06");
+    //    ui->HexEncodeText->appendPlainText(ui->receiveData->);
     // qDebug() << ui->receiveData->blockCount() << "block count";
 
-    doc = ui->receiveData->document();
+    doc        = ui->receiveData->document();
 
     blockCount = ui->receiveData->blockCount();
     qDebug() << "6.1.0==================读取block";
@@ -712,7 +742,7 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
     qDebug() << dataText;
     qDebug() << "6.1.3==================解析datextblock";
     textStruct destinyText = textStruct(dataText);
-    timeText = "";
+    timeText               = "";
     // qDebug() << "dataText" << dataText;
     // if (!dataText.contains(COMUT_BAT_SEP, Qt::CaseSensitive)) {
     //     // timeAndDataList = dataText.split(";"); // 和时间戳分开
@@ -720,13 +750,13 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
     qDebug() << "6.1.5==================分解dataText";
     if (dataText.contains(COMUT_BAT_SEP, Qt::CaseSensitive)) {
         timeAndDataList = dataText.split(COMUT_BAT_SEP); // 和时间戳分开
-        timeText = timeAndDataList[0];
-        dataText = timeAndDataList[1];
+        timeText        = timeAndDataList[0];
+        dataText        = timeAndDataList[1];
     } else {
         return QString("数据非法,无;,") + dataText;
     }
 
-    if (dataText.contains(QRegExp("^[0-9a-fA-F]{1,}$")) == true) {
+    if (dataText.contains(QRegularExpression("^[0-9a-fA-F]{1,}$")) == true) {
         return QString("数据非法,包含非法字符") + COMUT_SEP + timeAndDataList[0] + COMUT_BAT_SEP + timeAndDataList[1];
     }
     // qDebug()  << "text block" << textBlock.text();
@@ -738,77 +768,75 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
     // 通过长度判断是send还是receive
     qDebug() << "6.1.7==================SendCmdDocode";
     if (dataList.size() == 8) {
-        dataText = SendCmdDocode(dataList, dataText)  + COMUT_SEP + timeAndDataList[0] + COMUT_BAT_SEP;
-        bool ok = false;
-        int reviewCmdType = dataList.at(4).toInt(&ok, 16);
-        if(reviewCmdType == 0x30) {
+        dataText           = SendCmdDocode(dataList, dataText) + COMUT_SEP + timeAndDataList[0] + COMUT_BAT_SEP;
+        bool ok            = false;
+        int  reviewCmdType = dataList.at(4).toInt(&ok, 16);
+        if (reviewCmdType == 0x30) {
             // waitSendList.append(sysStru0->OutPutStru());
-//            SendAndDecode(sysStru0->OutPutStru());
+            //            SendAndDecode(sysStru0->OutPutStru());
         }
-
 
     } else if (dataList.size() > 8 && dataList.size() < 200) {
         qDebug() << "6.1.9==================DownLoadProcess";
-        if(hexDecode::isDownLoadCmd(destinyText.cmd)) { // 判断收到的命令是否是烧录相关命令
+        if (hexDecode::isDownLoadCmd(destinyText.cmd)) { // 判断收到的命令是否是烧录相关命令
             QString outPutStr;
-            uint8_t downState = hexFile.DownLoadProcess(destinyText, &outPutStr);   // 进入烧录程序,获得下一步状态和发送内容
+            uint8_t downState    = hexFile.DownLoadProcess(destinyText, &outPutStr); // 进入烧录程序,获得下一步状态和发送内容
             QString downloadInfo = QString("packetSendingNum / packetSize = %1 / %2").arg(hexFile.packetId).arg(hexFile.packetNum);
-            if(hexFile.isErrExceeding()) {
+            if (hexFile.isErrExceeding()) {
                 downState = hexDecode::DOWNLOAD_DONE;
             }
             switch (downState) {
-            case true:
-                ui->downLoadLabel->setText(downloadInfo);   // 在上位机显示相关信息
-                hexSendList.append(outPutStr);               // 发送数据列表添加待发送数据
-                break;
-            case hexDecode::PACKET_NUM_LENTH_ERR:
-                ui->downLoadLabel->setText("包号长度错误");
-                hexFile.packetNumLErr++;
-                hexSendList.append(outPutStr);
-                break;
-            case hexDecode::BMS_NACK:
-                ui->downLoadLabel->setText("从机回复nack");
-                hexFile.bmsNack++;
-                hexSendList.append(outPutStr);
-                break;
-//            case hexDecode::CMD_TYPE_ERR:
-//                hexFile.cmdTypeErr++;
-//                ui->downLoadLabel->setText("从机类型错误");
-//                hexSendList.append(outPutStr);
-//                break;
-            case hexDecode::DOWNLOAD_DONE:
-                ui->downLoadLabel->setText(downloadInfo);
-                hexSendList.append(outPutStr);
-                break;
-            case hexDecode::CHECKSUM_ACK:
-                ui->downLoadLabel->setText(downloadInfo);
-                ui->downLoadLabel->setText(ui->downLoadLabel->text() + "\n" + "烧录结束" + hexFile.DownLoadLog());
-                break;
-            case hexDecode::JUST_ERASE:
-                ui->downLoadLabel->setText(downloadInfo);
-                ui->downLoadLabel->setText(ui->downLoadLabel->text() + "\n" + "烧录结束" + hexFile.DownLoadLog());
-                break;
+                case true:
+                    ui->downLoadLabel->setText(downloadInfo); // 在上位机显示相关信息
+                    hexSendList.append(outPutStr);            // 发送数据列表添加待发送数据
+                    break;
+                case hexDecode::PACKET_NUM_LENTH_ERR:
+                    ui->downLoadLabel->setText("包号长度错误");
+                    hexFile.packetNumLErr++;
+                    hexSendList.append(outPutStr);
+                    break;
+                case hexDecode::BMS_NACK:
+                    ui->downLoadLabel->setText("从机回复nack");
+                    hexFile.bmsNack++;
+                    hexSendList.append(outPutStr);
+                    break;
+                    //            case hexDecode::CMD_TYPE_ERR:
+                    //                hexFile.cmdTypeErr++;
+                    //                ui->downLoadLabel->setText("从机类型错误");
+                    //                hexSendList.append(outPutStr);
+                    //                break;
+                case hexDecode::DOWNLOAD_DONE:
+                    ui->downLoadLabel->setText(downloadInfo);
+                    hexSendList.append(outPutStr);
+                    break;
+                case hexDecode::CHECKSUM_ACK:
+                    ui->downLoadLabel->setText(downloadInfo);
+                    ui->downLoadLabel->setText(ui->downLoadLabel->text() + "\n" + "烧录结束" + hexFile.DownLoadLog());
+                    break;
+                case hexDecode::JUST_ERASE:
+                    ui->downLoadLabel->setText(downloadInfo);
+                    ui->downLoadLabel->setText(ui->downLoadLabel->text() + "\n" + "烧录结束" + hexFile.DownLoadLog());
+                    break;
             }
-
         }
         // 解析tbs数据，sys数据，版本号数据
         dataText = readDataDocode(dataList, dataText) + COMUT_SEP + timeAndDataList[0] + COMUT_BAT_SEP;
-        if(dataText.contains("产品注册")) {
-            if(dataText.contains("校验正确")) {
+        if (dataText.contains("产品注册")) {
+            if (dataText.contains("校验正确")) {
                 ui->portStatus->setText("产品注册成功");
             } else {
                 ui->portStatus->setText("产品注册失败");
             }
-        } else if(dataText.contains("TBS数据")) {
-            if(dataText.contains("校验正确")) {
-                foreach(dataCell cell, tbsStru0->dataCellList) {
+        } else if (dataText.contains("TBS数据")) {
+            if (dataText.contains("校验正确")) {
+                foreach (dataCell cell, tbsStru0->dataCellList) {
                     QString tbsStr;
-                    if(cell.valName.contains("HEX")) {
-                        dataText += QString("0x%1").arg(cell.uintVal,0,16) + BAT_SEP;
-                    } else if(cell.valName.contains("电流")) {
-                        dataText += QString("%1").arg((int)cell.uintVal,0,10) + BAT_SEP;
+                    if (cell.valName.contains("HEX")) {
+                        dataText += QString("0x%1").arg(cell.uintVal, 0, 16) + BAT_SEP;
+                    } else if (cell.valName.contains("电流")) {
+                        dataText += QString("%1").arg((int)cell.uintVal, 0, 10) + BAT_SEP;
                     } else {
-                        dataText += QString("%1").arg(cell.uintVal,0,10) + BAT_SEP;
+                        dataText += QString("%1").arg(cell.uintVal, 0, 10) + BAT_SEP;
                     }
                     // dataText += tbsStr.setNum(cell.uintVal, 10) + BAT_SEP;
                 }
@@ -821,35 +849,34 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
     }
     // qDebug() << "split = " << timeText << dataText;
     qDebug() << "6.1.11==================PlainTetDecode ok";
-    //单独解码
-    // Widget.SetTbsToTableAndChart(dataText, 1);
+    // 单独解码
+    //  Widget.SetTbsToTableAndChart(dataText, 1);
     return dataText;
-
 }
 
 // 把输入的itemlist内的值修改成空“”
-void textDcode::clearTableItem(QVector<QTableWidgetItem>* itemTableList)
+void textDcode::clearTableItem(QVector<QTableWidgetItem> *itemTableList)
 {
     uint32_t idx = 0;
-    foreach(dataCell cell, tbsStru0->dataCellList) {
+    foreach (dataCell cell, tbsStru0->dataCellList) {
         (*itemTableList)[idx * 2 + 1].setText("");
         idx++;
     }
 }
 
 // 把输入的itemlist内写入新的值
-void textDcode::itemToTable(QVector<QTableWidgetItem>* itemTableList)
+void textDcode::itemToTable(QVector<QTableWidgetItem> *itemTableList)
 {
     uint32_t idx = 0;
-    foreach(dataCell cell, tbsStru0->dataCellList) {
+    foreach (dataCell cell, tbsStru0->dataCellList) {
         (*itemTableList)[idx * 2].setText(cell.valName);
-         if(cell.valName.contains("HEX")) {
-             (*itemTableList)[idx * 2 + 1].setText(QString("0x%1").arg(cell.uintVal,0,16));
-         } else if(cell.valName.contains("电流")) {
-             (*itemTableList)[idx * 2 + 1].setText(QString("%1").arg((int)cell.uintVal,0,10));
-         } else {
-             (*itemTableList)[idx * 2 + 1].setText(QString("%1").arg(cell.uintVal,0,10));
-         }
+        if (cell.valName.contains("HEX")) {
+            (*itemTableList)[idx * 2 + 1].setText(QString("0x%1").arg(cell.uintVal, 0, 16));
+        } else if (cell.valName.contains("电流")) {
+            (*itemTableList)[idx * 2 + 1].setText(QString("%1").arg((int)cell.uintVal, 0, 10));
+        } else {
+            (*itemTableList)[idx * 2 + 1].setText(QString("%1").arg(cell.uintVal, 0, 10));
+        }
 
         idx++;
     }
@@ -886,25 +913,24 @@ void textDcode::itemToTable(QVector<QTableWidgetItem>* itemTableList)
 // }
 void textDcode::IntWriteTbs(QStringList dataList)
 {
-
-    bool ok;
+    bool             ok;
     QVector<uint8_t> hexVector;
-    uint32_t tbsUnitIdx = 0, uintVal = 0;
+    uint32_t         tbsUnitIdx = 0, uintVal = 0;
 
-    foreach(QString hexStr, dataList) {
-        if(tbsStru0->dataCellList[tbsUnitIdx].valName.contains("HEX")) {
-            uintVal = hexStr.toUInt(&ok, 16);
+    foreach (QString hexStr, dataList) {
+        if (tbsStru0->dataCellList[tbsUnitIdx].valName.contains("HEX")) {
+            uintVal                                    = hexStr.toUInt(&ok, 16);
             tbsStru0->dataCellList[tbsUnitIdx].uintVal = uintVal;
-        } else if(tbsStru0->dataCellList[tbsUnitIdx].valName.contains("电流")) {
-            uintVal = hexStr.toInt(&ok, 10);
+        } else if (tbsStru0->dataCellList[tbsUnitIdx].valName.contains("电流")) {
+            uintVal                                    = hexStr.toInt(&ok, 10);
             tbsStru0->dataCellList[tbsUnitIdx].uintVal = uintVal;
         } else {
-            uintVal = hexStr.toUInt(&ok, 10);
+            uintVal                                    = hexStr.toUInt(&ok, 10);
             tbsStru0->dataCellList[tbsUnitIdx].uintVal = uintVal;
         }
 
         tbsUnitIdx++;
-        if(tbsUnitIdx >= (uint32_t)tbsStru0->dataCellList.size()) {
+        if (tbsUnitIdx >= (uint32_t)tbsStru0->dataCellList.size()) {
             qDebug() << "tbsUnit.size()" << tbsStru0->dataCellList.size();
             break;
         }
@@ -913,41 +939,40 @@ void textDcode::IntWriteTbs(QStringList dataList)
 }
 
 // 将字符串str转换成真实的int值，再转换成str写入tverStruct
-QString textDcode::HexWriteTver(QStringList dataList, tverStruct* tverStuObject)
+QString textDcode::HexWriteTver(QStringList dataList, tverStruct *tverStuObject)
 {
-
-    bool ok;
+    bool             ok;
     QVector<uint8_t> hexVector;
-    uint8_t byteInUnit = 0;
-    uint32_t  uintVal = 0;
+    uint8_t          byteInUnit = 0;
+    uint32_t         uintVal    = 0;
 
-    foreach(QString hexStr, dataList) {
+    foreach (QString hexStr, dataList) {
         hexStr.toInt(&ok, 16);
         if (ok == true) {
             hexVector.append((uint8_t)hexStr.toInt(&ok, 16));
         }
     }
 
-    if((uint32_t)hexVector.size() != tverStuObject->dataLenth) {
+    if ((uint32_t)hexVector.size() != tverStuObject->dataLenth) {
         return "tver数据长度不对";
     }
 
     QList<QString>::iterator it;
-    it = tverStuObject->keyList.begin();
+    it         = tverStuObject->keyList.begin();
     tver tver0 = tverStuObject->tverMap.value(*it);
-    foreach(uint8_t hex, hexVector) {
-        uintVal += (((uint32_t)hex) <<  (byteInUnit * 8));
+    foreach (uint8_t hex, hexVector) {
+        uintVal += (((uint32_t)hex) << (byteInUnit * 8));
         tver0.byteArray.append(hex);
         byteInUnit++;
-        if(byteInUnit == tver0.typeLenth) {
+        if (byteInUnit == tver0.typeLenth) {
             tver0.uintVal = uintVal;
-            uintVal = 0;
-            byteInUnit = 0;
+            uintVal       = 0;
+            byteInUnit    = 0;
             qDebug() << tver0.valName << tver0.uintVal << tver0.byteArray;
-            tverStuObject->tverMap.insert(*it,tver0);
+            tverStuObject->tverMap.insert(*it, tver0);
             qDebug() << tverStuObject->tverMap.value(*it).valName << tverStuObject->tverMap.value(*it).uintVal << tverStuObject->tverMap.value(*it).byteArray;
             it++;
-            if(it == tverStuObject->keyList.end()){
+            if (it == tverStuObject->keyList.end()) {
                 break;
             }
             tver0 = tverStuObject->tverMap.value(*it);
@@ -958,41 +983,40 @@ QString textDcode::HexWriteTver(QStringList dataList, tverStruct* tverStuObject)
 }
 
 // 将字符串str转换成真实的int值，再转换成str写入tverStruct
-QString textDcode::HexWriteTver_hex(QByteArray dataList, tverStruct* tverStuObject)
+QString textDcode::HexWriteTver_hex(QByteArray dataList, tverStruct *tverStuObject)
 {
+    //    bool ok;
+    //    QVector<uint8_t> hexVector;
+    uint8_t  byteInUnit = 0;
+    uint32_t uintVal    = 0;
 
-//    bool ok;
-//    QVector<uint8_t> hexVector;
-    uint8_t byteInUnit = 0;
-    uint32_t  uintVal = 0;
+    //    foreach(QString hexStr, dataList) {
+    //        hexStr.toInt(&ok, 16);
+    //        if (ok == true) {
+    //            hexVector.append((uint8_t)hexStr.toInt(&ok, 16));
+    //        }
+    //    }
 
-//    foreach(QString hexStr, dataList) {
-//        hexStr.toInt(&ok, 16);
-//        if (ok == true) {
-//            hexVector.append((uint8_t)hexStr.toInt(&ok, 16));
-//        }
-//    }
-
-    if((uint32_t)dataList.size() != tverStuObject->dataLenth) {
+    if ((uint32_t)dataList.size() != tverStuObject->dataLenth) {
         return "tver数据长度不对";
     }
 
     QList<QString>::iterator it;
-    it = tverStuObject->keyList.begin();
+    it         = tverStuObject->keyList.begin();
     tver tver0 = tverStuObject->tverMap.value(*it);
-    foreach(uint8_t hex, dataList) {
-        uintVal += (((uint32_t)hex) <<  (byteInUnit * 8));
+    foreach (uint8_t hex, dataList) {
+        uintVal += (((uint32_t)hex) << (byteInUnit * 8));
         tver0.byteArray.append(hex);
         byteInUnit++;
-        if(byteInUnit == tver0.typeLenth) {
+        if (byteInUnit == tver0.typeLenth) {
             tver0.uintVal = uintVal;
-            uintVal = 0;
-            byteInUnit = 0;
+            uintVal       = 0;
+            byteInUnit    = 0;
             qDebug() << tver0.valName << tver0.uintVal << tver0.byteArray;
-            tverStuObject->tverMap.insert(*it,tver0);
+            tverStuObject->tverMap.insert(*it, tver0);
             qDebug() << tverStuObject->tverMap.value(*it).valName << tverStuObject->tverMap.value(*it).uintVal << tverStuObject->tverMap.value(*it).byteArray;
             it++;
-            if(it == tverStuObject->keyList.end()){
+            if (it == tverStuObject->keyList.end()) {
                 break;
             }
             tver0 = tverStuObject->tverMap.value(*it);
@@ -1003,42 +1027,41 @@ QString textDcode::HexWriteTver_hex(QByteArray dataList, tverStruct* tverStuObje
 }
 
 //// 将字符串str转换成真实的int值，再转换成str写入dataStruct
-QString textDcode::HexWriteDataStruct(QStringList dataList, dataStruct* struObject)
+QString textDcode::HexWriteDataStruct(QStringList dataList, dataStruct *struObject)
 {
-
-    bool ok;
+    bool             ok;
     QVector<uint8_t> hexVector;
-    uint8_t byteInUnit = 0;
-    uint32_t  uintVal = 0;
+    uint8_t          byteInUnit = 0;
+    uint32_t         uintVal    = 0;
 
-    foreach(QString hexStr, dataList) {
+    foreach (QString hexStr, dataList) {
         hexStr.toInt(&ok, 16);
         if (ok == true) {
             hexVector.append((uint8_t)hexStr.toInt(&ok, 16));
         }
     }
 
-    if((uint32_t)hexVector.size() != struObject->dataLenth) {
+    if ((uint32_t)hexVector.size() != struObject->dataLenth) {
         return "tver数据长度不对";
     }
 
     QList<QString>::iterator it;
-    it = struObject->keyList.begin();
-    dataCell* cell0 = struObject->value(*it);
+    it              = struObject->keyList.begin();
+    dataCell *cell0 = struObject->value(*it);
     cell0->bigEndianBArray.clear();
     cell0->byteArray.clear();
-    foreach(uint8_t hex, hexVector) {
-        uintVal += (((uint32_t)hex) <<  (byteInUnit * 8));
+    foreach (uint8_t hex, hexVector) {
+        uintVal += (((uint32_t)hex) << (byteInUnit * 8));
         cell0->byteArray.append(hex);
         cell0->bigEndianBArray.insert(0, hex);
         byteInUnit++;
-        if(byteInUnit == cell0->typeLenth) {
+        if (byteInUnit == cell0->typeLenth) {
             cell0->uintVal = uintVal;
-            uintVal = 0;
-            byteInUnit = 0;
+            uintVal        = 0;
+            byteInUnit     = 0;
             qDebug() << struObject->value(*it)->valName << struObject->value(*it)->uintVal << struObject->value(*it)->byteArray;
             it++;
-            if(it == struObject->keyList.end()){
+            if (it == struObject->keyList.end()) {
                 break;
             }
             cell0 = struObject->value(*it);
@@ -1047,48 +1070,47 @@ QString textDcode::HexWriteDataStruct(QStringList dataList, dataStruct* struObje
         }
         qDebug() << cell0->valName << cell0->uintVal << cell0->byteArray;
     }
-    struObject->accurTime = QTime::currentTime();
+    struObject->accurTime     = QTime::currentTime();
     struObject->newDataStatus = true;
     return "tver解析正确";
 }
 
 //// 将字符串str转换成真实的int值，再转换成str写入dataStruct
-QString textDcode::HexWriteDataStruct_hex(QByteArray dataList, dataStruct* struObject)
+QString textDcode::HexWriteDataStruct_hex(QByteArray dataList, dataStruct *struObject)
 {
-
-//    bool ok;
+    //    bool ok;
     QVector<uint8_t> hexVector;
-    uint8_t byteInUnit = 0;
-    uint32_t  uintVal = 0;
+    uint8_t          byteInUnit = 0;
+    uint32_t         uintVal    = 0;
 
-//    foreach(QString hexStr, dataList) {
-//        hexStr.toInt(&ok, 16);
-//        if (ok == true) {
-//            hexVector.append((uint8_t)hexStr.toInt(&ok, 16));
-//        }
-//    }
+    //    foreach(QString hexStr, dataList) {
+    //        hexStr.toInt(&ok, 16);
+    //        if (ok == true) {
+    //            hexVector.append((uint8_t)hexStr.toInt(&ok, 16));
+    //        }
+    //    }
 
-    if((uint32_t)dataList.size() != struObject->dataLenth) {
+    if ((uint32_t)dataList.size() != struObject->dataLenth) {
         return "tver数据长度不对";
     }
 
     QList<QString>::iterator it;
-    it = struObject->keyList.begin();
-    dataCell* cell0 = struObject->value(*it);
+    it              = struObject->keyList.begin();
+    dataCell *cell0 = struObject->value(*it);
     cell0->bigEndianBArray.clear();
     cell0->byteArray.clear();
-    foreach(uint8_t hex, dataList) {
-        uintVal += (((uint32_t)hex) <<  (byteInUnit * 8));
+    foreach (uint8_t hex, dataList) {
+        uintVal += (((uint32_t)hex) << (byteInUnit * 8));
         cell0->byteArray.append(hex);
         cell0->bigEndianBArray.insert(0, hex);
         byteInUnit++;
-        if(byteInUnit == cell0->typeLenth) {
+        if (byteInUnit == cell0->typeLenth) {
             cell0->uintVal = uintVal;
-            uintVal = 0;
-            byteInUnit = 0;
+            uintVal        = 0;
+            byteInUnit     = 0;
             qDebug() << struObject->value(*it)->valName << struObject->value(*it)->uintVal << struObject->value(*it)->byteArray;
             it++;
-            if(it == struObject->keyList.end()){
+            if (it == struObject->keyList.end()) {
                 break;
             }
             cell0 = struObject->value(*it);
@@ -1097,7 +1119,7 @@ QString textDcode::HexWriteDataStruct_hex(QByteArray dataList, dataStruct* struO
         }
         qDebug() << cell0->valName << cell0->uintVal << cell0->byteArray;
     }
-    struObject->accurTime = QTime::currentTime();
+    struObject->accurTime     = QTime::currentTime();
     struObject->newDataStatus = true;
     return "tver解析正确";
 }
@@ -1107,7 +1129,7 @@ bool textDcode::ItemToTbs(QString text)
     QStringList timeAndDataList, dataList;
 
     timeAndDataList = text.split(COMUT_BAT_SEP);
-    if(timeAndDataList.begin()->contains("TX") || timeAndDataList.size() < 2) {
+    if (timeAndDataList.begin()->contains("TX") || timeAndDataList.size() < 2) {
         return false;
     }
 
@@ -1117,7 +1139,7 @@ bool textDcode::ItemToTbs(QString text)
     //     qDebug() << "dataList <= 8 or datalist[4] != 93";
     //     return false;
     // }
-    if(dataList.size() != 37) {
+    if (dataList.size() != 37) {
         qDebug() << dataList.size();
     }
     // 把数据写入tbsUnit
@@ -1129,12 +1151,12 @@ bool textDcode::ItemToTbs(QString text)
 void textDcode::SetStatusToBox(Ui::Widget *ui)
 {
     this->SetStatusToGBox(ui->gridLayout_7);
-    this->SetStatusToLBox(ui->loseGridLayout,  loseStat,  loseLabel,  tbsStru0->dataCellList[30].uintVal);
+    this->SetStatusToLBox(ui->loseGridLayout, loseStat, loseLabel, tbsStru0->dataCellList[30].uintVal);
     this->SetStatusToLBox(ui->otherGridLayout, otherInfo, otherLabel, tbsStru0->dataCellList[27].uintVal);
-    this->SetStatusToLBox(ui->batGridLayout,   batStat,   batLabel,    tbsStru0->dataCellList[32].uintVal);
-    this->SetStatusToLBox(ui->balanceGridLayout,   balanceStat,   balanceLabel,    tbsStru0->dataCellList[31].uintVal);
+    this->SetStatusToLBox(ui->batGridLayout, batStat, batLabel, tbsStru0->dataCellList[32].uintVal);
+    this->SetStatusToLBox(ui->balanceGridLayout, balanceStat, balanceLabel, tbsStru0->dataCellList[31].uintVal);
 
-//    this->SetStatusToLBox(ui->batGridLayout,   batStat,   batlabel,    tbsUnit[33].uintVal);
+    //    this->SetStatusToLBox(ui->batGridLayout,   batStat,   batlabel,    tbsUnit[33].uintVal);
 }
 
 // 把告警状态和保护状态写入到groupBox中
@@ -1143,32 +1165,32 @@ void textDcode::SetStatusToGBox(QGridLayout *gridLayout)
     int i = 0;
     // qDebug() << " protect status" << tbsUnit[29].uintVal;
     int bitNum = -1;
-    foreach(QString statName, alarmStat)
+    foreach (QString statName, alarmStat)
     {
         bitNum++;
-        if(statName == "") {
+        if (statName == "") {
             continue;
         }
         int iX3 = i * 3;
-        if(alarmLabel.value(iX3) == 0) {
+        if (alarmLabel.value(iX3) == 0) {
             alarmLabel.append(new QLabel());
             alarmLabel.append(new QLabel());
             alarmLabel.append(new QLabel());
 
-            gridLayout->addWidget(alarmLabel[iX3],   i, 0);
-            gridLayout->addWidget(alarmLabel[iX3+1], i, 1);
-            gridLayout->addWidget(alarmLabel[iX3+2], i, 2);
-            alarmLabel[iX3 + 1]->resize(50,50);
-            alarmLabel[iX3 + 2]->resize(50,50);
+            gridLayout->addWidget(alarmLabel[iX3], i, 0);
+            gridLayout->addWidget(alarmLabel[iX3 + 1], i, 1);
+            gridLayout->addWidget(alarmLabel[iX3 + 2], i, 2);
+            alarmLabel[iX3 + 1]->resize(50, 50);
+            alarmLabel[iX3 + 2]->resize(50, 50);
         }
 
         alarmLabel[iX3]->setText(statName);
-        if((tbsStru0->dataCellList[28].uintVal & 0x1 << bitNum) != 0) {
+        if ((tbsStru0->dataCellList[28].uintVal & 0x1 << bitNum) != 0) {
             alarmLabel[iX3 + 1]->setStyleSheet("QLabel { background-color: red}");
         } else {
             alarmLabel[iX3 + 1]->setStyleSheet("QLabel { background-color: green}");
         }
-        if((tbsStru0->dataCellList[29].uintVal & 0x1 << bitNum) != 0) {
+        if ((tbsStru0->dataCellList[29].uintVal & 0x1 << bitNum) != 0) {
             alarmLabel[iX3 + 2]->setStyleSheet("QLabel { background-color: red}");
         } else {
             alarmLabel[iX3 + 2]->setStyleSheet("QLabel { background-color: green}");
@@ -1178,66 +1200,66 @@ void textDcode::SetStatusToGBox(QGridLayout *gridLayout)
 }
 
 // 把电池状态，失效状态，其他状态写入到groupBox中
-void textDcode::SetStatusToLBox(QGridLayout *gridLayout, QList<QString> strL, QList<QLabel*> labelL, uint32_t val)
+void textDcode::SetStatusToLBox(QGridLayout *gridLayout, QList<QString> strL, QList<QLabel *> labelL, uint32_t val)
 {
-    int i = 0;
+    int i      = 0;
     int bitNum = -1;
     // qDebug() << "status val" << val;
 
-    foreach(QString statName, strL)
+    foreach (QString statName, strL)
     {
         bitNum++;
-        if(statName == "") {
+        if (statName == "") {
             continue;
         }
 
         int iX3 = i * 2;
-        if(labelL.value(iX3) == 0) {
+        if (labelL.value(iX3) == 0) {
             labelL.append(new QLabel());
             labelL.append(new QLabel());
             // 偶数是名称，奇数是状态
-            gridLayout->addWidget(labelL[iX3],     i, 0);
+            gridLayout->addWidget(labelL[iX3], i, 0);
             gridLayout->addWidget(labelL[iX3 + 1], i, 1);
-            labelL[iX3 + 1]->resize(50,50);
+            labelL[iX3 + 1]->resize(50, 50);
         }
 
         labelL[iX3]->setText(statName);
         // 空闲状态值为0x00，与其他状态相反
-        if(statName == "空闲") {
-            if(val == 0x0) {
+        if (statName == "空闲") {
+            if (val == 0x0) {
                 labelL[iX3 + 1]->setStyleSheet("QLabel { background-color: red}");
             } else {
                 labelL[iX3 + 1]->setStyleSheet("QLabel { background-color: green}");
             }
             break;
         }
-        if((val & (0x1 << bitNum)) != 0) {
+        if ((val & (0x1 << bitNum)) != 0) {
             labelL[iX3 + 1]->setStyleSheet("QLabel { background-color: red}");
         } else {
             labelL[iX3 + 1]->setStyleSheet("QLabel { background-color: green}");
         }
 
-//        qDebug() << i << iX3;
+        //        qDebug() << i << iX3;
         i++;
     }
 }
 
 QString textDcode::GetTime(QString csvData)
 {
-    int left = csvData.indexOf("[") + 1;
+    int left  = csvData.indexOf("[") + 1;
     int right = csvData.indexOf("]") - 1;
     return csvData.mid(left, right - left + 1);
 }
 
 QString dataStruct::OutPutStru(void)
 {
-    char byte = 0;
-    QByteArray dataArray, sendDataArray;
+    char                      byte = 0;
+    QByteArray                dataArray, sendDataArray;
     QList<dataCell>::iterator itor;
     for (itor = this->dataCellList.begin(); itor != this->dataCellList.end(); ++itor)
     {
         (*itor).byteArray.clear();
-        for(uint8_t i = 0; i < (*itor).typeLenth; i++) {
+        for (uint8_t i = 0; i < (*itor).typeLenth; i++) {
             byte = (((*itor).uintVal) & (0xff << (i * 8))) >> (i * 8);
             (*itor).byteArray.append(byte);
             byte = 0;
@@ -1247,25 +1269,25 @@ QString dataStruct::OutPutStru(void)
     sendDataArray.append(char(0x00));
     sendDataArray.append(((5 + dataArray.size()) & 0xff00) >> 8);
     sendDataArray.append(((5 + dataArray.size()) & 0xff));
-    sendDataArray.append(char(0x01)); // 单板类型
-    sendDataArray.append(char(this->cmdType | 0x80)); //功能码
+    sendDataArray.append(char(0x01));                 // 单板类型
+    sendDataArray.append(char(this->cmdType | 0x80)); // 功能码
     sendDataArray.append(char(0x55));
     sendDataArray.append(char(0xAA));
-    sendDataArray.append(char(0x00)); //应答码
+    sendDataArray.append(char(0x00)); // 应答码
     sendDataArray.append(dataArray);
-    char checkSum =(((5 + dataArray.size()) / 256) >> 8) + ((5 + dataArray.size()) & 0xff) + 0x01 + char(this->cmdType | 0x80) + 0x55 + 0xAA + 0x00;
-    foreach(char byte, dataArray) {
+    char checkSum = (((5 + dataArray.size()) / 256) >> 8) + ((5 + dataArray.size()) & 0xff) + 0x01 + char(this->cmdType | 0x80) + 0x55 + 0xAA + 0x00;
+    foreach (char byte, dataArray) {
         checkSum += byte;
     }
     sendDataArray.append(char(checkSum));
-//    qDebug() << dataArray << dataArray.size();
-    QString sendData = sendDataArray.toHex().data(),utf8Buffer;
-//    qDebug() << "sendDataArray size = " << sendDataArray.size();
-    for(int i=0;i<sendDataArray.length();i++)
+    //    qDebug() << dataArray << dataArray.size();
+    QString sendData = sendDataArray.toHex().data(), utf8Buffer;
+    //    qDebug() << "sendDataArray size = " << sendDataArray.size();
+    for (int i = 0; i < sendDataArray.length(); i++)
     {
-           QString str_1 = sendData.mid (i * 2, 2);
-           utf8Buffer += str_1;
-           utf8Buffer += " ";
+        QString str_1 = sendData.mid(i * 2, 2);
+        utf8Buffer += str_1;
+        utf8Buffer += " ";
     }
     qDebug() << "utf8Buffer size = " << utf8Buffer.size();
     return utf8Buffer;
@@ -1274,27 +1296,26 @@ QString dataStruct::OutPutStru(void)
 QString dataStruct::displayData(void)
 {
     QString displayDat;
-    int allLenth = 0;
-    foreach(dataCell cell, dataCellList) {
+    int     allLenth = 0;
+    foreach (dataCell cell, dataCellList) {
         allLenth += cell.typeLenth;
         displayDat += "l = " + QString::number(cell.typeLenth, 10) + "all l = " + QString::number(allLenth, 10);
         displayDat += cell.valName + " = ";
-        if(cell.signedType == datTypDic::SIGNED) {
-            if(cell.typeLenth == 4) {
+        if (cell.signedType == datTypDic::SIGNED) {
+            if (cell.typeLenth == 4) {
                 displayDat += QString::number((long)cell.uintVal, 10) + "\n";
-            } else if(cell.typeLenth == 2) {
-                 displayDat += QString::number((short)cell.uintVal, 10) + "\n";
+            } else if (cell.typeLenth == 2) {
+                displayDat += QString::number((short)cell.uintVal, 10) + "\n";
             } else {
                 displayDat += QString::number((char)cell.uintVal, 10) + "\n";
             }
         } else {
-            if(cell.valName.contains("HEX")) {
+            if (cell.valName.contains("HEX")) {
                 displayDat += "0x" + QString::number(cell.uintVal, 16) + "\n";
             } else {
                 displayDat += QString::number(cell.uintVal, 10) + "\n";
             }
         }
-
     }
     return displayDat;
 }
@@ -1302,26 +1323,26 @@ QString dataStruct::csvName(void)
 {
     QString csvNameLine;
 
-//        csvNameLine += "前缀,";
-        foreach(dataCell cell, this->dataCellList) {
-            csvNameLine += cell.valName + BAT_SEP;
-        }
+    //        csvNameLine += "前缀,";
+    foreach (dataCell cell, this->dataCellList) {
+        csvNameLine += cell.valName + BAT_SEP;
+    }
     return csvNameLine;
 }
 QString dataStruct::csvData(void)
 {
     QString csvDataLine;
-    foreach(dataCell cell, dataCellList) {
-        if(cell.signedType == datTypDic::SIGNED) {
-            if(cell.typeLenth == 4) {
+    foreach (dataCell cell, dataCellList) {
+        if (cell.signedType == datTypDic::SIGNED) {
+            if (cell.typeLenth == 4) {
                 csvDataLine += QString::number((long)cell.uintVal, 10) + BAT_SEP;
-            } else if(cell.typeLenth == 2) {
-                 csvDataLine += QString::number((short)cell.uintVal, 10) + BAT_SEP;
+            } else if (cell.typeLenth == 2) {
+                csvDataLine += QString::number((short)cell.uintVal, 10) + BAT_SEP;
             } else {
                 csvDataLine += QString::number((char)cell.uintVal, 10) + BAT_SEP;
             }
         } else {
-            if(cell.valName.contains("HEX")) {
+            if (cell.valName.contains("HEX")) {
                 csvDataLine += "0x" + QString::number(cell.uintVal, 16) + BAT_SEP;
             } else {
                 csvDataLine += QString::number(cell.uintVal, 10) + BAT_SEP;
@@ -1334,7 +1355,7 @@ QString dataStruct::csvData(void)
 QString dataStruct::strArray(void)
 {
     QString output = "";
-    foreach(dataCell cell, dataCellList) {
+    foreach (dataCell cell, dataCellList) {
         output += QString(cell.byteArray);
     }
     return output;
@@ -1342,26 +1363,24 @@ QString dataStruct::strArray(void)
 
 bool textDcode::SplitData(QByteArray hex)
 {
-    this->haveHex = false;
-    this->legality = ERR_NO;
+    this->haveHex   = false;
+    this->legality  = ERR_NO;
 
     this->actualLen = 0;
 
-    this->address = 0x00;
+    this->address   = 0x00;
 
-    this->bmsType = 0;
-    this->cmd = 0;
+    this->bmsType   = 0;
+    this->cmd       = 0;
 
+    this->dataLen   = 0;
 
-    this->dataLen = 0;
+    this->checkSum  = 0;
+    this->cmdAck    = 0;
 
-    this->checkSum = 0;
-    this->cmdAck = 0;
-
-
-    this->fullLen = 0;
-    if(hex.length() > 0) {
-        this->haveHex = true;
+    this->fullLen   = 0;
+    if (hex.length() > 0) {
+        this->haveHex   = true;
         this->actualHex = hex;
         this->actualLen = hex.length();
     } else {
@@ -1369,57 +1388,49 @@ bool textDcode::SplitData(QByteArray hex)
         return false;
     }
 
-
-
     this->dataLen = this->actualHex[1] * 0x100 + this->actualHex[2] - 5;
-    this->cmd = this->actualHex[4];
+    this->cmd     = this->actualHex[4];
     this->no80Cmd = this->actualHex[4] & 0x7f;
 
-
     this->fullHex = this->actualHex;
-    //计算单板类型到数据位的校验和
-    for(uint32_t i = 1; i < this->actualLen - 1; i++)
+    // 计算单板类型到数据位的校验和
+    for (uint32_t i = 1; i < this->actualLen - 1; i++)
     {
-       this->checkSum += (uint8_t)this->actualHex[i];
+        this->checkSum += (uint8_t)this->actualHex[i];
     }
-    if((cmd & 0x80) == 0) {
-//        this->cmdAck = ERR_CMD_ID;
+    if ((cmd & 0x80) == 0) {
+        //        this->cmdAck = ERR_CMD_ID;
     } else {
-        if(this->actualLen != this->dataLen + 9) {
+        if (this->actualLen != this->dataLen + 9) {
             this->legality = ERR_CMD_LEN;
         } else {
             this->dataHex = this->actualHex.mid(8, this->dataLen);
         }
     }
 
-    if( this->no80Cmd != PC_SET_WRITE_FLASH && \
-        this->no80Cmd != PC_SET_ALL_CHECKSUM && \
-        this->no80Cmd != PC_SET_DOWNLOAD_BUFFER && \
-        this->no80Cmd != PC_SET_DOWNLOAD_BACKUP) {
-
-        if(this->actualLen != 9) {
+    if (this->no80Cmd != PC_SET_WRITE_FLASH && this->no80Cmd != PC_SET_ALL_CHECKSUM && this->no80Cmd != PC_SET_DOWNLOAD_BUFFER && this->no80Cmd != PC_SET_DOWNLOAD_BACKUP) {
+        if (this->actualLen != 9) {
             this->legality = ERR_CMD_LEN;
         }
     }
-    //校验成功,提取控制码
+    // 校验成功,提取控制码
     qDebug() << "aa = " << (uint8_t)actualHex.at(this->actualLen - 1);
-    if((uint8_t)this->checkSum != (uint8_t)actualHex.at(this->actualLen - 1))
+    if ((uint8_t)this->checkSum != (uint8_t)actualHex.at(this->actualLen - 1))
     {
         this->legality = ERR_CHKSUM;
     }
-    if(actualHex.length() >= 9 ) {
+    if (actualHex.length() >= 9) {
         this->cmdAck = this->actualHex[8];
-        if(actualHex.length() >= 11) {
-            if(this->no80Cmd == PC_SET_WRITE_FLASH) {
-                this->noPacketLen = this->dataLen - 2;//取长度
-                this->noPacketHex = this->dataHex.mid(2, this->noPacketLen);
+        if (actualHex.length() >= 11) {
+            if (this->no80Cmd == PC_SET_WRITE_FLASH) {
+                this->noPacketLen  = this->dataLen - 2; // 取长度
+                this->noPacketHex  = this->dataHex.mid(2, this->noPacketLen);
                 this->cmdPacketNum = (uint8_t)this->dataHex.at(0) + (uint8_t)this->dataHex.at(1) * 256;
             }
         }
     }
 
-
-    if(this->legality != ERR_NO) {
+    if (this->legality != ERR_NO) {
         return false;
     } else {
         return true;
