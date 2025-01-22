@@ -5,7 +5,7 @@
 #include "ui_widget.h"
 #include <QDebug>
 #include <QFileDialog>
-//#include "serial0.h"
+// #include "serial0.h"
 #include <QTextBlock>
 #include <Qmap>
 #include <QTime>
@@ -24,7 +24,7 @@ public:
         LENTH_ERR,
     };
     enum ACK_STATE {
-        ACK_OK = 0x0,
+        ACK_OK        = 0x0,
         ACK_LENTH_ERR = 0x02,
         ACK_TYPE_ERR,
         ACK_ID_ERR,
@@ -33,22 +33,22 @@ public:
         ACK_PACKET_ERR,
         ACK_SHAKE_SUCCESS = 0x29,
     };
-    textStruct(){
+    textStruct()
+    {
         byteLenth = 0;
     }
     textStruct(QString text);
-    QString tim;
-    QString text;
-    sendState sendOrReceive;
-    dataErr Err;
-    uint8_t ACK;
-    uint8_t cmd;
-    bool cmdOk;
-    bool checkSumOk;
-    bool lenthOk;
-    int byteLenth;
+    QString    tim;
+    QString    text;
+    sendState  sendOrReceive;
+    dataErr    Err;
+    uint8_t    ACK;
+    uint8_t    cmd;
+    bool       cmdOk;
+    bool       checkSumOk;
+    bool       lenthOk;
+    int        byteLenth;
     QByteArray dataArray;
-
 };
 
 #endif // CURRENCY_H

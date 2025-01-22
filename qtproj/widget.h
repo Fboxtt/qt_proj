@@ -11,15 +11,17 @@
 #include <QTcpSocket>
 #include <QProgressDialog>
 QT_BEGIN_NAMESPACE
-namespace Ui { class Widget; }
+namespace Ui {
+class Widget;
+}
 QT_END_NAMESPACE
 
-class Widget : public QWidget //继承是: 调用是::
+class Widget : public QWidget // 继承是: 调用是::
 {
     Q_OBJECT
 
 public:
-    Widget(QWidget *parent = nullptr); //构造函数，并且有默认参数
+    Widget(QWidget *parent = nullptr); // 构造函数，并且有默认参数
     ~Widget();
 
 private slots:
@@ -30,7 +32,6 @@ private slots:
     void on_searchBtn_clicked();
 
     void on_openBtn_clicked();
-
 
     void on_sendBox_clicked();
 
@@ -44,7 +45,7 @@ private slots:
 
     void on_pushButton_3_clicked();
 
-    void on_PopupRightMenu(const QPoint& pos);
+    void on_PopupRightMenu(const QPoint &pos);
 
     void on_clearReceiveDataButton_2_clicked();
 
@@ -107,15 +108,14 @@ private slots:
     void on_pushButton_16_clicked();
 
 private:
-    Ui::Widget *ui; //似乎是定义了一个类指针
-    QTimer *tim;
-    QTimer *tbsTim = nullptr;
+    Ui::Widget *ui; // 似乎是定义了一个类指针
+    QTimer     *tim;
+    QTimer     *tbsTim = nullptr;
 
     QTcpServer *server;
     QTcpSocket *TcpSocket;
-    QString ip;
-    int port;
-
+    QString     ip;
+    int         port;
 
 public slots:
     void ReadSerialTimeOut();
@@ -138,19 +138,18 @@ public slots:
     void restoreBackup_clicked();
 
     void serverInit(void);
-//    void serverReceive(QByteArray);
-//    void serverSend(QString);
+    //    void serverReceive(QByteArray);
+    //    void serverSend(QString);
     void socketSend(void);
 
-//    void shakeInterrruptTest();
-//    void testProcess(QString key);
+    //    void shakeInterrruptTest();
+    //    void testProcess(QString key);
     void OTAtestReceive();
     void addTestKey(QString);
 };
 
-
-#define BAT_SEP (",")
-#define COMUT_SEP (";")
+#define BAT_SEP       (",")
+#define COMUT_SEP     (";")
 #define COMUT_BAT_SEP (";,")
 
 #endif // WIDGET_H

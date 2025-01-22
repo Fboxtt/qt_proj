@@ -13,26 +13,23 @@
 #include <QTime>
 class serial
 {
-
 public:
     serial();
-    void Init(Ui::Widget *ui);
-    void ClickOpenSerPort(Ui::Widget *ui);
-    void RefreshSerial(Ui::Widget *ui);
-    void ReadyRead(QTimer *tim);
-    QString SerialSend(Ui::Widget *ui, QString Data);
-    QString SerialSend(Ui::Widget *ui, QByteArray Data);
+    void        Init(Ui::Widget *ui);
+    void        ClickOpenSerPort(Ui::Widget *ui);
+    void        RefreshSerial(Ui::Widget *ui);
+    void        ReadyRead(QTimer *tim);
+    QString     SerialSend(Ui::Widget *ui, QString Data);
+    QString     SerialSend(Ui::Widget *ui, QByteArray Data);
     QSerialPort SerialPort;
+
 private:
-
 public:
-
-
     QByteArray receiveHex;
-    QString receiveStr;
-    QString receiveTimeStr;
+    QString    receiveStr;
+    QString    receiveTimeStr;
 
-    void TimeOut(Ui::Widget *ui, QTimer *tim);
+    void       TimeOut(Ui::Widget *ui, QTimer *tim);
 
     enum BAT_COMMAND_SEND_STATUS {
         COMPLETE,
