@@ -163,7 +163,18 @@ class tbsStruct : public dataStruct
 
 public:
     tbsStruct();
+    virtual ~tbsStruct();
     void addStatusBits(void);
+};
+
+class bmuCntStruct : public dataStruct
+{
+    using dataStruct::dataStruct;
+
+public:
+    uint8_t bmuCnt;
+    bmuCntStruct();
+    // virtual ~bmuCntStruct();
 };
 
 #define PC_GET_INF              0x71 // 获取BT版本号，APP版本号，BUFFER版本号，BACKUP版本号，芯片型号，芯片可写区域
@@ -232,8 +243,7 @@ public:
     QString                 AddTimeStamp(Ui::Widget *ui, QString decodeStr);
     QString                 readDataDocode(QStringList hexStrLis, QString decodeStr);
     uint32_t                CalCheckSum(QVector<uint8_t> hexVector);
-    void                    itemToTable(QVector<QTableWidgetItem> *itemTableList);
-    void                    clearTableItem(QVector<QTableWidgetItem> *itemTableList);
+    void                    itemToTable(QTableWidget *tableWidget);
     QVector<tbs>            HexWriteTbs(QStringList dataList);
     void                    IntWriteTbs(QStringList dataList);
     QString                 HexWriteTver(QStringList dataList, tverStruct *tver);
@@ -251,6 +261,7 @@ public:
     void                    SetStatusToBox(Ui::Widget *ui);
     void                    SetStatusToGBox(QGridLayout *gridLayout);
     void                    SetStatusToLBox(QGridLayout *gridLayout, QList<QString> strL, QList<QLabel *> labelL, uint32_t val);
+    void                    SetStatusToLBoxInBalance(QGridLayout *gridLayout, QList<QString> strL, QList<QLabel *> labelL, uint32_t bmu_cnt);
 
     bool                    CsvToTbs(QByteArray csvData);
 

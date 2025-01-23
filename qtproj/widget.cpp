@@ -27,31 +27,33 @@
 
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QScrollArea>
 
-serial                    se;
-textDcode                 dcode0;
-QVector<QTableWidgetItem> itemTableList(80);
+serial    se;
+textDcode dcode0;
+// QVector<QTableWidgetItem> itemTableList(80);
 
-chartV                   *chartV0;
-hexDecode                 hexFile;
+chartV             *chartV0;
+hexDecode           hexFile;
 
-tverStruct               *tverStru0;
-caliStruct               *caliStru0;
-tbsStruct                *tbsStru0;
-tbsStruct                *testLCD;
-snStruct                 *snStru20;
-snStruct                 *snStru30;
+tverStruct         *tverStru0;
+caliStruct         *caliStru0;
+tbsStruct          *tbsStru0;
+tbsStruct          *testLCD;
+snStruct           *snStru20;
+snStruct           *snStru30;
+bmuCntStruct       *bmuCntStru0;
 
-QStringList               waitSendList;
-QStringList               readySendList;
-QStringList               hexSendList;
-QVector<QByteArray>       byteSendList;
-QTimer                   *sendTim;
-QTimer                   *readTim;
+QStringList         waitSendList;
+QStringList         readySendList;
+QStringList         hexSendList;
+QVector<QByteArray> byteSendList;
+QTimer             *sendTim;
+QTimer             *readTim;
 
-sysStruct                *sysStru0;
+sysStruct          *sysStru0;
 
-testObject                testObj; // 测试程序，包括socket模块和json解析模块
+testObject          testObj; // 测试程序，包括socket模块和json解析模块
 
 #define SEND_INTERVAL   20
 #define SEND_TBS_COUNT  (1000 / SEND_INTERVAL)
@@ -63,6 +65,25 @@ Widget::Widget(QWidget *parent) :
 
     se.Init(ui);
     ui->sendBox->setEnabled(false);
+
+    QWidget     *balanceContainer      = new QWidget();
+    QGridLayout *scrollableBalanceGrid = new QGridLayout(balanceContainer);
+    scrollableBalanceGrid->setSpacing(5);
+
+    // 创建滚动区域
+    QScrollArea *balanceScrollArea = new QScrollArea();
+    balanceScrollArea->setWidget(balanceContainer);
+    balanceScrollArea->setWidgetResizable(true);
+    balanceScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    balanceScrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    balanceScrollArea->setMinimumHeight(200);
+    balanceScrollArea->setStyleSheet("QScrollArea { border: none; }");
+
+    // 直接将滚动区域添加到现有的 balanceGridLayout
+    ui->balanceGridLayout->addWidget(balanceScrollArea);
+
+    // 保存新的 GridLayout 引用，供后续使用
+    ui->balanceGridLayout = scrollableBalanceGrid;
 
     // 设置listWidget右键菜单
     ui->listWidget->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -82,10 +103,10 @@ Widget::Widget(QWidget *parent) :
     ui->tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableWidget->setVerticalHeaderLabels({"", "", "", "", "", "", "", "", "", "",
                                               "", "", "", "", "", "", "", "", "", ""});
-    for (int idx = 0, limit = itemTableList.size(); idx < limit; idx++) {
-        //        itemTableList[idx].setText(QString("%1").arg(idx,0,10));
-        ui->tableWidget->setItem(idx / 4, idx % 4, &itemTableList[idx]);
-    }
+    // for (int idx = 0, limit = itemTableList.size(); idx < limit; idx++) {
+    //     //        itemTableList[idx].setText(QString("%1").arg(idx,0,10));
+    //     ui->tableWidget->setItem(idx / 4, idx % 4, &itemTableList[idx]);
+    // }
     // k值校准tableWidget设置
     ui->tableWidget_2->setFont(QFont("黑体", 7)); // table字体设置
     // ui->tableWidget_2->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch); //自动适应列宽
@@ -117,13 +138,15 @@ Widget::Widget(QWidget *parent) :
     ui->label_10->setStyleSheet("QLabel { background-color: red}");
 
     // 数据结构体初始化函数
-    tverStru0 = new tverStruct();
-    caliStru0 = new caliStruct();
-    tbsStru0  = new tbsStruct();
-    testLCD   = new tbsStruct();
-    sysStru0  = new sysStruct();
-    snStru20  = new snStruct(20);
-    snStru30  = new snStruct(30);
+    bmuCntStru0 = new bmuCntStruct();
+    tverStru0   = new tverStruct();
+    caliStru0   = new caliStruct();
+    tbsStru0    = new tbsStruct();
+    testLCD     = new tbsStruct();
+    sysStru0    = new sysStruct();
+    snStru20    = new snStruct(20);
+    snStru30    = new snStruct(30);
+
     // 发送定时器初始化
     sendTim = new QTimer();
     sendTim->setInterval(SEND_INTERVAL);
@@ -294,7 +317,9 @@ void Widget::ReadSerialTimeOut()
         return;
     }
     ui->listWidget->setCurrentRow(row - 1);
-    this->SetTbsToTableAndChart(ui->listWidget->item(row - 1), 1);
+    if (receiveDecode.contains("TBS数据")) {
+        this->SetTbsToTableAndChart(ui->listWidget->item(row - 1), 1);
+    }
 
     //    qDebug() << "ou ++++ timeout     time"<< QTime::currentTime();
     // 开启tbs定时读取定时器
@@ -306,7 +331,7 @@ void Widget::ReadSerialTimeOut()
 void Widget::SetTbsToTableAndChart(QListWidgetItem *item, int flag)
 {
     // 清除itemTable内的数据，并写入
-    dcode0.clearTableItem(&itemTableList);
+    ui->tableWidget->clearContents();
 
     // 判断listwidget最后一个item是否是tbs数据，是则写入到tbsUnit中
     qDebug() << "=================解析listwidget数据，写入到tablewidget中" << dcode0.ItemToTbs(item->text()) << flag;
@@ -324,7 +349,7 @@ void Widget::SetTbsToTableAndChart(QListWidgetItem *item, int flag)
             chartV0->lineAddPoint("ntc1", currentTim, tbsStru0->dataCellList[19].uintVal);
             chartV0->lineAddPoint("RM", currentTim, tbsStru0->dataCellList[24].uintVal);
         }
-        dcode0.itemToTable(&itemTableList);
+        dcode0.itemToTable(ui->tableWidget);
 
         dcode0.SetStatusToBox(ui);
     }
@@ -605,8 +630,8 @@ void Widget::on_pushButton_clicked()
             chartV0->lineAddPoint("ntc1", QTime::fromString(TimStr, "HH:mm:ss:zzz"), tbsStru0->dataCellList[19].uintVal);
             chartV0->lineAddPoint("RM", QTime::fromString(TimStr, "HH:mm:ss:zzz"), tbsStru0->dataCellList[24].uintVal);
 
-            dcode0.clearTableItem(&itemTableList);
-            dcode0.itemToTable(&itemTableList);
+            ui->tableWidget->clearContents();
+            dcode0.itemToTable(ui->tableWidget);
             dcode0.SetStatusToBox(ui);
         }
     }
@@ -1168,4 +1193,10 @@ void Widget::OTAtestReceive()
     if (testObj.writeStr != "") {
         hexSendList.append(testObj.writeStr);
     }
+}
+
+void Widget::on_BmuGetNumButton_clicked()
+{
+    QString sendData = "00 00 04 01 0E 55 AA 12";
+    waitSendList.append(sendData);
 }

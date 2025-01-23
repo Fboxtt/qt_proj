@@ -1,16 +1,19 @@
 #include "currency.h"
 #include <textDecode0.h>
 #include <hexDecode.h>
-extern tverStruct *tverStru0;
-extern caliStruct *caliStru0;
-extern tbsStruct  *tbsStru0;
-extern QStringList waitSendList;
-extern QStringList readySendList;
-extern QStringList hexSendList;
-extern sysStruct  *sysStru0;
-extern snStruct   *snStru20;
-extern snStruct   *snStru30;
-extern hexDecode   hexFile;
+
+extern tverStruct   *tverStru0;
+extern caliStruct   *caliStru0;
+extern tbsStruct    *tbsStru0;
+extern bmuCntStruct *bmuCntStru0;
+extern QStringList   waitSendList;
+extern QStringList   readySendList;
+extern QStringList   hexSendList;
+extern sysStruct    *sysStru0;
+extern snStruct     *snStru20;
+extern snStruct     *snStru30;
+extern hexDecode     hexFile;
+
 datTypDic::datTypDic(DATA_TYPE type, QString typeName, uint32_t typeLenth, ENDIAN_TYPE endianType, SIGNED_TYPE signedType)
 {
     this->type       = type;
@@ -138,6 +141,20 @@ caliStruct::caliStruct()
 
     qDebug() << this->value("usChgCurrK")->valName << this->dataLenth;
 }
+
+// ***************************************bmuCntStruct**************************************//
+// ***************************************bmuCntStruct**************************************//
+bmuCntStruct::bmuCntStruct()
+{
+    this->dataLenth     = 0;
+    this->newDataStatus = false;
+    this->bmuCnt        = 1;
+
+    this->insert({"BMU个数", datTypDic::UCHAR});
+
+    this->cmdType = 0x0E;
+}
+
 // ***************************************tbsStruct**************************************//
 // ***************************************tbsStruct**************************************//
 tbsStruct::tbsStruct()
@@ -147,28 +164,22 @@ tbsStruct::tbsStruct()
 
     this->insert({"PACK电压mV", datTypDic::ULONG});
     this->insert({"电池电压mV", datTypDic::ULONG});
-    this->insert({"1电芯电压mV", datTypDic::USHORT});
-    this->insert({"2电芯电压mV", datTypDic::USHORT});
-    this->insert({"3电芯电压mV", datTypDic::USHORT});
-    this->insert({"4电芯电压mV", datTypDic::USHORT});
-    this->insert({"5电芯电压mV", datTypDic::USHORT});
-    this->insert({"6电芯电压mV", datTypDic::USHORT});
-    this->insert({"7电芯电压mV", datTypDic::USHORT});
-    this->insert({"8电芯电压mV", datTypDic::USHORT});
-    this->insert({"9电芯电压mV", datTypDic::USHORT});
-    this->insert({"10电芯电压mV", datTypDic::USHORT});
-    this->insert({"11电芯电压mV", datTypDic::USHORT});
-    this->insert({"12电芯电压mV", datTypDic::USHORT});
-    this->insert({"13电芯电压mV", datTypDic::USHORT});
-    this->insert({"14电芯电压mV", datTypDic::USHORT});
-    this->insert({"15电芯电压mV", datTypDic::USHORT});
-    this->insert({"16电芯电压mV", datTypDic::USHORT});
+
+    for (int group = 1; group <= bmuCntStru0->bmuCnt; group++) { // 假设有1组
+        for (int cell = 1; cell <= 16; cell++) {                 // 每组最多16个电芯
+            QString name = QString("G%1_%2电芯电压mV").arg(group).arg(cell);
+            // 例如: "G1_1电芯电压mV", "G1_2电芯电压mV", "G2_1电芯电压mV" 等
+            this->insert({name, datTypDic::USHORT});
+        }
+    }
     this->insert({"电流值mA", datTypDic::LONG});
-    this->insert({"1温度值℃", datTypDic::SHORT});
-    this->insert({"2温度值℃", datTypDic::SHORT});
-    this->insert({"3温度值℃", datTypDic::SHORT});
-    this->insert({"4温度值℃", datTypDic::SHORT});
-    this->insert({"5温度值℃", datTypDic::SHORT});
+
+    for (int group = 1; group <= bmuCntStru0->bmuCnt; group++) { // 假设有1组
+        for (int num = 1; num <= 5; num++) {
+            QString name = QString("G%1_%2温度值℃").arg(group).arg(num);
+            this->insert({name, datTypDic::SHORT});
+        }
+    }
     this->insert({"剩余容量AH", datTypDic::USHORT});
     this->insert({"满充容量AH", datTypDic::USHORT});
     this->insert({"显示和真实容量差", datTypDic::USHORT});
@@ -176,7 +187,11 @@ tbsStruct::tbsStruct()
     this->insert({"告警状态HEX", datTypDic::ULONG});
     this->insert({"保护状态HEX", datTypDic::ULONG});
     this->insert({"错误状态HEX", datTypDic::ULONG});
-    this->insert({"均衡状态HEX", datTypDic::ULONG});
+    // this->insert({"均衡状态HEX", datTypDic::ULONG});
+    for (int group = 1; group <= bmuCntStru0->bmuCnt; group++) { // 假设有1组
+        QString name = QString("G%1_均衡状态HEX").arg(group);
+        this->insert({name, datTypDic::ULONG});
+    }
 
     this->insert({"电池状态HEX", datTypDic::USHORT});
 
@@ -187,6 +202,16 @@ tbsStruct::tbsStruct()
 
     this->cmdType = 0x13;
 }
+
+tbsStruct::~tbsStruct()
+{
+    keyList.clear();      // 清空列表
+    dataCellList.clear(); // 清空列表
+    dataLenth     = 0;
+    newDataStatus = false;
+    cmdType       = 0;
+}
+
 void tbsStruct::addStatusBits(void)
 {
     this->value("其他信息HEX")->bitMap.insert(0x2, "加热器开启");
@@ -479,7 +504,7 @@ textStruct::textStruct(QString text)
 
 textDcode::textDcode(void)
 {
-    funcCode = {{0x01, "产品注册"}, {0x02, "断开注册"}, {0x13, "TBS数据"}, {0x0A, "开chg fet"}, {0x0B, "关chg fet"}, {0x0C, "开dchg fet"}, {0x0D, "关dchg fet"}, {0x10, "获取产品序列号"}, {0x16, "获取版本"}, {0x60, "关机命令"}, {0x64, "休眠命令"}};
+    funcCode = {{0x01, "产品注册"}, {0x02, "断开注册"}, {0x13, "TBS数据"}, {0x0A, "开chg fet"}, {0x0B, "关chg fet"}, {0x0C, "开dchg fet"}, {0x0D, "关dchg fet"}, {0x0E, "获取BMU个数"}, {0x10, "获取产品序列号"}, {0x16, "获取版本"}, {0x60, "关机命令"}, {0x64, "休眠命令"}};
 
     ackCode  = {{0x00, "ACK无异常"}, {0x01, "ACK长度错误"}, {0x03, "ACK类型错误"}, {0x04, "ACKid错误"}, {0x05, "ACK握手错误"}, {0x06, "ACK校验错误"}};
 
@@ -580,7 +605,7 @@ QList<QString> balanceStat = {
     "电芯13",
     "电芯14",
     "电芯15",
-    "电芯16          ",
+    "电芯16",
 };
 
 // 输入值，输出对应字符串
@@ -662,7 +687,10 @@ QString textDcode::readDataDocode(QStringList hexStrLis, QString decodeStr)
 
     if (hexStrLis.size() > 8 && (hexStrLis[4] == "93")) {
         // 把数据写入tbsUnit
-        HexWriteDataStruct(hexStrLis.mid(8, 96), tbsStru0); // 需要改成自适应
+        HexWriteDataStruct(hexStrLis.mid(8, 50 + 46 * bmuCntStru0->bmuCnt), tbsStru0); // 需要改成自适应
+    } else if (hexStrLis.size() > 8 && (hexStrLis[4] == "8E"))
+    {
+        HexWriteDataStruct(hexStrLis.mid(8, 1), bmuCntStru0); /* 获取BMU个数 */
     } else if (hexStrLis.size() > 8 && (hexStrLis[4] == "96")) {
         HexWriteTver(hexStrLis.mid(8, 80), tverStru0);
     } else if (hexStrLis.size() > 8 && (hexStrLis[4] == "87")) {
@@ -752,6 +780,7 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
         timeAndDataList = dataText.split(COMUT_BAT_SEP); // 和时间戳分开
         timeText        = timeAndDataList[0];
         dataText        = timeAndDataList[1];
+        // qDebug() << "dataText:" <<dataText;
     } else {
         return QString("数据非法,无;,") + dataText;
     }
@@ -776,7 +805,7 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
             //            SendAndDecode(sysStru0->OutPutStru());
         }
 
-    } else if (dataList.size() > 8 && dataList.size() < 200) {
+    } else if (dataList.size() > 8 && dataList.size() < 500) {
         qDebug() << "6.1.9==================DownLoadProcess";
         if (hexDecode::isDownLoadCmd(destinyText.cmd)) { // 判断收到的命令是否是烧录相关命令
             QString outPutStr;
@@ -819,6 +848,7 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
                     break;
             }
         }
+        qDebug() << "dataText:" << dataText;
         // 解析tbs数据，sys数据，版本号数据
         dataText = readDataDocode(dataList, dataText) + COMUT_SEP + timeAndDataList[0] + COMUT_BAT_SEP;
         if (dataText.contains("产品注册")) {
@@ -842,6 +872,29 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
                 }
                 ui->listWidget->addItem(dataText);
             }
+        } else if (dataText.contains("获取BMU个数")) {
+            if (dataText.contains("校验正确")) {
+                foreach (dataCell cell, bmuCntStru0->dataCellList) {
+                    if (cell.valName.contains("BMU个数")) {
+                        bmuCntStru0->bmuCnt = cell.uintVal;
+                        delete tbsStru0;
+                        tbsStru0 = new tbsStruct();
+
+                        QLayoutItem *child;
+                        while ((child = ui->balanceGridLayout->takeAt(0)) != nullptr) {
+                            if (child->widget()) {
+                                delete child->widget();
+                            }
+                            delete child;
+                        }
+                        balanceLabel.clear();
+                    }
+                }
+                ui->bmuNumLabel->setText(QString("%1").arg(bmuCntStru0->bmuCnt));
+                ui->bmuGetStsLabel->setText("获取成功");
+            } else {
+                ui->bmuGetStsLabel->setText("获取失败");
+            }
         }
     } else {
         qDebug() << "数据非法长度错误";
@@ -854,34 +907,57 @@ QString textDcode::PlainTextDecode(Ui::Widget *ui)
     return dataText;
 }
 
-// 把输入的itemlist内的值修改成空“”
-void textDcode::clearTableItem(QVector<QTableWidgetItem> *itemTableList)
-{
-    uint32_t idx = 0;
-    foreach (dataCell cell, tbsStru0->dataCellList) {
-        (*itemTableList)[idx * 2 + 1].setText("");
-        idx++;
-    }
-}
-
 // 把输入的itemlist内写入新的值
-void textDcode::itemToTable(QVector<QTableWidgetItem> *itemTableList)
+void textDcode::itemToTable(QTableWidget *tableWidget)
 {
-    uint32_t idx = 0;
+    uint32_t idx          = 0;
+    int      requiredRows = (tbsStru0->dataCellList.size() + 1) / 2;
+
+    // 设置表格属性
+    tableWidget->setRowCount(requiredRows);
+    tableWidget->setColumnCount(4);
+
+    // 设置表格大小策略和滚动条
+    tableWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    tableWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    tableWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+
+    // 禁用自动拉伸
+    tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+    tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+
+    // 设置默认行高和列宽
+    tableWidget->verticalHeader()->setDefaultSectionSize(30);    // 设置行高
+    tableWidget->horizontalHeader()->setDefaultSectionSize(100); // 设置列宽
+
+    // 创建字体
+    QFont font;
+    font.setPointSize(8);       // 设置字体大小
+    tableWidget->setFont(font); // 设置整个表格的默认字体
+
     foreach (dataCell cell, tbsStru0->dataCellList) {
-        (*itemTableList)[idx * 2].setText(cell.valName);
+        int row     = idx / 2;
+        int baseCol = (idx % 2) * 2;
+
+        // 创建并设置名称项
+        QTableWidgetItem *nameItem = new QTableWidgetItem(cell.valName);
+        tableWidget->setItem(row, baseCol, nameItem);
+
+        // 创建并设置值项
+        QString valueStr;
         if (cell.valName.contains("HEX")) {
-            (*itemTableList)[idx * 2 + 1].setText(QString("0x%1").arg(cell.uintVal, 0, 16));
+            valueStr = QString("0x%1").arg(cell.uintVal, 0, 16);
         } else if (cell.valName.contains("电流")) {
-            (*itemTableList)[idx * 2 + 1].setText(QString("%1").arg((int)cell.uintVal, 0, 10));
+            valueStr = QString("%1").arg((int)cell.uintVal, 0, 10);
         } else {
-            (*itemTableList)[idx * 2 + 1].setText(QString("%1").arg(cell.uintVal, 0, 10));
+            valueStr = QString("%1").arg(cell.uintVal, 0, 10);
         }
+        QTableWidgetItem *valueItem = new QTableWidgetItem(valueStr);
+        tableWidget->setItem(row, baseCol + 1, valueItem);
 
         idx++;
     }
 }
-
 // // 将字符串str转换成真实的int值，再转换成str写入tbsUnit
 // QVector<tbs> textDcode::HexWriteTbs(QStringList dataList)
 // {
@@ -1151,10 +1227,11 @@ bool textDcode::ItemToTbs(QString text)
 void textDcode::SetStatusToBox(Ui::Widget *ui)
 {
     this->SetStatusToGBox(ui->gridLayout_7);
-    this->SetStatusToLBox(ui->loseGridLayout, loseStat, loseLabel, tbsStru0->dataCellList[30].uintVal);
-    this->SetStatusToLBox(ui->otherGridLayout, otherInfo, otherLabel, tbsStru0->dataCellList[27].uintVal);
-    this->SetStatusToLBox(ui->batGridLayout, batStat, batLabel, tbsStru0->dataCellList[32].uintVal);
-    this->SetStatusToLBox(ui->balanceGridLayout, balanceStat, balanceLabel, tbsStru0->dataCellList[31].uintVal);
+    this->SetStatusToLBox(ui->loseGridLayout, loseStat, loseLabel, tbsStru0->dataCellList[9 + bmuCntStru0->bmuCnt * 21].uintVal);
+    this->SetStatusToLBox(ui->otherGridLayout, otherInfo, otherLabel, tbsStru0->dataCellList[6 + bmuCntStru0->bmuCnt * 21].uintVal);
+    this->SetStatusToLBox(ui->batGridLayout, batStat, batLabel, tbsStru0->dataCellList[10 + bmuCntStru0->bmuCnt * 22].uintVal);
+
+    this->SetStatusToLBoxInBalance(ui->balanceGridLayout, balanceStat, balanceLabel, bmuCntStru0->bmuCnt);
 
     //    this->SetStatusToLBox(ui->batGridLayout,   batStat,   batlabel,    tbsUnit[33].uintVal);
 }
@@ -1185,17 +1262,57 @@ void textDcode::SetStatusToGBox(QGridLayout *gridLayout)
         }
 
         alarmLabel[iX3]->setText(statName);
-        if ((tbsStru0->dataCellList[28].uintVal & 0x1 << bitNum) != 0) {
+        if ((tbsStru0->dataCellList[7 + bmuCntStru0->bmuCnt * 21].uintVal & 0x1 << bitNum) != 0) {
             alarmLabel[iX3 + 1]->setStyleSheet("QLabel { background-color: red}");
         } else {
             alarmLabel[iX3 + 1]->setStyleSheet("QLabel { background-color: green}");
         }
-        if ((tbsStru0->dataCellList[29].uintVal & 0x1 << bitNum) != 0) {
+        if ((tbsStru0->dataCellList[8 + bmuCntStru0->bmuCnt * 21].uintVal & 0x1 << bitNum) != 0) {
             alarmLabel[iX3 + 2]->setStyleSheet("QLabel { background-color: red}");
         } else {
             alarmLabel[iX3 + 2]->setStyleSheet("QLabel { background-color: green}");
         }
         i++;
+    }
+}
+
+void textDcode::SetStatusToLBoxInBalance(QGridLayout *gridLayout, QList<QString> strL, QList<QLabel *> labelL, uint32_t bmu_cnt)
+{
+    uint32_t j;
+    int      i = 0;
+    int      bitNum;
+    // qDebug() << "status val" << val;
+
+    for (j = 0; j < bmu_cnt; j++) {
+        bitNum = -1;
+        foreach (QString statName, strL)
+        {
+            bitNum++;
+            if (statName == "") {
+                continue;
+            }
+
+            int iX3 = i * 2;
+            if (labelL.value(iX3) == 0) {
+                labelL.append(new QLabel());
+                labelL.append(new QLabel());
+                // 偶数是名称，奇数是状态
+                gridLayout->addWidget(labelL[iX3], i, 0);
+                gridLayout->addWidget(labelL[iX3 + 1], i, 1);
+                labelL[iX3 + 1]->resize(50, 50);
+            }
+            QString name = QString("G%1_%2").arg(j + 1).arg(statName);
+            labelL[iX3]->setText(name);
+            // 空闲状态值为0x00，与其他状态相反
+            if ((tbsStru0->dataCellList[10 + bmu_cnt * 21 + j].uintVal & (0x1 << bitNum)) != 0) {
+                labelL[iX3 + 1]->setStyleSheet("QLabel { background-color: red}");
+            } else {
+                labelL[iX3 + 1]->setStyleSheet("QLabel { background-color: green}");
+            }
+
+            //        qDebug() << i << iX3;
+            i++;
+        }
     }
 }
 
