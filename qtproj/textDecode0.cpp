@@ -1365,21 +1365,15 @@ bool textDcode::SplitData(QByteArray hex)
 {
     this->haveHex   = false;
     this->legality  = ERR_NO;
-
     this->actualLen = 0;
-
     this->address   = 0x00;
-
     this->bmsType   = 0;
     this->cmd       = 0;
-
     this->dataLen   = 0;
-
     this->checkSum  = 0;
     this->cmdAck    = 0;
 
-    this->fullLen   = 0;
-    if (hex.length() > 0) {
+    if (hex.length() >= 9) {
         this->haveHex   = true;
         this->actualHex = hex;
         this->actualLen = hex.length();
@@ -1387,19 +1381,21 @@ bool textDcode::SplitData(QByteArray hex)
         this->legality = ERR_CMD_LEN;
         return false;
     }
-
+    this->address = this->actualHex[0];
     this->dataLen = this->actualHex[1] * 0x100 + this->actualHex[2] - 5;
+    this->bmsType = this->actualHex[3];
     this->cmd     = this->actualHex[4];
     this->no80Cmd = this->actualHex[4] & 0x7f;
-
-    this->fullHex = this->actualHex;
+    this->cmdAck  = this->actualHex[8];
+//    this->fullHex = this->actualHex;
     // 计算单板类型到数据位的校验和
     for (uint32_t i = 1; i < this->actualLen - 1; i++)
     {
         this->checkSum += (uint8_t)this->actualHex[i];
     }
     if ((cmd & 0x80) == 0) {
-        //        this->cmdAck = ERR_CMD_ID;
+//        this->legality = ERR_NO;
+        // 这是主机发送的数据，无法解析
     } else {
         if (this->actualLen != this->dataLen + 9) {
             this->legality = ERR_CMD_LEN;
@@ -1419,14 +1415,11 @@ bool textDcode::SplitData(QByteArray hex)
     {
         this->legality = ERR_CHKSUM;
     }
-    if (actualHex.length() >= 9) {
-        this->cmdAck = this->actualHex[8];
-        if (actualHex.length() >= 11) {
-            if (this->no80Cmd == PC_SET_WRITE_FLASH) {
-                this->noPacketLen  = this->dataLen - 2; // 取长度
-                this->noPacketHex  = this->dataHex.mid(2, this->noPacketLen);
-                this->cmdPacketNum = (uint8_t)this->dataHex.at(0) + (uint8_t)this->dataHex.at(1) * 256;
-            }
+    if (actualHex.length() >= 11) {
+        if (this->no80Cmd == PC_SET_WRITE_FLASH) {
+            this->noPacketLen  = this->dataLen - 2; // 取长度
+            this->noPacketHex  = this->dataHex.mid(2, this->noPacketLen);
+            this->cmdPacketNum = (uint8_t)this->dataHex.at(0) + (uint8_t)this->dataHex.at(1) * 256;
         }
     }
 
