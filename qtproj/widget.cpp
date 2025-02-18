@@ -27,6 +27,7 @@
 #include <QJsonObject>
 
 serial                    se;
+blueToothClass            blueTooth;
 textDcode                 dcode0;
 QVector<QTableWidgetItem> itemTableList(80);
 
@@ -50,6 +51,8 @@ QTimer                   *readTim;
 sysStruct                *sysStru0;
 
 testObject                testObj; // 测试程序，包括socket模块和json解析模块
+
+
 
 #define SEND_INTERVAL   20
 #define SEND_TBS_COUNT  (1000 / SEND_INTERVAL)
@@ -133,6 +136,10 @@ Widget::Widget(QWidget *parent) :
     ui->gridLayout_6->addWidget(forceRestoreBackup, 6, 1);
     forceRestoreBackup->setText("强制恢复备份区");
     connect(forceRestoreBackup, &QPushButton::clicked, this, &Widget::restoreBackup_clicked);
+
+    QPushButton *openBlueClick = new QPushButton("蓝牙模式", this);
+    ui->gridLayout_14->addWidget(openBlueClick,0, 2);
+    connect(openBlueClick, &QPushButton::clicked, this, &Widget::BlueToothClick);
 }
 
 Widget::~Widget()
@@ -238,6 +245,13 @@ void Widget::ReadSerialTimeOut()
     qDebug() << "7.1======";
     QString receiveDecode = dcode0.PlainTextDecode(ui); // 数据解析和分类
     if (dcode0.SplitData(se.receiveHex)) {
+    }
+    if (se.receiveHex.contains(QByteArray("AT")) || \
+            se.receiveHex.contains(QByteArray("OK")) || \
+            se.receiveHex.contains(QByteArray("ERROR")) || \
+            se.receiveHex.contains(QByteArray("+SCAN"))) {
+//        BlueToothRead(receiveDecode);
+        blueTooth.receiveHex = se.receiveHex;
     }
     qDebug() << "7.1.1======" << dcode0.legality;
     if (hexSendList.size() > 0) {
@@ -382,6 +396,17 @@ void Widget::SendAndDecode(QString sendData)
     qDebug() << "6-0==================发送数据函数sendata = " << sendData;
     // se.batComSendStatus = serial::COMPLETE;
     QString dcodeData = dcode0.AddTimeStamp(ui, sendData);
+    dcode0.PlainTextDecode(ui);
+}
+
+void Widget::SendStr(QByteArray sendArray0)
+{
+    se.SerialSend(ui, sendArray0);
+    QString sendData = QString(sendArray0);
+    qDebug() << "6.0==================发送数据函数sendata = " << sendData;
+    // se.batComSendStatus = serial::COMPLETE;
+    QString dcodeData = dcode0.AddTimeStamp(ui, sendData);
+    qDebug() << "6.1==================发送数据函数sendata = " << sendData;
     dcode0.PlainTextDecode(ui);
 }
 
@@ -1166,4 +1191,120 @@ void Widget::OTAtestReceive()
     if (testObj.writeStr != "") {
         hexSendList.append(testObj.writeStr);
     }
+}
+void delay(int milliseconds) {
+    QTimer timer;
+    timer.setSingleShot(true); // 设置为单次触发
+    QEventLoop loop;
+    QObject::connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
+    timer.start(milliseconds); // 启动定时器
+    loop.exec(); // 进入事件循环，等待定时器超时
+}
+void someFunction() {
+    qDebug() << "Start waiting...";
+    delay(2000); // 延时 2 秒
+    qDebug() << "Finished waiting!";
+}
+void Widget::BlueToothClick()
+{
+    static QWidget *blueToothWidget;
+    static QComboBox* blueQComboBox;
+    static QPushButton* blueConnect;
+    static QPushButton* blueDisconnect;
+    static QLabel* blueLogLabel;
+    static bool ok = false;
+    if(blueTooth.init == false) {
+        blueTooth.init = true;
+        blueToothWidget  = new QWidget();
+        QGridLayout* blueWidgetLayout = new QGridLayout(blueToothWidget);
+        QPushButton * blueInit = new QPushButton("蓝牙模块初始化");
+        QPushButton * serchBlue = new QPushButton("查询蓝牙");
+        QPushButton* blueDisconnect = new QPushButton("蓝牙断开");
+        blueConnect = new QPushButton("蓝牙连接");
+        blueLogLabel = new QLabel();
+        blueQComboBox = new QComboBox();
+        connect(blueInit, &QPushButton::clicked, [=](){ // 蓝牙初始化函数
+            int delayMs = 500;
+            blueLogLabel->setText("断联");this->SendStr(QByteArray("AT+DISC\r\n"));delay(delayMs); // 延时 0.5 秒
+            blueLogLabel->setText("设置AT模式");this->SendStr(QByteArray("AT+MODE=1\r\n"));delay(delayMs); // 延时 0.5 秒
+            blueLogLabel->setText("设为主机");this->SendStr(QByteArray("AT+ROLE=1\r\n"));delay(delayMs); // 延时 0.5 秒
+            blueLogLabel->setText("设置服务UUID");this->SendStr(QByteArray("AT+SUUID=FFE0\r\n"));delay(delayMs); // 延时 0.5 秒
+            blueLogLabel->setText("设置读UUID");this->SendStr(QByteArray("AT+RUUID=FFE1\r\n"));delay(delayMs); // 延时 0.5 秒
+            blueLogLabel->setText("设置写UUID");this->SendStr(QByteArray("AT+WUUID=FFE2\r\n"));delay(delayMs); // 延时 0.5 秒
+            blueLogLabel->setText("设置波特率");this->SendStr(QByteArray("AT+UART=19200\r\n"));delay(delayMs); // 延时 0.5 秒
+            blueLogLabel->setText("设置扫描最大数量");this->SendStr(QByteArray("AT+SCANMAX=20\r\n"));delay(delayMs); // 延时 0.5 秒
+            blueLogLabel->setText("扫描所有蓝牙");this->SendStr(QByteArray("AT+SCAN\r\n"));delay(delayMs*4); // 延时 0.5 秒
+            QStringList blueList = QString(blueTooth.receiveHex).split("\n");
+            if(blueList.size() > 0) {
+                if(blueList.at(0).contains("+SCAN:")){
+                    blueTooth.size = blueList.at(0).split(":").at(1).toInt(&ok,10); // 获取返回函数的列表长度
+                    blueList.removeAt(0);
+                    blueTooth.blueList = blueList;
+                    blueQComboBox->clear();
+                    blueQComboBox->addItems(blueTooth.blueList);
+                }
+            }
+        });
+        connect(serchBlue, &QPushButton::clicked, [=](){ // 查询蓝牙函数
+            int delayMs = 500;
+            blueLogLabel->setText("扫描所有蓝牙");this->SendStr(QByteArray("AT+SCAN\r\n"));delay(delayMs*4); // 延时 0.5 秒
+            QStringList blueList = QString(blueTooth.receiveHex).split("\n");
+            if(blueList.size() > 0) {
+                if(blueList.at(0).contains("+SCAN:")){
+                    blueTooth.size = blueList.at(0).split(":").at(1).toInt(&ok,10); // 获取返回函数的列表长度
+                    blueList.removeAt(0);
+                    blueTooth.blueList = blueList;
+                    blueQComboBox->clear();
+                    blueQComboBox->addItems(blueTooth.blueList);
+                }
+            }
+        });
+        connect(blueConnect, &QPushButton::clicked, [=](){ // 查询蓝牙函数
+            int delayMs = 500;
+            blueTooth.targetCurrentIdx = blueQComboBox->currentIndex();
+            blueTooth.targetBlueList = blueQComboBox->currentText().split(QChar(','));
+            blueTooth.targetName = blueTooth.targetBlueList.at(1);
+            QByteArray connectArray = "AT+CONNECT=";
+            connectArray.append(QString::number(blueTooth.targetCurrentIdx));
+            connectArray.append("\r\n");
+            blueLogLabel->setText("连接蓝牙");this->SendStr(connectArray);delay(delayMs*4); // 延时 0.5 秒
+            if(blueTooth.receiveHex.contains("CONNECT OK")) {
+                blueLogLabel->setText(QString("序号 = %1，\n名称 = %2， \n连接状态 = CONNECT OK").arg(blueTooth.targetCurrentIdx).arg(blueTooth.targetName));
+            } else {
+                blueLogLabel->setText(QString("序号 = %1，\n名称 = %2， \n连接状态 = not ok").arg(blueTooth.targetCurrentIdx).arg(blueTooth.targetName));
+            }
+
+//            blueQComboBox->
+        });
+        connect(blueDisconnect, &QPushButton::clicked, [=](){ // 查询蓝牙函数
+            int delayMs = 500;
+
+            blueLogLabel->setText("断开蓝牙");this->SendStr(QByteArray("AT+DISC\r\n"));delay(delayMs); // 延时 0.5 秒
+            blueLogLabel->setText("查询蓝牙状态");this->SendStr(QByteArray("AT+LINK?\r\n"));delay(delayMs); // 延时 0.5 秒
+            if(blueTooth.receiveHex.contains("OffLine")) {
+                blueLogLabel->setText(QString("断开成功"));
+            } else {
+                blueLogLabel->setText(QString("断开失败"));
+            }
+            blueQComboBox->clear();
+            blueTooth.clear();
+        });
+        blueWidgetLayout->addWidget(blueInit);
+        blueWidgetLayout->addWidget(serchBlue);
+        blueWidgetLayout->addWidget(blueConnect);
+        blueWidgetLayout->addWidget(blueDisconnect);
+        blueWidgetLayout->addWidget(blueQComboBox);
+        blueWidgetLayout->addWidget(blueLogLabel);
+        blueToothWidget->resize(300, 400);
+    }
+
+    blueToothWidget->show();
+}
+
+
+
+
+void Widget::BlueToothRead(QString str)
+{
+//    blueTooth.receiveData = str;
 }

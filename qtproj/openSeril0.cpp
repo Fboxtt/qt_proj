@@ -230,6 +230,8 @@ QString serial::SerialSend(Ui::Widget *ui, QByteArray sendArray)
         }
         if ((uint8_t)sendArray[sendArray.size() - 1] != checkSum) {
             ui->portStatus->setText("发送校验错误，正确是0x" + QString::number(checkSum, 16));
+        } else {
+            ui->portStatus->setText("发送校验正确，正确是0x" + QString::number(checkSum, 16));
         }
     }
     qDebug() << "4===========数据发送开始" << QTime::currentTime();
@@ -245,4 +247,26 @@ QString serial::SerialSend(Ui::Widget *ui, QByteArray sendArray)
     }
 
     return SpaceData;
+}
+
+
+blueToothClass::blueToothClass()
+{
+
+}
+QString blueToothClass::disconnect()
+{
+
+}
+
+void blueToothClass::clear()
+{
+    this->state = OFFLINE;
+    this->size = 0;
+    this->blueList.clear();
+    this->targetBlueList.clear();
+    this->targetCurrentIdx = 0;
+    this->targetName.clear();
+    this->targetMac.clear();
+    this->targetDB.clear();
 }

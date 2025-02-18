@@ -39,3 +39,27 @@ public:
 
     BAT_COMMAND_SEND_STATUS batComSendStatus = FIRST_CONNECT;
 };
+
+class blueToothClass
+{
+
+public:
+    blueToothClass();
+    enum CONNECT_STATE{
+        OFFLINE,
+        ONLINE,
+    };
+    CONNECT_STATE state = OFFLINE;
+    bool init = false;
+    int size = 0;
+    QStringList blueList;
+    QStringList targetBlueList;
+    QString targetName;
+    int targetCurrentIdx = 0;
+    QString targetMac;
+    QString targetDB;
+    QString receiveData;
+    QByteArray receiveHex;
+    void clear();
+    QString disconnect();
+};

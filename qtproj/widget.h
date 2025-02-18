@@ -128,7 +128,7 @@ public slots:
 
     void SendAndDecode(QByteArray sendArray);
     void SendAndDecode(QString sendData);
-
+    void SendStr(QByteArray);
     void sendHexListFunc();
 
     void DisplaySnCode(QString str);
@@ -146,6 +146,9 @@ public slots:
     //    void testProcess(QString key);
     void OTAtestReceive();
     void addTestKey(QString);
+
+    void BlueToothClick();
+    void BlueToothRead(QString);
 };
 
 #define BAT_SEP       (",")
