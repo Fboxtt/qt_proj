@@ -133,7 +133,7 @@ QString hexDecode::ReadHexFile(QFile *file)
 
         // 检查校验和是否正确
         if (dataCheckSum != (uint8_t)(0x100 - dataCheck)) {
-            decodeLog += QString(": 校验错误------------错误行号 = %1实际是0x%2\n").arg(lineNumber).arg(0x100 - dataCheckSum, 2, 16);
+//            decodeLog += QString(": 校验错误------------错误行号 = %1实际是0x%2\n").arg(lineNumber).arg(0x100 - dataCheckSum, 2, 16);
         }
     }
     // 获取扩展线性地址 08 00 -> 0x0800, 获取程序起始地址
@@ -147,6 +147,8 @@ QString hexDecode::ReadHexFile(QFile *file)
         decodeLog += ": 正确---------------------错误行号 = 无\n";
         this->totalCheckSumArray.append((char)totalCheckSum); // 计算总校验和并保存
         this->totalCheckSumArray.append((char)(totalCheckSum / 0x100));
+//        decodeLog += QString(": 校验和（小端序） = %1\n").arg((char)totalCheckSum,3,(int)10);
+        decodeLog += QString("验和（小端序） = %1 %2").arg(totalCheckSum&0xff, 2, 16).arg((totalCheckSum&0xff00) / 0x100, 2, 16);
         this->exist = true;
         if (this->hexLenth % this->packetSize > 0) {
             this->packetNum = this->hexLenth / this->packetSize + 1;

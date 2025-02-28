@@ -3,6 +3,8 @@
 #include <QTime>
 #include <QDateTime>
 
+extern blueToothClass            blueTooth;
+
 serial::serial(void)
 {
 }
@@ -221,6 +223,8 @@ QString serial::SerialSend(Ui::Widget *ui, QString Data)
     return this->SerialSend(ui, Data_1);
 }
 
+extern void delay(int);
+
 QString serial::SerialSend(Ui::Widget *ui, QByteArray sendArray)
 {
     uint8_t checkSum = 0;
@@ -235,7 +239,19 @@ QString serial::SerialSend(Ui::Widget *ui, QByteArray sendArray)
         }
     }
     qDebug() << "4===========数据发送开始" << QTime::currentTime();
-    SerialPort.write(sendArray);
+    if(sendArray.size() == 512 && blueTooth.state == blueToothClass::ONLINE) {
+
+        SerialPort.write(sendArray.mid(0, 128));
+        delay(50);
+        SerialPort.write(sendArray.mid(128, 128));
+        delay(50);
+        SerialPort.write(sendArray.mid(256, 128));
+        delay(50);
+        SerialPort.write(sendArray.mid(384, 128));
+        delay(50);
+    } else {
+        SerialPort.write(sendArray);
+    }
     qDebug() << "5===========数据发送结束" << QTime::currentTime();
     QString noSpaceData = sendArray.toHex().toUpper().data(), SpaceData;
     for (int i = 0, limit = sendArray.size(); i < limit; i++) {

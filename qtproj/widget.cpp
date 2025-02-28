@@ -13,7 +13,8 @@
 #include <QPixmap>
 // QT_CHARTS_USE_NAMESPACE
 // using namespace QTCharts;
-
+#include <QtSerialPort/QSerialPort>
+#include <QtSerialPort/QSerialPortInfo>
 #include "serial0.h"
 #include "csv1.h"
 #include "chart.h"
@@ -1211,7 +1212,10 @@ void Widget::BlueToothClick()
     static QComboBox* blueQComboBox;
     static QPushButton* blueConnect;
     static QPushButton* blueDisconnect;
+    static QPushButton* blueTest;
     static QLabel* blueLogLabel;
+    static QLineEdit* gap128;
+    static QLineEdit* gap512;
     static bool ok = false;
     if(blueTooth.init == false) {
         blueTooth.init = true;
@@ -1219,7 +1223,11 @@ void Widget::BlueToothClick()
         QGridLayout* blueWidgetLayout = new QGridLayout(blueToothWidget);
         QPushButton * blueInit = new QPushButton("蓝牙模块初始化");
         QPushButton * serchBlue = new QPushButton("查询蓝牙");
-        QPushButton* blueDisconnect = new QPushButton("蓝牙断开");
+        gap128 = new QLineEdit("gap128");
+        gap512 = new QLineEdit("gap512");
+
+        blueDisconnect = new QPushButton("蓝牙断开");
+        blueTest = new QPushButton("蓝牙手法测试");
         blueConnect = new QPushButton("蓝牙连接");
         blueLogLabel = new QLabel();
         blueQComboBox = new QComboBox();
@@ -1247,6 +1255,7 @@ void Widget::BlueToothClick()
         });
         connect(serchBlue, &QPushButton::clicked, [=](){ // 查询蓝牙函数
             int delayMs = 500;
+            blueLogLabel->setText("断开蓝牙");this->SendStr(QByteArray("AT+DISC\r\n"));delay(delayMs); // 延时 0.5 秒
             blueLogLabel->setText("扫描所有蓝牙");this->SendStr(QByteArray("AT+SCAN\r\n"));delay(delayMs*4); // 延时 0.5 秒
             QStringList blueList = QString(blueTooth.receiveHex).split("\n");
             if(blueList.size() > 0) {
@@ -1259,8 +1268,11 @@ void Widget::BlueToothClick()
                 }
             }
         });
-        connect(blueConnect, &QPushButton::clicked, [=](){ // 查询蓝牙函数
+        connect(blueConnect, &QPushButton::clicked, [=](){ // 连接蓝牙函数
             int delayMs = 500;
+            if(blueQComboBox->currentText() == "") {
+                return;
+            }
             blueTooth.targetCurrentIdx = blueQComboBox->currentIndex();
             blueTooth.targetBlueList = blueQComboBox->currentText().split(QChar(','));
             blueTooth.targetName = blueTooth.targetBlueList.at(1);
@@ -1270,8 +1282,10 @@ void Widget::BlueToothClick()
             blueLogLabel->setText("连接蓝牙");this->SendStr(connectArray);delay(delayMs*4); // 延时 0.5 秒
             if(blueTooth.receiveHex.contains("CONNECT OK")) {
                 blueLogLabel->setText(QString("序号 = %1，\n名称 = %2， \n连接状态 = CONNECT OK").arg(blueTooth.targetCurrentIdx).arg(blueTooth.targetName));
+                blueTooth.state = blueToothClass::ONLINE;
             } else {
                 blueLogLabel->setText(QString("序号 = %1，\n名称 = %2， \n连接状态 = not ok").arg(blueTooth.targetCurrentIdx).arg(blueTooth.targetName));
+                blueTooth.state = blueToothClass::OFFLINE;
             }
 
 //            blueQComboBox->
@@ -1283,18 +1297,39 @@ void Widget::BlueToothClick()
             blueLogLabel->setText("查询蓝牙状态");this->SendStr(QByteArray("AT+LINK?\r\n"));delay(delayMs); // 延时 0.5 秒
             if(blueTooth.receiveHex.contains("OffLine")) {
                 blueLogLabel->setText(QString("断开成功"));
+                blueTooth.state = blueToothClass::OFFLINE;
             } else {
                 blueLogLabel->setText(QString("断开失败"));
             }
             blueQComboBox->clear();
             blueTooth.clear();
         });
+        connect(blueTest, &QPushButton::clicked, [=](){ // 蓝牙收发函数
+            int delay128ms = gap128->text().toInt(&ok, 10);
+            int delay512ms = gap512->text().toInt(&ok, 10);
+            int count = 500;
+            while(count-- > 0) {
+                if(blueTooth.state == blueToothClass::OFFLINE) {
+                    break;
+                }
+                int count128 = 4;
+                while(count128-- > 0){
+                    QByteArray a = QByteArray(128, (char)0x50);
+                    se.SerialPort.write(a);
+                    delay(delay128ms);
+                }
+                delay(delay512ms);
+            }
+        });
         blueWidgetLayout->addWidget(blueInit);
         blueWidgetLayout->addWidget(serchBlue);
         blueWidgetLayout->addWidget(blueConnect);
         blueWidgetLayout->addWidget(blueDisconnect);
         blueWidgetLayout->addWidget(blueQComboBox);
+        blueWidgetLayout->addWidget(blueTest);
         blueWidgetLayout->addWidget(blueLogLabel);
+        blueWidgetLayout->addWidget(gap128);
+        blueWidgetLayout->addWidget(gap512);
         blueToothWidget->resize(300, 400);
     }
 
