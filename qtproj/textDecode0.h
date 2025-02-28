@@ -128,6 +128,15 @@ public:
     snStruct(int);
 };
 
+class verStruct : public dataStruct
+{
+    using dataStruct::dataStruct;
+
+public:
+    QString keyPrint();
+    verStruct();
+};
+
 class tverStruct
 {
 public:

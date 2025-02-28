@@ -378,6 +378,38 @@ void tverStruct::insert(tver addTver)
     tverMap.insert(addTver.valName, addTver);
     this->dataLenth += addTver.typeLenth;
 }
+//****************************newtver
+verStruct::verStruct()
+{
+    this->dataLenth     = 0;
+    this->newDataStatus = false;
+    this->insert({"主版本号", datTypDic::USHORT});
+    this->insert({"次版本号", datTypDic::USHORT});
+    this->insert({"修订版本", datTypDic::USHORT});
+    this->insert({"编译年", datTypDic::USHORT});
+    this->insert({"编译月", datTypDic::UCHAR});
+    this->insert({"编译日", datTypDic::UCHAR});
+    this->insert({"硬件版本", datTypDic::STRING, 30});
+    this->insert({"功能版本", datTypDic::STRING, 40});
+    this->newDataStatus = false;
+    this->cmdType       = 0x16;
+}
+
+QString verStruct::keyPrint()
+{
+    QString str;
+    foreach (QString key, tverStru0->keyList) {
+        if (this->value(key)->dataType == datTypDic::STRING) {
+            str += this->value(key)->valName + ":" + QString(this->value(key)->byteArray);
+        } else {
+            str += this->value(key)->valName + ":" + QString::number(this->value(key)->uintVal);
+        }
+        str += "\n";
+    }
+//    ui->versionLabel->setText(output);
+    return str;
+}
+//*****************************
 
 tbs::tbs(QString valName, datTypDic::DATA_TYPE dataType)
 {

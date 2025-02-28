@@ -36,6 +36,11 @@ chartV                   *chartV0;
 hexDecode                 hexFile;
 
 tverStruct               *tverStru0;
+
+verStruct              *btStru0;
+verStruct              *appStru0;
+verStruct              *bufferStru0;
+
 caliStruct               *caliStru0;
 tbsStruct                *tbsStru0;
 tbsStruct                *testLCD;
@@ -120,6 +125,9 @@ Widget::Widget(QWidget *parent) :
 
     // 数据结构体初始化函数
     tverStru0 = new tverStruct();
+    btStru0 = new verStruct();
+    appStru0 = new verStruct();
+    bufferStru0 = new verStruct();
     caliStru0 = new caliStruct();
     tbsStru0  = new tbsStruct();
     testLCD   = new tbsStruct();
@@ -197,6 +205,7 @@ void Widget::on_selectFileButton_clicked()
                 dcode0.HexWriteTver_hex(verArray, tverStru0);
                 this->SetVersionLable();
             }
+
             QString HexStatus = QString("\
 大小         = %1字节\n\
 扩展线性地址 = 0x%2\n\
@@ -208,6 +217,19 @@ app开头位置 = %5")
                                     .arg(hexFile.address, 4, 16, QChar('0'))
                                     .arg(errLog)
                                     .arg(idx);
+            if (hexFile.n00dataArray.size() > 2000 && hexFile.n00dataArray.size() < 8000) {
+                dcode0.HexWriteDataStruct_hex(hexFile.n00dataArray.mid(0xd0, btStru0->dataLenth), btStru0);
+                HexStatus += "\n" + btStru0->keyPrint();
+            } else if (hexFile.n00dataArray.size() > 8000 && hexFile.n00dataArray.size() < 50000) {
+                dcode0.HexWriteDataStruct_hex(hexFile.n00dataArray.mid(0xd0, appStru0->dataLenth), appStru0);
+                HexStatus +=  "\n" + appStru0->keyPrint();
+            } else if(hexFile.n00dataArray.size() < 2000) {
+            } else {
+                dcode0.HexWriteDataStruct_hex(hexFile.n00dataArray.mid(0xd0, btStru0->dataLenth), btStru0);
+                dcode0.HexWriteDataStruct_hex(hexFile.n00dataArray.mid(0x30d0, appStru0->dataLenth), appStru0);
+                HexStatus +=  "\n" + btStru0->keyPrint() + "\n" + appStru0->keyPrint();
+            }
+            ui->label->setStyleSheet("font-size: 20px; color: blue;");
             ui->label->setText(HexStatus);
         }
 

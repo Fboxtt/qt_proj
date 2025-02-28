@@ -64,7 +64,7 @@ QString hexDecode::ReadHexFile(QFile *file)
         }
         if (lineData.size() < COLON_L + DATAL_L + R_N_L) {
             qDebug() << "lenth < 5";
-            decodeLog += QString(": 长度错误------------错误行号 = %1\n").arg(lineNumber);
+            decodeLog += QString(": 长度错误----------错误行号 = %1\n").arg(lineNumber);
             // 长度错误，为避免内存越界，故读取下一行数据
             continue;
         }
@@ -75,7 +75,7 @@ QString hexDecode::ReadHexFile(QFile *file)
         // 计算实际长度和datalenth是否相等
         if ((NOT_DATA_L + dateLenth * 2) != (uint32_t)(lineData.size())) {
             qDebug() << (NOT_DATA_L + dateLenth * 2) << (lineData.size());
-            decodeLog += QString(": 长度错误------------错误行号 = %1\n").arg(lineNumber);
+            decodeLog += QString(": 长度错误---------错误行号 = %1\n").arg(lineNumber);
             // 长度错误，为避免内存越界，故读取下一行数据
             continue;
         }
@@ -87,14 +87,14 @@ QString hexDecode::ReadHexFile(QFile *file)
         uint8_t  dataCheck    = this->toUInt(lineData.mid(lineData.size() - 4, 2));
 
         if (dataType > 6) {
-            decodeLog += QString(": 数据类型错误--------错误行号 = %1\n").arg(lineNumber);
+            decodeLog += QString(": 数据类型错误-----错误行号 = %1\n").arg(lineNumber);
             continue;
         } else if (dataType == 0) {
             if (this->n00dataArray.size() == 0) {
                 this->address = dataAddress;
             } else {
                 if (lastAddr != dataAddress) {
-                    decodeLog += QString(": 地址错误------------错误行号 = %1\n").arg(lineNumber);
+                    decodeLog += QString(": 地址错误-------错误行号 = %1\n").arg(lineNumber);
                     lastAddr = dataAddress + dateLenth;
                     continue;
                 }
@@ -144,11 +144,11 @@ QString hexDecode::ReadHexFile(QFile *file)
         totalCheckSum += 0xff;
     }
     if (decodeLog == "") {
-        decodeLog += ": 正确---------------------错误行号 = 无\n";
+        decodeLog += ": 正确-----------错误行号 = 无\n";
         this->totalCheckSumArray.append((char)totalCheckSum); // 计算总校验和并保存
         this->totalCheckSumArray.append((char)(totalCheckSum / 0x100));
 //        decodeLog += QString(": 校验和（小端序） = %1\n").arg((char)totalCheckSum,3,(int)10);
-        decodeLog += QString("验和（小端序） = %1 %2").arg(totalCheckSum&0xff, 2, 16).arg((totalCheckSum&0xff00) / 0x100, 2, 16);
+        decodeLog += QString("验和（小端序） = %1 %2").arg(totalCheckSum&0xff, 2, 16, QChar('0')).toUpper().arg((totalCheckSum&0xff00) / 0x100, 2, 16, QChar('0')).toUpper();
         this->exist = true;
         if (this->hexLenth % this->packetSize > 0) {
             this->packetNum = this->hexLenth / this->packetSize + 1;
