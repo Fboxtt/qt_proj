@@ -1,43 +1,40 @@
-#ifndef BLUETOOTH_H
-#define BLUETOOTH_H
+#ifndef BLUETOOTHMANAGER_H
+#define BLUETOOTHMANAGER_H
 
 #include <QObject>
-#include <QtBluetooth/QBluetoothDeviceDiscoveryAgent>
-#include <QtBluetooth/QLowEnergyController>
-#include <QtBluetooth/QLowEnergyService>
+#include <QList>
+#include <QPair>
+#include <QString>
+#include <QDebug>
 
-class BluetoothOTA : public QObject {
+// WinRT 头文件
+#include <winrt/Windows.Foundation.h>
+#include <winrt/Windows.Devices.Bluetooth.h>
+#include <winrt/Windows.Devices.Enumeration.h>
+#include <winrt/Windows.Devices.Bluetooth.Rfcomm.h>
+#include <winrt/Windows.Storage.Streams.h>
+
+using namespace winrt;
+using namespace Windows::Devices::Bluetooth;
+using namespace Windows::Devices::Enumeration;
+using namespace Windows::Devices::Bluetooth::Rfcomm;
+using namespace Windows::Storage::Streams;
+using namespace Windows::Foundation;
+
+class BluetoothManager : public QObject
+{
     Q_OBJECT
 
 public:
-    explicit BluetoothOTA(QObject *parent = nullptr);
-    void startDiscovered();
-
-    QList<QBluetoothDeviceInfo> devices;
-    void onScanFinished();
-    void clear();
-private slots:
-    void deviceDiscovered(const QBluetoothDeviceInfo &device);
-    void deviceScanError(QBluetoothDeviceDiscoveryAgent::Error error);
-    void deviceScanFinished();
-    void connectToDevice();
-    void deviceConnected();
-    void deviceConnectionError(QLowEnergyController::Error error);
-    void deviceDisconnected();
-    void serviceDiscovered(const QBluetoothUuid &serviceUuid);
-    void serviceDiscoveryFinished();
-    void serviceStateChanged(QLowEnergyService::ServiceState state);
-    void sendOTAData();
+    explicit BluetoothManager(QObject *parent = nullptr);
+    void scanDevices();
 
 private:
-    QBluetoothDeviceDiscoveryAgent *discoveryAgent;
-    QBluetoothDeviceInfo targetDevice;
-    QLowEnergyController *controller = nullptr;
-    QLowEnergyService *otaService = nullptr;
+    void connectToDevice(const QString &deviceId);
+    void openRfcommService(const BluetoothDevice &device);
+    void sendData(const RfcommDeviceService &service);
 
-    // 替换为你的 OTA 服务 UUID 和特征 UUID
-    static constexpr const char *OTA_SERVICE_UUID = "0000XXXX-0000-1000-8000-00805F9B34FB";
-    static constexpr const char *OTA_CHARACTERISTIC_UUID = "0000YYYY-0000-1000-8000-00805F9B34FB";
+    QList<QPair<QString, QString>> deviceList; // 存储设备列表
 };
 
-#endif // BLUETOOTH_H
+#endif // BLUETOOTHMANAGER_H
