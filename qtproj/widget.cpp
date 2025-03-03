@@ -27,6 +27,8 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
+#include "bluetooth.h"
+
 serial                    se;
 blueToothClass            blueTooth;
 textDcode                 dcode0;
@@ -1228,6 +1230,8 @@ void someFunction() {
     delay(2000); // 延时 2 秒
     qDebug() << "Finished waiting!";
 }
+
+BluetoothOTA *bluetoothOTA;
 void Widget::BlueToothClick()
 {
     static QWidget *blueToothWidget;
@@ -1343,6 +1347,14 @@ void Widget::BlueToothClick()
                 delay(delay512ms);
             }
         });
+//        extern BluetoothOTA;
+        static QPushButton* pcBlueInit = new QPushButton("初始化pc的蓝牙");
+        connect(pcBlueInit, &QPushButton::clicked, [=](){ // 蓝牙收发函数
+            qDebug() << "otainit";
+            bluetoothOTA = new BluetoothOTA();
+        });
+        blueWidgetLayout->addWidget(pcBlueInit);
+
         blueWidgetLayout->addWidget(blueInit);
         blueWidgetLayout->addWidget(serchBlue);
         blueWidgetLayout->addWidget(blueConnect);

@@ -12,6 +12,9 @@ serial::serial(void)
 void serial::Init(Ui::Widget *ui)
 {
     // 读取串口信息
+    if(QSerialPortInfo::availablePorts().size() < 1) {
+        return;
+    }
     foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts()) // 访问静态成员函数，返回Qlist
     {
         // 自动读取串口号添加到端口portBox中
