@@ -1351,7 +1351,14 @@ void Widget::BlueToothClick()
         static QPushButton* pcBlueInit = new QPushButton("初始化pc的蓝牙");
         connect(pcBlueInit, &QPushButton::clicked, [=](){ // 蓝牙收发函数
             qDebug() << "otainit";
-            bluetoothOTA = new BluetoothOTA();
+            if(bluetoothOTA == nullptr) {
+                bluetoothOTA = new BluetoothOTA();
+                qputenv("QT_LOGGING_RULES", "qt.bluetooth*=true");
+                bluetoothOTA->startDiscovered();
+            } else {
+                bluetoothOTA->startDiscovered();
+            }
+
         });
         blueWidgetLayout->addWidget(pcBlueInit);
 

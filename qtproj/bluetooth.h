@@ -11,7 +11,11 @@ class BluetoothOTA : public QObject {
 
 public:
     explicit BluetoothOTA(QObject *parent = nullptr);
+    void startDiscovered();
 
+    QList<QBluetoothDeviceInfo> devices;
+    void onScanFinished();
+    void clear();
 private slots:
     void deviceDiscovered(const QBluetoothDeviceInfo &device);
     void deviceScanError(QBluetoothDeviceDiscoveryAgent::Error error);

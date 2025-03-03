@@ -6,15 +6,43 @@
 BluetoothOTA::BluetoothOTA(QObject *parent) : QObject(parent) {
     // 初始化设备发现代理
     discoveryAgent = new QBluetoothDeviceDiscoveryAgent(this);
-    connect(discoveryAgent, &QBluetoothDeviceDiscoveryAgent::deviceDiscovered,
-            this, &BluetoothOTA::deviceDiscovered);
+    qDebug() << QBluetoothDeviceDiscoveryAgent::supportedDiscoveryMethods();
+    discoveryAgent->setLowEnergyDiscoveryTimeout(10000);
+//    connect(discoveryAgent, &QBluetoothDeviceDiscoveryAgent::deviceDiscovered,
+//            this, &BluetoothOTA::deviceDiscovered);
     connect(discoveryAgent, QOverload<QBluetoothDeviceDiscoveryAgent::Error>::of(&QBluetoothDeviceDiscoveryAgent::error),
             this, &BluetoothOTA::deviceScanError);
     connect(discoveryAgent, &QBluetoothDeviceDiscoveryAgent::finished,
-            this, &BluetoothOTA::deviceScanFinished);
+            this, &BluetoothOTA::onScanFinished);
+}
 
+void BluetoothOTA::startDiscovered() {
     // 开始扫描设备
-    discoveryAgent->start();
+    discoveryAgent->start(QBluetoothDeviceDiscoveryAgent::ClassicMethod | QBluetoothDeviceDiscoveryAgent::LowEnergyMethod);
+}
+
+void BluetoothOTA::clear() {
+    // 开始扫描设备
+    devices.clear();
+}
+
+// 该方法可以扫描所有设备
+void BluetoothOTA::onScanFinished()
+{
+    // 扫描完成后获取所有设备
+    devices.clear();
+    devices = discoveryAgent->discoveredDevices();
+
+    qDebug() << "Scan finished. Total devices found:" << devices.size();
+
+    // 打印所有设备信息
+    for (const QBluetoothDeviceInfo &device : devices)
+    {
+        qDebug() << "Device:" << device.name() << "Address:" << device.address().toString();
+    }
+    devices.clear();
+    // 退出应用程序
+//    QCoreApplication::quit();
 }
 
 // 发现设备
