@@ -1231,12 +1231,13 @@ void someFunction() {
     qDebug() << "Finished waiting!";
 }
 
-BluetoothOTA *bluetoothOTA;
+//BluetoothOTA *bluetoothOTA;
 void Widget::BlueToothClick()
 {
     static QWidget *blueToothWidget;
     static QComboBox* blueQComboBox;
     static QPushButton* blueConnect;
+
     static QPushButton* blueDisconnect;
     static QPushButton* blueTest;
     static QLabel* blueLogLabel;
@@ -1302,11 +1303,11 @@ void Widget::BlueToothClick()
             blueTooth.targetCurrentIdx = blueQComboBox->currentIndex();
             blueTooth.targetBlueList = blueQComboBox->currentText().split(QChar(','));
             blueTooth.targetName = blueTooth.targetBlueList.at(1);
-            QByteArray connectArray = "AT+CONNECT=";
-            connectArray.append(QString::number(blueTooth.targetCurrentIdx));
+            QByteArray connectArray = "AT+CONN=";
+            connectArray.append(QString::number(blueTooth.targetCurrentIdx + 1));
             connectArray.append("\r\n");
             blueLogLabel->setText("连接蓝牙");this->SendStr(connectArray);delay(delayMs*4); // 延时 0.5 秒
-            if(blueTooth.receiveHex.contains("CONNECT OK")) {
+            if(blueTooth.receiveHex.contains("CONNECT OK") ||blueTooth.receiveHex.contains("OK+S_CONN")) {
                 blueLogLabel->setText(QString("序号 = %1，\n名称 = %2， \n连接状态 = CONNECT OK").arg(blueTooth.targetCurrentIdx).arg(blueTooth.targetName));
                 blueTooth.state = blueToothClass::ONLINE;
             } else {
@@ -1316,12 +1317,43 @@ void Widget::BlueToothClick()
 
 //            blueQComboBox->
         });
+
+        static QLineEdit* blueToothIdx;
+        static QPushButton* manualPushButton;
+        blueToothIdx = new QLineEdit("手动填写序号");
+        manualPushButton = new QPushButton("手动连接");
+        connect(manualPushButton, &QPushButton::clicked, [=](){ // 连接蓝牙函数
+            int delayMs = 500;
+            if(blueToothIdx->text() == "") {
+                return;
+            }
+            blueTooth.targetCurrentIdx = blueToothIdx->text().toUInt();
+//            blueTooth.targetBlueList =;
+//            blueTooth.targetName =;
+            QByteArray connectArray = "AT+CONN=";
+            connectArray.append(QString::number(blueToothIdx->text().toUInt()));
+            connectArray.append("\r\n");
+            blueLogLabel->setText("连接蓝牙");this->SendStr(connectArray);delay(delayMs*4); // 延时 0.5 秒
+            if(blueTooth.receiveHex.contains("CONNECT OK") ||blueTooth.receiveHex.contains("OK+S_CONN")) {
+                blueLogLabel->setText(QString("序号 = %1，\n名称 = ， \n连接状态 = CONNECT OK").arg(blueTooth.targetCurrentIdx));
+                blueTooth.state = blueToothClass::ONLINE;
+            } else {
+                blueLogLabel->setText(QString("序号 = %1，\n名称 = ， \n连接状态 = not ok").arg(blueTooth.targetCurrentIdx));
+                blueTooth.state = blueToothClass::OFFLINE;
+            }
+
+//            blueQComboBox->
+        });
+        blueWidgetLayout->addWidget(blueToothIdx, 0, 0);
+        blueWidgetLayout->addWidget(manualPushButton, 0, 1);
+
+
         connect(blueDisconnect, &QPushButton::clicked, [=](){ // 查询蓝牙函数
             int delayMs = 500;
 
             blueLogLabel->setText("断开蓝牙");this->SendStr(QByteArray("AT+DISC\r\n"));delay(delayMs); // 延时 0.5 秒
             blueLogLabel->setText("查询蓝牙状态");this->SendStr(QByteArray("AT+LINK?\r\n"));delay(delayMs); // 延时 0.5 秒
-            if(blueTooth.receiveHex.contains("OffLine")) {
+            if(blueTooth.receiveHex.contains("OffLine") || blueTooth.receiveHex.contains("OK")) {
                 blueLogLabel->setText(QString("断开成功"));
                 blueTooth.state = blueToothClass::OFFLINE;
             } else {
@@ -1351,13 +1383,13 @@ void Widget::BlueToothClick()
         static QPushButton* pcBlueInit = new QPushButton("初始化pc的蓝牙");
         connect(pcBlueInit, &QPushButton::clicked, [=](){ // 蓝牙收发函数
             qDebug() << "otainit";
-            if(bluetoothOTA == nullptr) {
-                bluetoothOTA = new BluetoothOTA();
-                qputenv("QT_LOGGING_RULES", "qt.bluetooth*=true");
-                bluetoothOTA->startDiscovered();
-            } else {
-                bluetoothOTA->startDiscovered();
-            }
+//            if(bluetoothOTA == nullptr) {
+//                bluetoothOTA = new BluetoothOTA();
+//                qputenv("QT_LOGGING_RULES", "qt.bluetooth*=true");
+//                bluetoothOTA->startDiscovered();
+//            } else {
+//                bluetoothOTA->startDiscovered();
+//            }
 
         });
         blueWidgetLayout->addWidget(pcBlueInit);
